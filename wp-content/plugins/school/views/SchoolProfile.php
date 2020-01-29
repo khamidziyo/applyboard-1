@@ -19,7 +19,44 @@ function schoolProfile()
 
     <p>Contact Number:&nbsp;&nbsp;<input type="text" name="number" id="number" required></p>
 
-    <p>Pin-Code:&nbsp;&nbsp;<input type="text" name="pin_code" id="pin_code" disabled></p>
+    <p>Pin-Code:&nbsp;&nbsp;<input type="text" name="pin_code" class="pin_code" disabled></p>
+    <input type="hidden" name="pin_code" id="pin_code" class="pin_code"></p>
+
+
+    <p>Country&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    <select name="country" id="country" required>
+    <option selected="selected" disabled>Select Country</option>
+    </select></p>
+
+
+    <label>State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <select name="state" id="state" required>
+    <option selected="selected" disabled>Select state</option>
+    </select></label><br>
+
+
+
+    <p>City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <select name="city" id="city" required>
+    <option selected="selected" disabled>Select City</option>
+    </select></p>
+
+    <p>School Type &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <select  name="school_type" id="school_type" required>
+    <option value=''>Select School Type</option>
+    <option value="1" name='School'>School</option>
+    <option value="2" name='College'>College</option>
+    <option value="3" name='University'>University</option>
+    <option value="4" name='Institute'>Institute</option>
+    </select></p>
+
+    <p for="accomodation">Accomodation <input type="checkbox" name="accomodation" id="accomodation" value=1></p><br>
+    <span id="living_cost"></span>
+
+    <p for="work_study">Work While Studying <input type="checkbox" name="work_study" id="work_study" value=1></p><br>
+
+    <p for="offer_leter">Conditional Offer Letter <input type="checkbox" name="offer_leter" id="offer_leter" value=1></p><br>
 
     <label>Profile Image</label><br>
     <img src = '' width = '200px' height = '200px' id="profile_image">
@@ -28,6 +65,12 @@ function schoolProfile()
     <label>Cover Image</label><br>
     <img src = '' width = '200px' height = '200px' id="cover_image">
     <input type = 'file' name = 'cover_image_input' id = 'cover_image_input'>
+
+    <span id="certificates"></span>
+
+    <span id="new_certificate_span"></span><br>
+
+    <input type="button" class='btn btn-default' value="Add Certificate" id="add_certificate">
 
     <input type="submit" value="Update" class="btn btn-success" id="update_profile" name="update_profile">
 

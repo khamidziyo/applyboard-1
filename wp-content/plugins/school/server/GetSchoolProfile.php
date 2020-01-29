@@ -27,9 +27,13 @@ if (!empty($_POST['val'])) {
                      as state_id,state.name as state_name,cities.id as city_id,cities.name as city_name from
                      school join countries as cntry on cntry.id=school.countries_id join state on
                      state.id=school.state_id join cities on cities.id=school.city_id where school.id=" . $id;
-              
+
+                    $certificate_sql = "select * from  school_certificate where school_id=" . $id;
+                    $certificate_data=$wpdb->get_results($certificate_sql);
+
                     $school_data = $wpdb->get_results($school_sql);
-                    $response = ['status' => Success_Code, 'message' => 'School Profile Fetched Successfully', 'data' => $school_data[0]];
+                    $response = ['status' => Success_Code, 'message' => 'School Profile Fetched Successfully',
+                     'data' => $school_data[0],'certificates'=>$certificate_data];
                     break;
             }
         }

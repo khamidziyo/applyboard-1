@@ -161,7 +161,7 @@ $(document).ready(function() {
 
         // ajax call to submit the form data...
         $.ajax({
-            url: server_url + 'AddSchoolData.php',
+            url: school_server_url + 'AddSchoolData.php',
             type: 'post',
             data: form_data,
             dataType: 'json',
@@ -239,7 +239,7 @@ function getDataBYAjax(data = null, val) {
 
     // ajax call here...
     $.ajax({
-        url: server_url + 'GetData.php',
+        url: school_server_url + 'GetData.php',
         type: 'get',
         dataType: 'json',
         beforeSend: function(request) {

@@ -24,7 +24,7 @@ function userDetail()
     </p>
     <input type="hidden" name="val" value="sendMessage">
 
-    <p>Attachment<short>if any</short>
+    <p>Attachment <short>if any</short>
     <input type='file' name='document_input[]' class="document_input"></p>
 
     </div>

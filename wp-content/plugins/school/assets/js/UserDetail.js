@@ -57,7 +57,7 @@ $(document).ready(function () {
                         }
                         $("#sub_marks").html(sub_mark_html);
 
-                        $("#image").attr('src',student_assets_url+"images/"+data.image);
+                        $("#image").attr('src', student_assets_url + "images/" + data.image);
                     } else {
                         swal({
                             title: response.message,
@@ -77,6 +77,53 @@ $(document).ready(function () {
             }
         })
     }
+})
+
+$("#update_status").click(function () {
+    var id = window.app_id;
+    var status = $("#status_dropdown").val();
+
+    var data = { id: id, val: "updateStatus", status: status };
+    $.ajax({
+        url: school_server_url + "UpdateApplication.php",
+        type: "post",
+        dataType: "json",
+        data: data,
+
+        // function to append the token in the request...
+        beforeSend: function (req) {
+
+            // calling function that appends the token defined in token.js file 
+            // inside common directory of plugins.
+            if (!appendToken(req)) {
+                redirectLogin();
+            }
+        },
+        success: function (response) {
+            if (verifyToken(response)) {
+                if (response.status == 200) {
+                    swal({
+                        title: response.message,
+                        icon: 'success'
+                    })
+                } else {
+                    swal({
+                        title: response.message,
+                        icon: 'error'
+                    })
+                }
+            } else {
+                redirectLogin();
+            }
+        },
+        error: function (error) {
+            console.error(error);
+            swal({
+                title: "Internal Server Error",
+                icon: 'error'
+            })
+        }
+    })
 })
 
 
