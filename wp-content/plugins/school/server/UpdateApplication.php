@@ -23,6 +23,12 @@ if (!empty($_POST['val'])) {
 
                 case 'updateStatus':
 
+                    // echo "<pre>";
+                    // echo trim($_POST['status']);
+                    // print_r($_POST);
+
+                    // die;
+
                     if (empty($_POST['id'])) {
                         throw new Exception("Application id is required");
                     }
@@ -32,7 +38,7 @@ if (!empty($_POST['val'])) {
                     }
 
                     $app_id = base64_decode($_POST['id']);
-               
+  
                     $update = $wpdb->update('applications', ['status' =>$_POST['status']], ['id' => $app_id]);
                     if ($update) {
                         $response=['status'=>Success_Code,'message'=>"Application Status Updated Successfully"];

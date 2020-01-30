@@ -12,8 +12,8 @@ $(document).ready(function () {
 // function to view the courses to those i can apply...
 function viewCourseTable() {
     $("#eligible_course_table").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [5, 10, 20, 30, 40],
+        "pageLength": 5,
         "processing": true,
         "serverSide": true,
         "language": {
@@ -55,7 +55,7 @@ function viewCourseTable() {
 // when user clicks on not eligible button...
 $(document).on('click', '.not_eligible_btn', function () {
     var course_id = $(this).attr('c_id');
-    window.location.href = "http://localhost/wordpress/wordpress/index.php/view-course/?data=" + course_id;
+    window.location.href = base_url + "view-course?c_id=" + course_id;
 });
 
 // when user clicks on apply button of a particular course...
@@ -90,11 +90,13 @@ $(document).on('click', '.apply', function () {
             // inside common directory of plugins.
             if (verifyToken(response)) {
                 if (response.status == 200) {
-                    $(this).val("Already Applied");
                     swal({
                         title: response.message,
                         icon: 'success'
                     })
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
                 }
 
                 // response status 201 if a profile is incomplete...
@@ -201,6 +203,6 @@ $("#user_profile").submit(function (e) {
 function redirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/student-login/";
+        window.location.href = base_url + "student-login/";
     }, 1000)
 }

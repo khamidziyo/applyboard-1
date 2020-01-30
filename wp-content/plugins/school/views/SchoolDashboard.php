@@ -3,11 +3,16 @@
 function schoolDashboard()
 {
     ?>
-        <a href="http://localhost/wordpress/wordpress/index.php/school-profile/">Profile</a></br>
-        <a href="http://localhost/wordpress/wordpress/index.php/notification-detail/">Applications</a></br>
-        <a href="http://localhost/wordpress/wordpress/index.php/notification-detail/">Notifications</a></br>
+        <a href="<?=base_url?>school-profile/">Profile</a></br>
+        <a href="<?=base_url?>add-course/">Add Course</a></br>
+        <a href="<?=base_url?>view-all-course/">View All Course</a></br>
+        
+        <a href="<?=base_url?>messages">My Messages</a></br>
+        
+        <a href="<?=base_url?>notification-detail/">Applications</a></br>
+        <a href="<?=base_url?>notification-detail/">Notifications</a></br>
 
-        <h2><center>List Of Applications received by students</center></h2>
+        <h2><center>List Of Applications submitted by students</center></h2>
         <table id="applications_table" border="2px">
         <thead>
         <th>Id</th>

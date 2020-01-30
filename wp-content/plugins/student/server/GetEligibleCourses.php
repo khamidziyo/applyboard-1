@@ -80,6 +80,7 @@ if (!empty($_GET)) {
                     // all the courses that matches with user interest in user_interest table...
                     $total_courses = $wpdb->get_results($sql . $where);
 
+                    //
                     $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
                     // echo $sql;die;
                     $display_courses = $wpdb->get_results($sql);
@@ -97,6 +98,10 @@ if (!empty($_GET)) {
 
                         // loop on total courses of user interested...
                         foreach ($display_courses as $key => $obj) {
+
+                            if (empty($obj->exam_marks)) {
+                                $cmplt_eligible_arr[] = $obj;
+                            }
 
                             // decoding the course exam array...
                             $course_exams = json_decode($obj->exam_marks, true);
@@ -134,15 +139,16 @@ if (!empty($_GET)) {
                                     $partial_eligible_arr[] = $obj;
                                 }
                                 break;
-
                             }
                         }
                     } else {
                         // to be not eligible ...
                     }
+//                     echo "<pre>";
+                    //                     print_r($cmplt_eligible_arr);
+                    //                     print_r($partial_eligible_arr);
+                    //                      die;
 
-                    // print_r($partial_eligible_arr);
-                    // die;
                     if (!empty($cmplt_eligible_arr)) {
 
                         foreach ($cmplt_eligible_arr as $key => $obj) {
@@ -153,7 +159,7 @@ if (!empty($_GET)) {
                             $record[] = $obj->type_name;
                             $record[] = $obj->category_name;
                             $applications = $wpdb->get_results("select id from applications where course_id=" . $obj->id . " && user_id=" . $payload->userId);
-                           
+
                             if (!empty($applications[0])) {
                                 $record[] = "<input type='button' class='btn btn-success' value='Already Applied' c_id=" . base64_encode($obj->id) . ' disabled>';
                             } else {

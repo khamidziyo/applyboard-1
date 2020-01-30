@@ -1,7 +1,5 @@
-// function that loads when script is loaded..
-$(document).ready(function() {
-    getUserProfile();
-})
+
+getUserProfile();
 
 // function to get the user profile...
 function getUserProfile() {
@@ -9,6 +7,7 @@ function getUserProfile() {
         url: student_server_url + "GetStudentprofile.php",
         type: "get",
         dataType: "json",
+        async:false,
         data: { val: "getProfile" },
 
         // appending token in request...

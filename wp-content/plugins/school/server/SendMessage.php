@@ -37,10 +37,10 @@ if (!empty($_POST['val'])) {
 
             // decode the user id...
             $user = base64_decode($_POST['id']);
-
+            
             // message array that is to be inserted...
             $insert_msg_arr = ['to_user' => $user, 'subject' => $_POST['subject'],
-                'message' => trim($_POST['message']), 'from_user' => $payload->userId, 'created_at' => date('Y-m-d h:i:s')];
+                'message' => trim($_POST['message']), 'from_user' => $payload->userId, 'created_at' => date('Y-m-d h:i:s a')];
 
                 // query to insert the message...
             $insert_msg_res = $wpdb->insert('messages', $insert_msg_arr);

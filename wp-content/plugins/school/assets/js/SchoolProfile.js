@@ -394,7 +394,7 @@ $("#check_password").click(function () {
 
                     // if status is 200...
                     if (response.status == 200) {
-                        window.location.href = "http://localhost/wordpress/wordpress/index.php/change-password/?tok=" + response.data.token;
+                        window.location.href = base_url+"change-password/?tok=" + response.data.token;
                     } else {
                         swal({
                             title: response.message,
@@ -484,6 +484,6 @@ $("#change_password").click(function () {
 function redirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/school-login/";
+        window.location.href = base_url+"school-login/";
     }, 2000)
 }

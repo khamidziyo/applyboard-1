@@ -106,6 +106,9 @@ $("#update_status").click(function () {
                         title: response.message,
                         icon: 'success'
                     })
+                    setTimeout(function(){
+                        location.reload();
+                    })
                 } else {
                     swal({
                         title: response.message,
@@ -203,6 +206,6 @@ function sendMessage(data) {
 function redirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/school-login/";
+        window.location.href = base_url+"school-login/";
     }, 2000)
 }

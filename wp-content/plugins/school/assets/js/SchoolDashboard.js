@@ -5,8 +5,8 @@ $(document).ready(function () {
 function viewApplicationTable() {
 
     $("#applications_table").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [5, 10, 20, 30, 40],
+        "pageLength": 5,
         "processing": true,
         "serverSide": true,
         "language": {
@@ -38,7 +38,7 @@ function viewApplicationTable() {
 
             // calling function that verifies the token defined in token .js file 
             // inside common directory of plugins.
-            if (verifyToken(response)) { 
+            if (verifyToken(response)) {
                 console.log(response);
             } else {
                 redirectLogin();
@@ -48,17 +48,17 @@ function viewApplicationTable() {
 }
 
 // when user clicks on view button to view the user...
-$(document).on('click','.view',function(){
-var id=$(this).attr('user_id');
-var app_id=$(this).attr('app_id');
+$(document).on('click', '.view', function () {
+    var id = $(this).attr('user_id');
+    var app_id = $(this).attr('app_id');
 
-window.location.href="http://localhost/wordpress/wordpress/index.php/user-detail?id="+id+"&app_id="+app_id;
+    window.location.href = base_url + "user-detail?id=" + id + "&app_id=" + app_id;
 })
 
 // function that redirects to login page...
 function redirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/school-login/";
+        window.location.href = base_url + "school-login/";
     }, 2000)
 }

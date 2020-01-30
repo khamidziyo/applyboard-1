@@ -9,12 +9,15 @@ define('Facebook_Oauth_Key','HwAr2OtSxRgEEnO2-JnYjsuA3tc');
 // google auth key...
 define('Google_Oauth_Key','9s0oa6wq-djZGZXRzmY0xWJejOw');
 
+// base url of all pages...
+define('base_url','http://localhost/wordpress/wordpress/index.php/');
+
 
 // school assets url...
 define('school_asset_url',content_url('plugins/school/assets/'));
 
 // course assets url...
-define('course_asset_url',content_url('plugins/School-Mangement/assets/'));
+define('course_asset_url',content_url('plugins/Course/assets/'));
 
 // student assets url...
 define('student_asset_url',content_url('plugins/student/assets'));
