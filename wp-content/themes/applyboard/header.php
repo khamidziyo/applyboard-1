@@ -28,7 +28,7 @@
 		<script src="<?=content_url("themes/applyboard/js/jquery.sticky.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/slick.js")?>"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+		<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 
 	 <?php wp_head();?>
 </head>

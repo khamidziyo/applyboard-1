@@ -37,7 +37,7 @@ class Student{
 
             // catching the exception...
         }catch(Exception $e){
-            $response=['status'=>Error_Code,'message'=>$e->getMessage()];
+            $response=['status'=>117,'message'=>$e->getMessage()];
             echo json_encode($response);
             exit;
         }

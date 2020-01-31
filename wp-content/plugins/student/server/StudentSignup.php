@@ -69,10 +69,10 @@ if(!empty($_POST)){
         $msg = "<h1>Hello ".$_POST['email']."\n Welcome To Apply board.</h1>
         <p>".$url." Please verify your account on clicking the link given below.</p>
         <a class='btn btn-primary' href=".$url."></a>";
-      
+    
           // sending mail to user...
             $mail_res=wp_mail($_POST['email'],"<h3>Activate Your Applyboard Account</h3>",$msg);
-
+ 
             // if mail sent successfully...
             if($mail_res){
                 $wpdb->query( 'COMMIT' );

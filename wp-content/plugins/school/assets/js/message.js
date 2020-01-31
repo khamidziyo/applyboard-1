@@ -1,6 +1,7 @@
 $(document).ready(function () {
+
     var local_data;
-    var sender_id;
+    var user_id;
 
     if (localStorage.getItem('data') != null) {
         local_data = JSON.parse(localStorage.getItem('data'));
@@ -34,6 +35,7 @@ $(document).ready(function () {
 })
 
 function getMessages(url) {
+
     var msg_html = "";
 
     $.ajax({
@@ -63,17 +65,17 @@ function getMessages(url) {
 
                 // if status is 200...
                 if (response.status == 200) {
-                    console.log(response);
-                    $.each(response.messages, function (k, obj) {
-                        msg_html += "<label>User:&nbsp;&nbsp;" + obj.f_name + " " + obj.l_name + "</label>";
-                        msg_html += "<p>Subject:&nbsp;&nbsp;" + obj.subject + "<p>"
-                        if (obj.m_status == "0") {
+                    // console.log(response);
+
+                    $.each(response.sent_messages, function (k, obj) {
+                        msg_html += "<label>User:&nbsp;&nbsp;" + obj.name + "</label>";
+                        if (obj.status == "0") {
                             msg_html += "<p>Message:&nbsp;&nbsp;<b>" + obj.message + "</b></p>";
                         } else {
-                            msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p></br></br>";
+                            msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
                         }
                         msg_html += "<small>" + obj.created_at + "</small><br>";
-                        msg_html += "<button sender='" + obj.f_name + " " + obj.l_name + "' class='btn btn-primary view_message'>View All Messages</button><br><br>"
+                        msg_html += "<button sender='" + obj.name + "' user_id=" + btoa(obj.u_id) + " class='btn btn-primary view_message'>View All Messages</button><br><br>"
                     })
                     $("#messages").html(msg_html);
                 } else {
@@ -104,7 +106,10 @@ function getMessages(url) {
 $(document).on('click', '.view_message', function () {
     sender_name = $(this).attr('sender');
 
-    var data = { val: "getAllMessages" };
+    user_id = $(this).attr('user_id');
+
+    var data = { val: "getAllMessages", user: user_id };
+
     switch (local_data.role) {
 
         // if logged in user is school...
@@ -114,7 +119,7 @@ $(document).on('click', '.view_message', function () {
 
         // if logged in user is student...
         case '1':
-            getMessagesBySenderId(data, student_server_url + "GetMessage.php");
+            getMessagesBySenderId(data, student_server_url + "GetMessage.php", sender_name);
             break;
 
     }
@@ -154,24 +159,21 @@ function getMessagesBySenderId(data, url, sender) {
                 if (response.status == 200) {
                     $("#message_modal").modal("show");
                     $("#sender_name").html(sender);
-                    // console.log(response);
+
+                    // return false;
                     $.each(response.messages, function (k, obj) {
                         if (response.id == obj.from_user) {
-
-                            msg_html += "<span style='float:right';color:red>"
-                            msg_html += "<p>Subject:&nbsp;&nbsp;" + obj.subject + "<p>";
+                            msg_html += "<div class='sent_messages'>"
 
                             msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
-                            msg_html += "<small>" + obj.created_at + "</small><br></br>";
-                            msg_html += "</span>";
+                            msg_html += "<small>" + obj.created_at + "</small><br><br>";
+                            msg_html += "</div></br>";
                         } else {
-
-                            msg_html += "<span style='float:left'>"
-                            msg_html += "<p>Subject:&nbsp;&nbsp;" + obj.subject + "<p>";
+                            msg_html += "<div class='receive_messages'>"
 
                             msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
-                            msg_html += "<small>" + obj.created_at + "</small><br></br>";
-                            msg_html += "</span>";
+                            msg_html += "<small>" + obj.created_at + "</small><br><br>";
+                            msg_html += "</div>";
                         }
                     });
 
@@ -202,30 +204,43 @@ function getMessagesBySenderId(data, url, sender) {
     })
 }
 
-$("#reply").click(function () {
-    $("#message_modal").modal('hide');
-    $("#send_message_modal").modal('show');
-})
-
-
 $("#message_form").submit(function (e) {
     e.preventDefault();
-    var user = window.user_id;
     var form = document.getElementById('message_form');
     var form_data = new FormData(form);
+    form_data.append('user', user_id);
 
-    var sender = window.sender_id;
-    alert(sender);
-    return false;
-    form_data.append('id', user);
+    switch (local_data.role) {
 
-    sendMessage(form_data);
-});
+        case 0:
+
+            sendMessage(form_data, school_server_url);
+            break;
+
+        case '1':
+            sendMessage(form_data, student_server_url);
+            break;
+    }
+})
 
 // function to send the message...
-function sendMessage(data) {
+function sendMessage(data, url) {
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('9d27859f518c27645ae1', {
+        cluster: 'ap2',
+        forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function (data) {
+        console("<p style='color:green'>"+data+"</p>");
+    });
+
     $.ajax({
-        url: school_server_url + "SendMessage.php",
+        url: url + "SendMessage.php",
         type: "post",
         dataType: "json",
         data: data,
@@ -248,8 +263,10 @@ function sendMessage(data) {
                         title: response.message,
                         icon: 'success'
                     })
-                    document.getElementById('message_form').reset();
-                    $("#message_modal").modal("hide");
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
                 } else {
                     swal({
                         title: response.message,

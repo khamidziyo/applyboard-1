@@ -22,7 +22,7 @@ function appendToken(req) {
 
 // function called there is any error from server regarding token...
 function verifyToken(response) {
-    var arr = [109, 110, 111, 112, 113, 114, 115];
+    var arr = [109, 110, 111, 112, 113, 114, 115,117];
 
     // if response.status matches with the array...
     if ($.inArray(response.status, arr) != -1) {

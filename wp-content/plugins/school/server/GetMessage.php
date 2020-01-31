@@ -19,28 +19,42 @@ function verifyUser()
 if (!empty($_GET['val'])) {
     try {
         if (verifyUser()) {
+      
+
             $id = $payload->userId;
 
             switch ($_GET['val']) {
 
                 // to get all the messages...
                 case 'getMessages':
+                    $sent_msg_sql = "SELECT m.*,u.id as u_id, CONCAT_WS(' ',u.f_name,u.l_name) as name FROM messages as m INNER JOIN users
+                     AS u ON u.id=m.to_user   WHERE m.id IN(SELECT MAX(m.id) FROM messages as m
+                      WHERE from_user=$id GROUP BY to_user)";
 
-                    $sql = "SELECT m.id as m_id, m.from_user, m.to_user, m.status,m.message,m.subject,
-                    m.created_at,u.f_name,u.id,u.l_name FROM messages m INNER JOIN users as u on
-                    m.from_user=u.id 
-                    WHERE `to_user` =$id OR `from_user`=$id ORDER BY m.created_at DESC LIMIT 0,1";
+                    $sent_msgs = $wpdb->get_results($sent_msg_sql);
 
-                    // echo $sql;die;
-                    $messages = $wpdb->get_results($sql);
+                    //     $sent_msg_sql = "SELECT m.*,u.id as u_id, CONCAT_WS(' ',u.f_name,u.l_name) as name FROM messages as m INNER JOIN users
+                    //     AS u ON u.id=m.from_user   WHERE m.id IN(SELECT MAX(m.id) FROM messages as m
+                    //      WHERE to_user=$id GROUP BY from_user)";
+
+                    //    $messages = $wpdb->get_results($sql);
+
                     $response = ['status' => Success_Code, 'message' => "Messages Fetched Successfully",
-                        'messages' => $messages];
+                        'sent_messages' => $sent_msgs];
 
                     break;
 
                 case 'getAllMessages':
 
-                    $sql = "SELECT * from messages where to_user=$id or from_user=$id";
+                    // if the recipient or sender id is not in the request..
+                    if (empty($_GET['user'])) {
+                        throw new Exception("User id is required");
+                    }
+
+                    $user_id = base64_decode($_GET['user']);
+
+                    $sql = "SELECT * from messages where to_user=$id and from_user=$user_id or
+                    from_user=$id and to_user=" . $user_id;
 
                     $messages = $wpdb->get_results($sql);
 

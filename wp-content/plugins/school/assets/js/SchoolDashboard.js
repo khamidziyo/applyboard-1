@@ -7,6 +7,7 @@ function viewApplicationTable() {
     $("#applications_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
         "pageLength": 5,
+        "order":[0,'desc'],
         "processing": true,
         "serverSide": true,
         "language": {

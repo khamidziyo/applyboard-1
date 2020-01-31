@@ -15,9 +15,7 @@ function userDetail()
     <div class = 'modal-body'>
 
     <form name="message_form" id="message_form" method="Post">
-    <p>Subject:
-    <input type = 'text' name = 'subject' id = 'subject' required>
-    </p>
+ 
     <p>Message<br>
     <textarea name="message" id="message" rows="10" cols="40" maxlength="500" required></textarea><br>
     <span style="color:red" id="char_left"></span>

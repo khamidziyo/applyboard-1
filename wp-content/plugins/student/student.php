@@ -43,7 +43,7 @@
 
       <p>
      <a id="facebook-button" class="btn  btn-social btn-facebook">
-      <i class="fa fa-facebook"></i> Sign up with Facebo    include_once(dirname(__DIR__,1)."/common/constants.php");
+      <i class="fa fa-facebook"></i> Sign up with Facebook
 
       
     </div>

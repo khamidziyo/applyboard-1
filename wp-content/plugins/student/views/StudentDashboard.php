@@ -114,8 +114,9 @@ function studentDashboard() {
 
     </style>
 
-    <a href="http://localhost/wordpress/wordpress/index.php/student-profile/">Profile</a><br><br>
-    <a href="http://localhost/wordpress/wordpress/index.php/student-applications/">My Applications</a><br><br>
+    <a href="<?=base_url?>student-profile/">Profile</a><br><br>
+    <a href="<?=base_url?>messages/">My Messages</a><br><br>
+    <a href="<?=base_url?>student-applications/">My Applications</a><br><br>
 
     <div class = 'modal fade' id = 'eligibilty_modal'>
     <div class = 'modal-dialog' style = 'width:90%'>

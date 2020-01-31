@@ -3,6 +3,41 @@
 function myMessages()
 {
     ?>
+    <style>
+    .sent_messages {
+   max-width:50%;
+   min-width:150px;
+   background: lightblue;
+   padding:2px;
+   margin:3px;
+   border-radius: 2px;
+   border:1px solid black;
+   float:  left;
+   clear: left;
+}
+
+.receive_messages {
+   max-width:50%;
+   min-width:150px;
+   background: #ffeec0;
+   padding:2px;
+   margin:3px;
+   border-radius: 2px;
+   border:1px solid black;
+   float:  left;
+   clear: left;
+}
+
+/* Important part */
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    height: 250px;
+    overflow-y: auto;
+}
+</style>
+
     <span id="messages"></span>
 
     <div class = 'modal fade' id = 'message_modal'>
@@ -19,7 +54,14 @@ function myMessages()
     <div  class = 'modal-footer'>
 
     <span id="send_messages">
-    <button class = 'btn btn-default' id = 'reply'>Reply</button>
+
+
+    <form name="message_form" id="message_form" method="post">
+    <input type="file" name="documents[]" multiple>
+    <input type="hidden" name="val" value="sendMessage">
+    <input type="text" name="message" id="message" placeholder="Enter Your Message" required>
+    <input type="submit" class="btn btn-success" value="Reply" id = 'reply'>
+        </form>
 
     <button class = 'btn btn-default' data-dismiss = 'modal'>Close</button>
     </span>
@@ -30,41 +72,6 @@ function myMessages()
     </div>
 
 
-    <div class="container-fluid">
-
-<div class = 'modal fade' id = 'send_message_modal'>
-<div class = 'modal-dialog'>
-<div class = 'modal-content'>
-<div class = 'modal-header'>
-<button type = 'button' class = 'close' data-dismiss = 'modal'>&times;
-</button>
-<h4 class = 'modal-title'>Send Message</h4>
-</div>
-<div class = 'modal-body'>
-
-<form name="message_form" id="message_form" method="Post">
-<p>Subject:
-<input type = 'text' name = 'subject' id = 'subject' required>
-</p>
-<p>Message<br>
-<textarea name="message" id="message" rows="10" cols="40" maxlength="500" required></textarea><br>
-<span style="color:red" id="char_left"></span>
-</p>
-<input type="hidden" name="val" value="sendMessage">
-
-<p>Attachment <short>if any</short>
-<input type='file' name='document_input[]' class="document_input"></p>
-
-</div>
-<div class = 'modal-footer'>
-<input type = 'submit' class = 'btn btn-default' value="Send" id = 'send_message'>
-
-<button type = 'button' class = 'btn btn-default' data-dismiss = 'modal'>Close</button>
-</form>
-</div>
-</div>
-</div>
-</div>
 
 <script src = '<?=school_asset_url?>js/message.js'></script>
 <?php

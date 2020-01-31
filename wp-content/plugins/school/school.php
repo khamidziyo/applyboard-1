@@ -16,7 +16,7 @@ add_action("admin_menu", function () {
 });
 
 $view_arr = ['SchoolLogin', 'SchoolDashboard','SchoolProfile', 'AddSchool',
- 'VerifySchool', 'ViewSchool','Notifications','UserDetail','Messages'];
+ 'AccountVerification', 'ViewSchool','Notifications','UserDetail','Messages'];
 foreach ($view_arr as $view_name) {
     include_once "views/" . $view_name . ".php";
 }

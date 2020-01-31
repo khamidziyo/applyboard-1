@@ -1,5 +1,5 @@
 <?php
-function verifySchool($wpdb){
+function accountVerification($wpdb){
     try{
         if(!empty($_GET['type'])){
             
@@ -62,8 +62,8 @@ function verifySchool($wpdb){
     }
 }
 
-add_shortcode('school_verify',function()use($wpdb){
-    verifySchool($wpdb);
+add_shortcode('account_verification',function()use($wpdb){
+    accountVerification($wpdb);
 });
 
 ?>

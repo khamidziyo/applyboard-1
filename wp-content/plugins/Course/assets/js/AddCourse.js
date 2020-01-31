@@ -232,6 +232,6 @@ $("#course_form").submit(function (e) {
 // function that redirects to login page...
 function redirectLogin() {
     setTimeout(function () {
-        window.location.href = base_url + "school-login-form/";
+        window.location.href = base_url + "school-login//";
     }, 2000)
 }

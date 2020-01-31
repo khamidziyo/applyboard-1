@@ -4,6 +4,9 @@ if(file_exists(dirname( __FILE__ ).'/Jwt.php')){
     include_once  dirname( __FILE__ ).'/Jwt.php';
 }
 
+require dirname(__DIR__,1) . '/vendor/autoload.php';
+
+
 /**
 * Get header Authorization
 * */
