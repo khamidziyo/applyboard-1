@@ -2,7 +2,7 @@
 getData();
 
 // var local_data = {};
-var notification_html="<ul>";
+var notification_html = "<ul>";
 if (localStorage.getItem('data') != null) {
     local_data = JSON.parse(localStorage.getItem('data'));
 }
@@ -21,13 +21,19 @@ function getData() {
                 getUserProfile(school_server_url + 'SchoolProfile.php', school, school_assets_url);
                 break;
             case "1":
-                var user = { id: local_data.id, val: 'studentProfile' };
+                var user = { val: 'studentProfile' };
                 getUserProfile(student_server_url + 'StudentProfile.php', user, student_assets_url);
                 break;
 
             case "2":
-                var user = { id: local_data.id, val: 'adminProfile' };
+                var user = { val: 'adminProfile' };
                 getUserProfile(admin_server_url + "AdminDashboard.php", user, admin_assets_url);
+                break;
+
+            // if the logged in user is agent...
+            case "3":
+                var user = { val: 'agentProfile' };
+                getUserProfile(agent_server_url + "AgentDashboard.php", user, agent_assets_url);
                 break;
         }
     }
@@ -57,7 +63,7 @@ function getUserProfile(url, user_data, asset_path) {
 
                     $.each(response.notification, function (key, obj) {
                         notification_html += "<li class='notifications' id=" + obj.id + ">" + obj.message + " ";
-                        notification_html += obj.u_email + " for " + obj.c_name+"</li>";
+                        notification_html += obj.u_email + " for " + obj.c_name + "</li>";
                     })
                     notification_html += "</ul>";
                     $("#notif_count").html(response.notification_count);
@@ -116,21 +122,26 @@ $("#logout").click(function (e) {
 
                 case 0:
                     setTimeout(function () {
-                        window.location.href = "http://localhost/wordpress/wordpress/index.php/school-login/";
+                        window.location.href = base_url+"school-login/";
                     }, 2000)
                     break;
                 case "1":
                     setTimeout(function () {
-                        window.location.href = "http://localhost/wordpress/wordpress/index.php/student-login/";
+                        window.location.href = base_url+"student-login/";
                     }, 2000)
                     break;
 
                 case "2":
                     setTimeout(function () {
-                        window.location.href = "http://localhost/wordpress/wordpress/index.php/admin-login/";
+                        window.location.href = base_url+"admin-login/";
                     }, 2000)
                     break;
 
+                case "3":
+                    setTimeout(function () {
+                        window.location.href = base_url+"agent-login/";
+                    }, 2000)
+                    break;
             }
         }
     })
@@ -142,13 +153,13 @@ $("#notification").hover(function () {
 })
 
 $("#notification").click(function () {
-    window.location.href = "http://localhost/wordpress/wordpress/index.php/notification-detail/";
+    window.location.href = base_url+"notification-detail/";
 })
 
 // function that redirects to login page...
 function adminRedirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/admin-login/";
+        window.location.href = base_url+"admin-login/";
     }, 2000)
 }

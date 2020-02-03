@@ -77,8 +77,6 @@ if (!empty($_POST['val'])) {
                             throw new Exception("Document size should not exceed more than 2 MB");
                         }
 
-                        // SELECT * FROM messages WHERE id IN(SELECT MAX(id) FROM messages where to_user=37 OR from_user=37 GROUP BY from_user)
-
                         $path = dirname(__DIR__, 1) . '/assets/documents/';
                         // echo $path;die;
 

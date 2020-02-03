@@ -23,4 +23,11 @@ var admin_server_url = "http://localhost/wordpress/wordpress/wp-content/plugins/
 // assets path of admin plugin...
 var admin_assets_url = "http://localhost/wordpress/wordpress/wp-content/plugins/admin/assets/";
 
+// server path of agent plugin...
+var agent_server_url = "http://localhost/wordpress/wordpress/wp-content/plugins/agent/server/";
+
+// assets path of agent plugin...
+var agent_assets_url = "http://localhost/wordpress/wordpress/wp-content/plugins/agent/assets/";
+
+
 var base_url = "http://localhost/wordpress/wordpress/index.php/";

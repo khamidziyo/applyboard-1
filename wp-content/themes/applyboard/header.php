@@ -25,6 +25,8 @@
 		<script src="<?=content_url("themes/applyboard/js/server_url.js")?>"></script>
 
     	<script type="text/javascript" src="<?=content_url("plugins/common/token.js")?>"></script>
+		<script type="text/javascript" src="<?=content_url("plugins/common/sweetalert.js")?>"></script>
+
 		<script src="<?=content_url("themes/applyboard/js/jquery.sticky.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/slick.js")?>"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
