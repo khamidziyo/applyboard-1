@@ -15,6 +15,7 @@
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/font-awesome.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.dataTables.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery-ui.css')?>">
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>">
 
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.js")?>"></script>
@@ -23,6 +24,7 @@
 
 		<script src="<?=content_url("themes/applyboard/js/datatable.min.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/server_url.js")?>"></script>
+		<script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multiselect.js")?>"></script>
 
     	<script type="text/javascript" src="<?=content_url("plugins/common/token.js")?>"></script>
 		<script type="text/javascript" src="<?=content_url("plugins/common/sweetalert.js")?>"></script>
@@ -43,9 +45,9 @@
 	<div   id="user_notification" border="5px solid black" width="100px"></div>
 
 	<span style="float:right">
-	
+
 	<p id="notif_count"></p>
-	
+
 	<img src="<?=content_url("themes/applyboard/images/notification.png")?>" id="notification" height="20px" width="20px">
 
 	<span id="user_email"></span>

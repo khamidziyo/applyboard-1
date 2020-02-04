@@ -35,6 +35,16 @@ function addStudent()
       </select>
     </div>
 
+
+    <div class="form-group">
+    <span id="exams"></span>
+    </div>
+
+    <div class="form-group">
+    <span id="marks"></span>
+    </div>
+
+
     <div class="form-group">
       <label for="nationality">Select Nationality</label>
 
@@ -46,7 +56,7 @@ function addStudent()
 
     <div class="form-group">
       <label for="pass_number">Passport Number:</label>
-      <input type="number" class="form-control" id="pass_number" name="pass_number" required>
+      <input type="text" class="form-control" id="pass_number" name="pass_number" required>
     </div>
 
 
@@ -66,6 +76,16 @@ function addStudent()
     </div>
 
     <div class="form-group">
+      <label for="grade_scheme">Grade Scheme</label>
+
+      <select class="form-control" id="grade_scheme" name="grade_scheme" required>
+        <option selected disabled>Select Grade Scheme </option>
+      </select>
+    </div>
+
+
+
+    <div class="form-group">
       <label for="marks">Average Marks Scored In Highest Qualification:</label>
       <input type="text" class="form-control" id="marks" placeholder="Enter marks scored in highest qualification" name="marks" required>
     </div>
@@ -75,21 +95,17 @@ function addStudent()
 
       <select class="form-control" id="visa" name="visa" required>
         <option selected disabled>Select Visa</option>
+        <option value="0">No I don't have this.</option>
+        <option value="1">USA F1 Visa</option>
+        <option value="2">Canadian study Permit or Visitor Visa</option>
       </select>
     </div>
 
-    <div class="form-group">
-      <label for="exam">Exams Given</label>
-
-      <select class="form-control" id="exam" name="exam" required>
-        <option selected disabled>Select Exam</option>
-      </select>
-    </div>
 
     <div class="form-group">
       <label for="image">Profile Image:</label>
       <input type="file" class="form-control" id="img_input" name="img_input" required>
-        <img src="" width="200px" height="200px" style="display:none">
+        <img src="" id="image" width="200px" height="200px" style="display:none">
     </div>
 
     <input type="submit" class="btn btn-success" value="Create Student">

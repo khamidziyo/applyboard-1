@@ -12,10 +12,10 @@ var grades = [];
 // $(document).ready(function() {
 
 
-    showTab(currentTab); // Display the current tab
+showTab(currentTab); // Display the current tab
 
-    //calling function to get the modal dynamic data from server...
-    getModalData();
+//calling function to get the modal dynamic data from server...
+getModalData();
 
 // });
 
@@ -73,7 +73,7 @@ function getModalData() {
     var exam_html = "";
     var category_html = "";
     var grade_html = "";
-    
+
     $.ajax({
         url: student_server_url + "GetModalData.php",
         type: "get",
@@ -81,7 +81,7 @@ function getModalData() {
         data: { val: "getModalData" },
 
         // appending token in request...
-        beforeSend: function(request) {
+        beforeSend: function (request) {
 
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
@@ -94,7 +94,7 @@ function getModalData() {
         },
 
         // if the response is success
-        success: function(response) {
+        success: function (response) {
 
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
@@ -115,7 +115,7 @@ function getModalData() {
                             cntry_html += "<option selected='selected' disabled>Select</option>";
 
                             // each loop to display countries in drop down...
-                            $.each(response.cntry_data, function(k, obj) {
+                            $.each(response.cntry_data, function (k, obj) {
                                 cntry_html += "<option value=" + obj.id + ">" + obj.name + "</option>";
                             });
 
@@ -130,7 +130,7 @@ function getModalData() {
                             exam_html += "<option value='0'>No I don't have this</option>";
 
                             // each loop to display exams in drop down...
-                            $.each(response.exams, function(k, obj) {
+                            $.each(response.exams, function (k, obj) {
                                 exam_html += "<option value=" + obj.id + ">" + obj.name + "</option>";
                             });
 
@@ -142,7 +142,7 @@ function getModalData() {
                         if (response.hasOwnProperty("course_category")) {
 
                             // each loop to dynamically display course categories in drop down...
-                            $.each(response.course_category, function(k, obj) {
+                            $.each(response.course_category, function (k, obj) {
                                 category_html += "<input type='checkbox' name='course[" + obj.name + "]'";
                                 category_html += "value=" + obj.id + " unchecked=false>" + obj.name;
                             });
@@ -156,13 +156,13 @@ function getModalData() {
                             grade_html += "<option selected='selected' disabled>Select Grade</option>";
 
                             // each loop to dynamically display all classes in drop down...
-                            $.each(response.grade, function(k, obj) {
+                            $.each(response.grade, function (k, obj) {
 
                                 // decoding the json...
                                 grades.push(JSON.parse(obj.grade_scheme));
 
                                 // loop to get all the classess extracted from json...
-                                $.each(JSON.parse(obj.grade_scheme), function(grade) {
+                                $.each(JSON.parse(obj.grade_scheme), function (grade) {
                                     grade_html += "<option value=" + obj.id + ">" + grade + "</option>";
                                 })
 
@@ -185,13 +185,13 @@ function getModalData() {
         },
 
         // if server response is not success...
-        error: function(error) {
+        error: function (error) {
             console.error(error);
         }
     })
 }
 
-$(document).on('click', '#view_eligible_program', function() {
+$(document).on('click', '#view_eligible_program', function () {
 
     window.location.href = "http://localhost/wordpress/wordpress/index.php/eligible-programs/";
 
@@ -209,7 +209,7 @@ function submitEligibilityData() {
         data: $("#eligibilityForm").serializeArray(),
 
         // appending token in the request...
-        beforeSend: function(request) {
+        beforeSend: function (request) {
 
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
@@ -219,7 +219,7 @@ function submitEligibilityData() {
         },
 
         // success response from server...
-        success: function(response) {
+        success: function (response) {
 
             // calling function that verifies the token defined in token .js file 
             // inside common directory of plugins.
@@ -236,7 +236,7 @@ function submitEligibilityData() {
                     $("#eligibilty_modal").modal('hide');
 
                     // function to refresh the page after eligibility data is submitted...
-                    setTimeout(function() {
+                    setTimeout(function () {
                         location.reload();
                     }, 1500);
 
@@ -262,7 +262,7 @@ function submitEligibilityData() {
         },
 
         // if not a success response...
-        error: function(error) {
+        error: function (error) {
             swal({
                 title: "Internal Server Error",
                 icon: "error"
@@ -272,7 +272,7 @@ function submitEligibilityData() {
 }
 
 // when user selects the exam...
-$("#exams").change(function() {
+$("#exams").change(function () {
     var marks_html = "";
     var exam_val = $(this).children("option:selected").val();
 
@@ -291,7 +291,7 @@ $("#exams").change(function() {
 })
 
 // when user selects the class...
-$("#grade").change(function() {
+$("#grade").change(function () {
     var scheme_html = "<option selected='selected' disabled>Select</option>";
 
     var grade_name = $(this).children("option:selected").text();
@@ -300,8 +300,8 @@ $("#grade").change(function() {
     grades.filter(grade_class => {
         if (grade_class) {
             if (grade_class.hasOwnProperty(grade_name)) {
-                $.each(grade_class, function(grade, scheme_arr) {
-                    $.each(scheme_arr, function(k, scheme) {
+                $.each(grade_class, function (grade, scheme_arr) {
+                    $.each(scheme_arr, function (k, scheme) {
                         scheme_html += "<option>" + scheme + "</option>"
                     })
                 })
@@ -325,7 +325,7 @@ $("#sch_name").autocomplete({
 
 
 // when user enter the value in the input...
-$("#program").keyup(function() {
+$("#program").keyup(function () {
 
     // if value is null...
     if ($(this).val() == "") {
@@ -340,7 +340,7 @@ $("#program").keyup(function() {
         dataType: "json",
 
         // apending token in request...
-        beforeSend: function(request) {
+        beforeSend: function (request) {
 
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
@@ -352,7 +352,7 @@ $("#program").keyup(function() {
         },
 
         // if response is success...
-        success: function(response) {
+        success: function (response) {
 
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
@@ -364,7 +364,7 @@ $("#program").keyup(function() {
                         availablePrograms.length = 0;
 
                         // pushing the programs in the array by loop...
-                        $.each(response.data, function(k, obj) {
+                        $.each(response.data, function (k, obj) {
                             availablePrograms.unshift(obj.name);
                         })
                     }
@@ -378,14 +378,14 @@ $("#program").keyup(function() {
         },
 
         // if response is error...
-        error: function(error) {
+        error: function (error) {
             console.error(error);
         }
     })
 })
 
 // when user enter the school name in the input...
-$("#sch_name").keyup(function() {
+$("#sch_name").keyup(function () {
 
     // if value is null...
     if ($(this).val() == "") {
@@ -400,7 +400,7 @@ $("#sch_name").keyup(function() {
         dataType: "json",
 
         // apending token in request...
-        beforeSend: function(request) {
+        beforeSend: function (request) {
 
 
             // calling function that appends the token defined in token.js file 
@@ -413,7 +413,7 @@ $("#sch_name").keyup(function() {
         },
 
         // if response is successs...
-        success: function(response) {
+        success: function (response) {
 
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
@@ -425,7 +425,7 @@ $("#sch_name").keyup(function() {
                         availableSchools.length = 0;
 
                         //each loop to push all relevant schools in array...
-                        $.each(response.data, function(k, obj) {
+                        $.each(response.data, function (k, obj) {
                             availableSchools.push(obj.name);
                         })
                     }
@@ -437,7 +437,7 @@ $("#sch_name").keyup(function() {
                 redirectLogin();
             }
         },
-        error: function(error) {
+        error: function (error) {
             console.error(error);
         }
     })
@@ -446,7 +446,7 @@ $("#sch_name").keyup(function() {
 
 
 // when user clicks on search button to search for program...
-$("#search_form").submit(function(e) {
+$("#search_form").submit(function (e) {
     e.preventDefault();
 
     // call ajax to get get the detail of course...
@@ -457,7 +457,7 @@ $("#search_form").submit(function(e) {
         data: $("#search_form").serializeArray(),
 
         // appending token in request...
-        beforeSend: function(request) {
+        beforeSend: function (request) {
 
 
             // calling function that appends the token defined in token.js file 
@@ -470,7 +470,7 @@ $("#search_form").submit(function(e) {
         },
 
         // if response is success...
-        success: function(response) {
+        success: function (response) {
 
 
             // calling function that verifies the token defined in token.js file 
@@ -508,7 +508,7 @@ $("#search_form").submit(function(e) {
         },
 
         // if response is error...
-        error: function(error) {
+        error: function (error) {
             swal({
                 title: "Internal Server Error",
                 icon: "error"
@@ -518,7 +518,7 @@ $("#search_form").submit(function(e) {
 })
 
 // when user clicks on view detail button to view the course in detail...
-$("#view_detail").click(function() {
+$("#view_detail").click(function () {
     var c_id = btoa($(this).attr('c_id'));
     var s_id = btoa($(this).attr('s_id'));
 
@@ -530,7 +530,7 @@ $("#view_detail").click(function() {
 // function that redirects to login page...
 function redirectLogin() {
     localStorage.removeItem('data');
-    setTimeout(function() {
+    setTimeout(function () {
         window.location.href = "http://localhost/wordpress/wordpress/index.php/student-login/";
     }, 2000)
 }

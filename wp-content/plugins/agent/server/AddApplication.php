@@ -1,4 +1,5 @@
 <?php
+
 global $wpdb;
 
 if (!isset($wpdb)) {
@@ -17,23 +18,23 @@ function verifyUser()
 }
 
 if (!empty($_POST['val'])) {
-    if (verifyUser()) {
-        try {
+    try {
+        if (verifyUser()) {
             switch ($_POST['val']) {
-                case 'addStudent':
+                case 'addApplication':
                     echo "<pre>";
                     print_r($_POST);
                     die;
                     break;
+
                 default:
                     throw new Exception("No match Found");
                     break;
             }
-        } catch (Exception $e) {
-            $response = ['status' => Error_Code, 'message' => $e->getMessage()];
         }
+    } catch (Exception $e) {
+        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }
 } else {
-    $response = ['status' => Error_Code, 'message' => "Unauthorized Access.Value is required"];
+    $response = ['status' => Error_Code, 'message' => "Unauthorized Access.Value is required."];
 }
-echo json_encode($response);

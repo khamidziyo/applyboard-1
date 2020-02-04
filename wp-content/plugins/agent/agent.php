@@ -14,7 +14,7 @@
  * Domain Path:        languages
  **/
 
- $view_arr = ['AddAgent','ViewAgent','AgentLogin','AgentDashboard','AddStudent'];
+ $view_arr = ['AddAgent','ViewAgent','AgentLogin','AgentDashboard','AddStudent','ViewStudents','ViewApplication'];
 foreach ($view_arr as $view_name) {
     include_once "views/" . $view_name . ".php";
 }
