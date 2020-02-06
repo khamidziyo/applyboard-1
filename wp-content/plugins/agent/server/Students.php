@@ -51,9 +51,9 @@ if (!empty($_GET['val'])) {
                         $where = substr_replace($where, '', -3);
                     }
 
-                    $sql = "select u.*,c.name as cntry_name,count(a.id) as total_application from users
-                     as u join countries as c on c.id=u.nationality  left join applications as a on
-                     a.student_id=u.id where u.agent_id=" . $id;
+                     $sql ="select u.*,c.name as cntry_name,(SELECT COUNT(*) FROM applications as a 
+                     WHERE a.student_id=u.id) as total_application from users as u join countries as c
+                      on c.id=u.nationality where u.agent_id=$id";
 
                     // query to get the total results...
                     $total_students = $wpdb->get_results($sql);

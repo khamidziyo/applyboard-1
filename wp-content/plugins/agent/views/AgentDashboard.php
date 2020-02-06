@@ -6,9 +6,10 @@ function agentDashboard()
 
 
 <div class="container">
-<a href="#">Profile</a><br>
+<a href="<?=base_url?>agent-profile/">Profile</a><br>
 <a href="<?=base_url?>add-student/">Add Student</a><br>
 <a href="<?=base_url?>view-students/">View Students</a><br>
+<a href="<?=base_url?>view-sub-agents/">View Sub Agents</a><br>
 <a class="btn btn-primary" id="create_sublogin">Create Sub agents</a><br><br>
 
 
@@ -88,7 +89,7 @@ function agentDashboard()
   <div class="card-body">
     <h5 class="card-title">Total Sub agents</h5>
     <p class="card-text" id="sub_agents"></p>
-    <a href="#">View Sub Agents</a>
+    <a href="<?=base_url?>view-sub-agents/">View Sub Agents</a>
   </div>
 </div>
 </div>

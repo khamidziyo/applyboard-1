@@ -1,8 +1,9 @@
-viewAgents();
+$(document).ready(function () {
+    viewSubAgents();
+})
 
-
-function viewAgents() {
-    $("#view_agent_table").DataTable({
+function viewSubAgents() {
+    $("#view_sub_agent").DataTable({
         "lengthMenu": [1, 2, 3, 4],
         "pageLength": 1,
         "processing": true,
@@ -14,15 +15,15 @@ function viewAgents() {
         "destroy": true,
         "columnDefs": [
             // { targets: '_all', visible: true },
-            { "orderable": false, "targets": [4, 5, 6, 7] }
+            { "orderable": false, "targets": [2,3,4] }
         ],
         "ajax": ({
-            url: agent_server_url + "agents.php",
+            url: agent_server_url + "subAgents.php",
             data: { val: "getAgents" },
             dataType: "json",
             beforeSend: function (request) {
                 if (!appendToken(request)) {
-                    adminRedirectLogin();
+                    agentRedirectLogin();
                 }
             }
         }),
@@ -31,7 +32,7 @@ function viewAgents() {
             if (verifyToken(response)) {
                 console.log(response);
             } else {
-                adminRedirectLogin();
+                agentRedirectLogin();
             }
         }
     })

@@ -44,15 +44,16 @@ $(document).on('click', '.view_application', function () {
     window.location.href = base_url + "/view-applications?id=" + id;
 })
 
+$(document).on('click', '.edit_user', function () {
+    var id = $(this).attr('data_id');
+    window.location.href = base_url + "/add-student?id=" + id;
+})
+
 $(document).on('click', '.create_application', function () {
     var id = $(this).attr('data_id');
 
     window.location.href = base_url + "eligible-programs?id=" + id;
-
-    // var data = { 'val': 'getData' };
-    // getDropdownData(data);
-
-})
+});
 
 
 

@@ -1,7 +1,8 @@
 <?php
 function changePassword() {
-    if ( !empty( $_GET['tok']) && !empty($_GET['student'] )) {
-
+    if ( !empty( $_GET['tok'])) {
+        // echo $_GET['tok'];
+        // die;
         ?>
 
         <form name = 'change_password_form' id = 'change_password_form'>
@@ -14,11 +15,10 @@ function changePassword() {
         </p>
 
         <input type = 'hidden' name = 'token' value = <?= $_GET['tok']?>>
-        <input type = 'hidden' name = 'student' value = <?= $_GET['student']?>>
+        <input type = 'hidden' name = 'val' value ="changePassword">
 
         <input type = 'submit' class = 'btn btn-primary' name = 'reset' value = 'Change Password' id = 'reset'>
 
-        <img src = "<?=admin_asset_url?>/images/loading.gif" id = 'load_img' width = '200px' height = '200px' style = 'display:none'>
         <script src = '<?=admin_asset_url?>js/ChangePassword.js'></script>
         <?php
     }else{

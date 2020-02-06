@@ -104,11 +104,22 @@ function addStudent()
 
     <div class="form-group">
       <label for="image">Profile Image:</label>
+      <img src="" id="image" width="200px" height="200px" style="display:none">
+      <input type="hidden" name="cur_image" id="cur_image">
       <input type="file" class="form-control" id="img_input" name="img_input" required>
-        <img src="" id="image" width="200px" height="200px" style="display:none">
     </div>
 
-    <input type="submit" class="btn btn-success" value="Create Student">
+    <div class="form-group">
+    <span id="documents"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="documents">Documents:</label>
+      <input type="file" class="form-control" class="documents" name="documents[]" multiple>
+    </div>
+
+
+    <input type="submit" class="btn btn-success" id="submit_btn" value="Create Student">
 
     </form>
        <script src="<?=agent_asset_url?>js/AddStudent.js"></script>

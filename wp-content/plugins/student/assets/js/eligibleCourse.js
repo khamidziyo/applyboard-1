@@ -1,19 +1,22 @@
-$(document).ready(function () {
-    const queryString = window.location.search;
 
+
+var queryString = window.location.search;
+
+if (window.location.href.indexOf("id") > -1) {
     const urlParams = new URLSearchParams(queryString);
 
     var stu_id = urlParams.get('id');
     var data = { student: stu_id, 'val': 'getEligibleCoursesByAgent' };
-
     viewCourseTable(data);
+}
 
-    $("#dob").datepicker({
-        changeMonth: true,
-        changeYear: true
-    });
 
+
+$("#dob").datepicker({
+    changeMonth: true,
+    changeYear: true
 });
+
 
 // function to view the courses to those i can apply...
 function viewCourseTable(data) {
@@ -58,6 +61,20 @@ function viewCourseTable(data) {
         }
     });
 }
+
+$("#filter_applications").submit(function (e) {
+    e.preventDefault();
+    var form_data = $("#filter_applications").serializeArray();
+    if (form_data.length > 0) {
+        // console.log(form_data);
+
+        var data = { student: window.stu_id, 'val': 'getEligibleCoursesByAgent', 'filter': form_data };
+
+        viewCourseTable(data);
+    }
+
+})
+
 
 var data = { 'val': 'getData' };
 
@@ -187,88 +204,70 @@ $("#countries").change(function () {
 
 
 
-// when user clicks on not eligible button...
+// // when user clicks on not eligible button...
 $(document).on('click', '.not_eligible_btn', function () {
     var course_id = $(this).attr('c_id');
+
     window.location.href = base_url + "view-course?c_id=" + course_id;
 });
 
+
 // when user clicks on apply button of a particular course...
-// $(document).on('click', '.apply', function () {
+$(document).on('click', '.apply', function () {
 
-//     // to store all the languages...
-//     var language_html = "";
+    var course = $(this).attr('c_id');
 
-//     var course = $(this).attr('c_id');
-//     $.ajax({
-//         url: student_server_url + "ApplyCourse.php",
-//         type: "post",
-//         dataType: "json",
-//         data: { val: "applyCourse", course: course },
+    if (window.stu_id != null) {
+        var data = { val: "applyCourseByAgent", course: course, 'student': window.stu_id }
+    } else {
+        var data = { val: "applyCourseByStudent", course: course };
+    }
 
-//         // appending token in request...
-//         beforeSend: function (request) {
+    $.ajax({
+        url: student_server_url + "ApplyCourse.php",
+        type: "post",
+        dataType: "json",
+        data: data,
 
-//             // calling function that appends the token defined in token.js file 
-//             // inside common directory of plugins.
-//             if (!appendToken(request)) {
+        // appending token in request...
+        beforeSend: function (request) {
 
-//                 // if the token is not in the localStorage...
-//                 redirectLogin();
-//             }
-//         },
+            // calling function that appends the token defined in token.js file 
+            // inside common directory of plugins.
+            if (!appendToken(request)) {
 
-//         // if the response is success
-//         success: function (response) {
+                // if the token is not in the localStorage...
+                redirectLogin();
+            }
+        },
 
-//             // calling function that verifies the token defined in token.js file 
-//             // inside common directory of plugins.
-//             if (verifyToken(response)) {
-//                 if (response.status == 200) {
-//                     swal({
-//                         title: response.message,
-//                         icon: 'success'
-//                     })
-//                     setTimeout(function () {
-//                         location.reload();
-//                     }, 1000);
-//                 }
+        // if the response is success
+        success: function (response) {
 
-//                 // response status 201 if a profile is incomplete...
-//                 else if (response.status == 201) {
-//                     swal({
-//                         title: response.message,
-//                         icon: 'warning'
-//                     }).then(function () {
-//                         $("#profile_modal").modal('show');
-//                         language_html += "<option selected disabled>Select Your Prior Language</option>";
-//                         $.each(response.languages, function (k, obj) {
-//                             language_html += "<option value=" + obj.id + ">" + obj.name + "</option>"
-//                         })
-//                         $("#lang_prior").html(language_html);
-//                     })
-//                 }
-//                 else {
-//                     swal({
-//                         title: response.message,
-//                         icon: 'error'
-//                     })
-//                 }
-//             } else {
-//                 redirectLogin();
-//             }
-//         },
+            // calling function that verifies the token defined in token.js file 
+            // inside common directory of plugins.
+            if (verifyToken(response)) {
+                sweetalert(response);
 
-//         // if the response is error...
-//         error: function (err) {
-//             swal({
-//                 title: "Internal Server Error",
-//                 icon: "error"
-//             })
-//             console.error(err);
-//         }
-//     })
-// })
+                if (response.status == 200) {
+                    $(this).val("Applied");
+                    $(this).attr('disabled',true);
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                }
+            } else {
+                redirectLogin();
+            }
+        },
+
+        // if the response is error...
+        error: function (err) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+})
 
 
 

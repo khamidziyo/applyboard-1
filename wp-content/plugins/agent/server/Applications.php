@@ -68,11 +68,13 @@ if (!empty($_GET['val'])) {
                         $where = substr_replace($where, '', -3);
                     }
 
-                    $sql = "select applications.*,s.name as s_name,c.name as c_name,agents.name as
-                    agent_name from agents
-                    join applications on applications.agent_id=agents.id join school as s on
-                    s.id=applications.school_id join courses as c on c.id=applications.course_id where
-                     agent_id in (" . implode(",", $agent_id) . ") && applications.student_id=" . $student_id;
+                    $sql = "select applications.*,s.name as s_name,c.name as c_name,CONCAT( users.f_name,' ',users.l_name)
+                     AS u_name,agents.name as
+                     agent_name from agents join applications on applications.agent_id=agents.id join
+                     users on users.id=applications.student_id join school as s on
+                     s.id=applications.school_id join courses as c on c.id=applications.course_id
+                     where applications.agent_id in (" . implode(",", $agent_id) . ") &&
+                     applications.student_id=" . $student_id;
 
                     // query to get the total results...
                     $total_applications = $wpdb->get_results($sql);
@@ -87,7 +89,7 @@ if (!empty($_GET['val'])) {
                         foreach ($display_applications as $key => $obj) {
                             $record = [];
                             $record[] = $obj->id;
-                            $record[] = $obj->f_name . " " . $obj->l_name;
+                            $record[] = $obj->u_name;
                             $record[] = $obj->agent_name;
                             $record[] = $obj->s_name;
                             $record[] = $obj->c_name;

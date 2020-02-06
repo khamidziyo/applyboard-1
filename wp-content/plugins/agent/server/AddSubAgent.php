@@ -55,7 +55,8 @@ if (!empty($_POST['val'])) {
                     }
 
                     $password = password_hash($password, PASSWORD_DEFAULT);
-                    $ins_agent_arr = ['email' => $email, 'created_by' => $id, 'password' => $password, 'role' => '4'];
+                    $ins_agent_arr = ['email' => $email, 'created_by' => $id, 'password' => $password,
+                     'role' => '4','created_at'=>Date('Y-m-d h:i:s')];
                     $ins_agent_res = $wpdb->insert('agents', $ins_agent_arr);
 
                     if ($ins_agent_res) {

@@ -117,7 +117,7 @@ if (!empty($_POST['val'])) {
                         'address' => $_POST['person_address'], 'business_name' => $_POST['business_name'],
                         'business_email' => $_POST['business_email'], 'business_phone' => $_POST['business_phone'],
                         'business_address' => $_POST['business_address'], 'business_website' => $_POST['business_site'],
-                        'image' => $image_name, 'role' => '3', 'created_at' => time()];
+                        'image' => $image_name, 'role' => '3', 'created_at' => Date('Y-m-d h:i:s')];
 
                     // to start the transaction...
                     $wpdb->query('START TRANSACTION');

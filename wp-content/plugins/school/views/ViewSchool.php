@@ -92,17 +92,17 @@ function viewSchool() {
             </p>
 
             <p>Profile Image</p>   
-            <img src="<?=asset_url."images/".$data[0]->profile_image?>" width="200px" height="200px">
+            <img src="<?=school_asset_url."images/".$data[0]->profile_image?>" width="200px" height="200px">
 
             <p>Cover Image </p>
-            <img src="<?=asset_url."images/".$data[0]->cover_image?>" width="200px" height="200px">
+            <img src="<?=school_asset_url."images/".$data[0]->cover_image?>" width="200px" height="200px">
 
             <p> Certificates: </p>
             <?php
             if(!empty($data[0]->document)){
                 foreach($data as $key=>$obj){
                     ?>
-             <img src="<?=asset_url."certificates/".$obj->document?>" width="200px" height="200px"><br><br>
+             <img src="<?=school_asset_url."certificates/".$obj->document?>" width="200px" height="200px"><br><br>
                     <?php
                 }
             }

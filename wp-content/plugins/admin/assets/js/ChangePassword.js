@@ -1,59 +1,51 @@
 // when user clicks on button to change password...
-$("#change_password_form").submit(function(e) {
+$("#change_password_form").submit(function (e) {
 
     e.preventDefault();
+    var role;
 
-    $("#load_img").show();
+    if (localStorage.getItem('data') != null) {
+        var data = localStorage.getItem('data');
+        var local_data = JSON.parse(data);
+        role = local_data.role;
+    }
 
-    $("#reset").hide();
+    $("#reset").attr('disabled', true);
 
     var myform = document.getElementById('change_password_form');
-    var data = new FormData(myform);
-
+    var form_data = new FormData(myform);
+    form_data.append('role', role);
     // call to ajax to reset the password...
     $.ajax({
         url: admin_server_url + "ChangePassword.php",
         type: "post",
-        data: $("#change_password_form").serializeArray(),
+        data: form_data,
         dataType: "json",
-        beforeSend: function(request) {
+        contentType:false,
+        processData:false,
+        beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
             }
         },
         // if success ajax response...
-        success: function(response) {
+        success: function (response) {
             if (verifyToken(response)) {
+                $("#reset").attr('disabled', false);
 
-                $("#load_img").hide();
-                $("#reset").show();
-
-                if (response.status == 200) {
-                    swal({
-                            title: response.message,
-                            icon: "success"
-                        })
-                        // $("#change_password_form").get(0).reset();
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: "error"
-                    })
-                }
+                sweetalert(response);
             } else {
                 adminRedirectLogin();
             }
         },
 
         // if error ajax response...
-        error: function(error) {
-            $("#load_img").hide();
-            $("#reset").show();
+        error: function (error) {
+            $("#reset").attr('disabled', false);
 
-            swal({
-                title: "Internal Server Error",
-                icon: "error"
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+
         }
     })
 

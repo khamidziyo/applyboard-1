@@ -5,12 +5,13 @@ function eligibleProgram()
     ?>
     <!-- <div class="container" style="width:500px"> -->
 
+  <form name="filter_applications" id="filter_applications">
     <div class="row">
     <div class="col-md-3">
 
 <div class="form-group">
   <label for="country">Select Country</label>
-  <select class="form-control" id="countries" name="country[]" multiple required>
+  <select class="form-control" id="countries" name="country" multiple>
   </select>
 </div>
 </div>
@@ -18,7 +19,7 @@ function eligibleProgram()
 <div class="col-md-3">
 <div class="form-group">
   <label for="category">Select Category of Course interested </label>
-  <select class="form-control" id="categories" name="category[]" multiple required>
+  <select class="form-control" id="categories" name="category" multiple>
   </select>
 </div>
 </div>
@@ -26,7 +27,7 @@ function eligibleProgram()
 <div class="col-md-3">
 <div class="form-group">
   <label for="discipline">Select The Discipline of course</label>
-  <select class="form-control" id="discipline" name="disciplines[]" multiple required>
+  <select class="form-control" id="discipline" name="disciplines" multiple>
   </select>
 </div>
 </div>
@@ -34,19 +35,22 @@ function eligibleProgram()
 <div class="col-md-3">
 <div class="form-group">
   <label for="schools">Select School</label>
-  <select class="form-control" id="schools" name="school[]" multiple required>
+  <select class="form-control" id="schools" name="school" multiple>
   </select>
 </div>
 
-<input type="button" value="Filter Course" class="btn btn-primary">
+<input type="submit" value="Filter Course" id="filter_course" class="btn btn-primary">
 </div>
 
 </div>
+</form>
+
 
 <table id="eligible_course_table" border="2px solidblack">
 <thead>
 <th>Id</th>
-<th>Name</th>
+<th>Course Name</th>
+<th>School Name</th>
 <th>Code</th>
 <th>Type</th>
 <th>Category</th>
@@ -56,7 +60,7 @@ function eligibleProgram()
 </table>
 
 
-    
+
 
 <script src="<?=student_asset_url?>/js/eligibleCourse.js"></script>
 <?php

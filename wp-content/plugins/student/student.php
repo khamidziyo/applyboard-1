@@ -99,7 +99,7 @@
    
    // views array to load all the views...
    $views=['StudentDashboard','EligibleProgram','StudentProfile','ForgotPassword',
-   'ResetPassword','ChangePassword','MyApplications'];
+   'ResetPassword','MyApplications'];
 
    foreach($views as $view_name){
       include_once "views/".$view_name.".php";

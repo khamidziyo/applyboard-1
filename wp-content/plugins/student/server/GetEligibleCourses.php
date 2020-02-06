@@ -56,12 +56,62 @@ if (!empty($_GET)) {
         }
         $cmplt_eligible_arr = [];
         $partial_eligible_arr = [];
+        $countries = [];
+        $categories = [];
+        $disciplines = [];
+        $schools = [];
 
         $start = $_GET['start'];
         $length = $_GET['length'];
         $limit = 'limit ' . $start . ',' . $length;
 
         $sort_arr = ['id', 'name'];
+
+        if (!empty($_GET['filter'])) {
+            $filter_sql = "where ";
+
+            $filter_arr = $_GET['filter'];
+            foreach ($filter_arr as $key => $arr) {
+                switch ($arr['name']) {
+
+                    case 'country':
+                        // $filter_sql.="s.countries_id in ".$arr['value'].",";
+
+                        $countries[] = $arr['value'];
+                        break;
+
+                    case 'category':
+                        $categories[] = $arr['value'];
+                        break;
+
+                    case 'disciplines':
+                        $disciplines[] = $arr['value'];
+                        break;
+
+                    case 'school':
+                        $schools[] = $arr['value'];
+                        break;
+                }
+            }
+
+            if (!empty($countries)) {
+                $filter_sql .= " s.countries_id in (" . implode(",", $countries) . ")   &&";
+            }
+
+            if (!empty($categories)) {
+                $filter_sql .= " category_id in (" . implode(",", $categories) . ")  &&";
+            }
+
+            if (!empty($disciplines)) {
+                $filter_sql .= " type_id in (" . implode(",", $disciplines) . ")   &&";
+            }
+
+            if (!empty($schools)) {
+                $filter_sql .= " school_id in  (" . implode(",", $schools) . ")   &&";
+            }
+        }
+
+        $filter_sql = substr_replace($filter_sql, "", -3);
 
         $order_by = 'order by ' . $sort_arr[$_GET['order'][0][column]] . ' ' . $_GET['order'][0][dir];
 
@@ -70,7 +120,8 @@ if (!empty($_GET)) {
         $id = $payload->userId;
 
         $student_id = base64_decode($_GET['student']);
-
+        // echo $student_id;
+        // die;
         if (!empty($_GET['search'][value])) {
 
             $srch_val = $_GET['search'][value];
@@ -81,91 +132,68 @@ if (!empty($_GET)) {
             $where = substr_replace($where, '', -3);
         }
 
-        $sql = "select c.id,c.name,c.code,c.exam_marks,type.name as type_name,category.name as
-         category_name from courses as c join type on type.id=c.type_id join category on
-         category.id=c.category_id";
+        $sql = "select c.id,c.name,c.code,c.exam_marks,s.name as s_name,type.name as type_name,
+        category.name as category_name from courses as c join type on type.id=c.type_id join category
+        on category.id=c.category_id join school as s on s.id=c.school_id  " . $filter_sql . "order by id desc";
 
-        // all the courses that matches with user interest in user_interest table...
-        $total_courses = $wpdb->get_results($sql . $where);
+        $total_courses = $wpdb->get_results($sql);
 
-        //
-        $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
-        // echo $sql;die;
-        $display_courses = $wpdb->get_results($sql);
+        $user = $wpdb->get_results("select exam from users where id=$student_id");
 
-        $user_exam_data = $wpdb->get_results("select exam from users where id=" . $student_id);
+        $user_exam = json_decode($user[0]->exam, true);
 
-        // if user has already given the exam...
-        if (!empty($user_exam_data)) {
-            $i = 0;
+        foreach ($total_courses as $key => $course_obj) {
+            $count = 0;
 
-            // decoding the user exam array...
-            $user_exam = json_decode($user_exam_data[0]->exam, true);
+            $course_exam = json_decode($course_obj->exam_marks, true);
 
-            // loop on total courses of user interested...
-            foreach ($display_courses as $key => $obj) {
+            if (is_array($course_exam)) {
 
-                if (empty($obj->exam_marks)) {
-                    $cmplt_eligible_arr[] = $obj;
-                }
-
-                // decoding the course exam array...
-                $course_exams = json_decode($obj->exam_marks, true);
-
-                // loop on course exam to check whether that exam is given by user...
-                foreach ($course_exams as $exam_id => $sub_arr) {
-                    // $exams = $wpdb->get_results( 'select id,name from exams where id='.$exam_id );
-                    // $obj->exam_name = $exams;
-
+                foreach ($course_exam as $exam_id => $sub_arr) {
                     if (array_key_exists($exam_id, $user_exam)) {
-                        // echo $user_exam[$exam_id]['reading'];
-                        // echo $course_exams[$exam_id]['reading'];
 
-                        // subarray and marks to compare the course marks with user marks...
-                        foreach ($sub_arr as $subject => $marks) {
-                            if ($user_exam[$exam_id][$subject] >= $course_exams[$exam_id][$subject]) {
-
-                                // incrementing i variable to check whether in all exams user has
-                                // narks higher as defined by user...
-                                $i++;
-
-                            } else {
-                                $i--;
+                        foreach ($sub_arr as $subject => $course_sub_marks) {
+                            // echo $subject." ".$user_exam[$exam_id][$subject];
+                            // echo $subject." ".$course_sub_marks."<br>";
+                            if ($user_exam[$exam_id][$subject] >= $course_sub_marks) {
+                                $count++;
                             }
                         }
-
-                        if ($i == 4) {
-                            $cmplt_eligible_arr[] = $obj;
-                            $i = 0;
-                        } else {
-                            $partial_eligible_arr[] = $obj;
+                        if ($count == 4) {
+                            $complete_eligible_arr[] = json_decode(json_encode($course_obj), true);
+                            break;
                         }
-                        break;
-                    } else {
-                        $partial_eligible_arr[] = $obj;
                     }
-                    break;
                 }
             }
-        } else {
-            // to be not eligible ...
+            if ($count != 4) {
+                $partial_eligible_arr[] = json_decode(json_encode($course_obj), true);
+            }
         }
 
-        if (!empty($cmplt_eligible_arr)) {
+        // print_r($cmplt_eligible_arr);
+        // print_r($partial_eligible_arr);
+        // die;
 
-            foreach ($cmplt_eligible_arr as $key => $obj) {
+        $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
+
+        if (!empty($complete_eligible_arr)) {
+
+            foreach ($complete_eligible_arr as $key => $arr) {
+
                 $record = [];
-                $record[] = $obj->id;
-                $record[] = $obj->name;
-                $record[] = $obj->code;
-                $record[] = $obj->type_name;
-                $record[] = $obj->category_name;
-                $applications = $wpdb->get_results("select id from applications where course_id=" . $obj->id . " && student_id=" . $student_id);
+                $record[] = $arr['id'];
+                $record[] = $arr['name'];
+                $record[] = $arr['s_name'];
+                $record[] = $arr['code'];
+                $record[] = $arr['type_name'];
+                $record[] = $arr['category_name'];
+                $applications = $wpdb->get_results("select id from applications where course_id=" . $arr['id'] . " && student_id=" . $student_id);
 
                 if (!empty($applications[0])) {
-                    $record[] = "<input type='button' class='btn btn-success' value='Already Applied' c_id=" . base64_encode($obj->id) . ' disabled>';
+                    $record[] = "<input type='button' class='btn btn-success' value='Already Applied' disabled>";
                 } else {
-                    $record[] = "<input type='button' class='btn btn-success apply' value='Apply' c_id=" . base64_encode($obj->id) . '>';
+                    $record[] = "<input type='button' class='btn btn-success apply' value='Apply' c_id=" . base64_encode($arr['id']) . '>';
                 }
                 $output['aaData'][] = $record;
             }
@@ -173,31 +201,28 @@ if (!empty($_GET)) {
 
         if (!empty($partial_eligible_arr)) {
 
-            foreach ($partial_eligible_arr as $key => $obj) {
+            foreach ($partial_eligible_arr as $key => $arr) {
                 $record = [];
-                $record[] = $obj->id;
-                $record[] = $obj->name;
-                $record[] = $obj->code;
-                $record[] = $obj->type_name;
-                $record[] = $obj->category_name;
-                $record[] = "<input type='button' name='not_eligible' value='Not Eligible' class='not_eligible_btn btn btn-danger' c_id=" . base64_encode($obj->id) . ">";
+                $record[] = $arr['id'];
+                $record[] = $arr['name'];
+                $record[] = $arr['s_name'];
+                $record[] = $arr['code'];
+                $record[] = $arr['type_name'];
+                $record[] = $arr['category_name'];
+                $record[] = "<input type='button' name='not_eligible' value='Not Eligible' class='not_eligible_btn btn btn-danger' c_id=" . base64_encode($arr['id']) . ">";
 
                 $output['aaData'][] = $record;
             }
-        }if (empty($cmplt_eligible_arr) && empty($partial_eligible_arr)) {
+        }
+        if (empty($cmplt_eligible_arr) && empty($partial_eligible_arr)) {
             $output['aaData'] = [];
         }
 
         $output['iTotalDisplayRecords'] = count($total_courses);
         $output['iTotalRecords'] = count($display_courses);
 
-        // echo '<pre>';
-        // print_r( $output );
-        // die;
-
         echo json_encode($output);
         exit;
-
     } catch (Exception $e) {
         $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }

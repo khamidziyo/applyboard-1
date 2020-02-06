@@ -25,7 +25,7 @@ if (!empty($_POST['val'])) {
                     $allowedExtensions = ['jpg', 'jpeg', 'png'];
                     $id = $payload->userId;
 
-                    $req_arr = ['first_name', 'last_name', 'email', 'dob', 'pass_number', 'marks', 'exams'];
+                    $req_arr = ['first_name', 'last_name', 'email', 'dob', 'pass_number', 'marks'];
                     foreach ($req_arr as $form_inputs) {
 
                         trim($_POST[$form_inputs]);
@@ -33,6 +33,15 @@ if (!empty($_POST['val'])) {
                         if (!array_key_exists($form_inputs, $_POST)) {
                             throw new Exception("Please enter your " . $form_inputs);
                         }
+                    }
+
+                    echo "<pre>";
+                    print_r($_POST);
+                    print_r($_FILES);
+                    die;
+
+                    if (!isset($_POST['exams'])) {
+                        throw new Exception("Please select the exam you appeared for");
                     }
 
                     if (!isset($_POST['lang_prior'])) {
@@ -79,7 +88,7 @@ if (!empty($_POST['val'])) {
                     }
 
                     $exams = json_encode($_POST['exams']);
-
+                    
                     $image = $_FILES['img_input']['name'];
 
                     $img_type = pathinfo($image, PATHINFO_EXTENSION);
@@ -99,7 +108,7 @@ if (!empty($_POST['val'])) {
                         'l_name' => trim($_POST['last_name']), 'email' => trim($_POST['email']),
                         'dob' => $dob, 'language_prior' => $_POST['lang_prior'], 'nationality' => $_POST['nationality'],
                         'passport_no' => trim($_POST['pass_number']), 'gender' => $gender, 'grade_id' => $_POST['qualification'],
-                        'score' => $_POST['marks'], 'exam' => $exam, 'has_visa' => $_POST['visa'],
+                        'score' => $_POST['marks'], 'exam' => $exams, 'has_visa' => $_POST['visa'],
                         'image' => $image_name, 'created_at' => Date('Y-m-d h:i:s')];
 
                     // to start the transaction...
@@ -112,9 +121,21 @@ if (!empty($_POST['val'])) {
                             throw new Exception("Image could not be uploaded in the sever directory.Try again");
                         }
 
-                        // commit the transaction...
-                        $wpdb->query('COMMIT');
-                        $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
+                        $student_id = $wpdb->insert_id;
+
+                        if (!empty($_FILES['documents']['name'])) {
+
+                            // calling function to upload student documents...
+                            if (uploadStudentDocuments($student_id, $wpdb)) {
+                                // commit the transaction...
+                                $wpdb->query('COMMIT');
+                                $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
+                            }
+                        } else {
+                            // commit the transaction...
+                            $wpdb->query('COMMIT');
+                            $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
+                        }
 
                     } else {
                         throw new Exception("Student not created due to internal server error");
@@ -125,6 +146,7 @@ if (!empty($_POST['val'])) {
                     throw new Exception("No match Found");
                     break;
             }
+
         } catch (Exception $e) {
             $wpdb->query('ROLLBACK');
             $response = ['status' => Error_Code, 'message' => $e->getMessage()];
@@ -133,4 +155,35 @@ if (!empty($_POST['val'])) {
 } else {
     $response = ['status' => Error_Code, 'message' => "Unauthorized Access.Value is required"];
 }
+
+function uploadStudentDocuments($id, $wpdb)
+{
+
+    $allowedDocExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+
+    $docs = $_FILES['documents']['name'];
+
+    foreach ($docs as $key => $doc_name) {
+        $doc_type = pathinfo($doc_name, PATHINFO_EXTENSION);
+
+        if (!in_array($doc_type, $allowedDocExtensions)) {
+            throw new Exception("Only jpg,jpeg,png and pdf formats are allowed");
+        }
+
+        if ($_FILES['documents']['size'][$key] > 2 * 1024 * 1024) {
+            throw new Exception("Document size should not exceed more than 2 MB");
+        }
+        $doc_name = microtime() . '.' . $doc_type;
+        $path = dirname(__DIR__) . "/assets/documents/" . $doc_name;
+
+        if (!move_uploaded_file($_FILES['documents']['tmp_name'][$key], $path)) {
+            throw new Exception("Document could not be uploaded in the sever directory.Try again");
+        }
+
+        $wpdb->insert('user_documents', ['user_id' => $id, 'document' => $doc_name, 'created_at' => Date('Y-m-d h:i:s')]);
+    }
+
+    return true;
+}
+
 echo json_encode($response);

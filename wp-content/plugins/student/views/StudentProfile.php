@@ -3,6 +3,7 @@
 function studentProfile() {
     ?>
     <a style = 'float:right' id = 'change_password'>Change Password</a>
+    
     <form name="student_update_profile" id="student_update_profile">
     <div class = 'container-fluid' id = 'profile_div' style = 'display:none'>
     <img src = '' width = '200px' height = '200px' id="image">
