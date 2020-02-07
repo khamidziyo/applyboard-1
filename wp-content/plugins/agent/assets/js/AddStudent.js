@@ -4,18 +4,36 @@ $("#dob").datepicker({
     changeYear: true,
     yearRange: "1980:2014"
 });
+var local_data;
 
-var data = { val: 'getData' };
+if (localStorage.getItem('data') != null) {
+    local_data = JSON.parse(localStorage.getItem('data'));
+    switch (local_data.role) {
 
-getStudentData(data);
+        // if role is agent...
+        case "3":
+            var data = { val: 'getDataByAgent' };
+
+            break;
+
+        // if role is sub agent...
+        case "4":
+            var data = { val: 'getDataBySubAgent' };
+            break;
+    }
+    getStudentData(data);
+
+}
+
+
 
 const queryString = window.location.search;
 
 const urlParams = new URLSearchParams(queryString);
 if (urlParams.get('id')) {
     $("#submit_btn").val('Update Student');
-    $("#img_input").attr('required',false);
-    $("#grade_scheme").attr('required',false);
+    $("#img_input").attr('required', false);
+    $("#grade_scheme").attr('required', false);
 
     var stu_id = urlParams.get('id');
     var data = { student: stu_id, 'val': 'editUser' };
@@ -44,18 +62,18 @@ function getUserProfile(data) {
                         getStudentData(data);
 
 
-                        var exams=JSON.parse(response.data.exam);
-                        
+                        var exams = JSON.parse(response.data.exam);
+
                         for (let key of Object.keys(exams)) {
-                            $(".exam_input[value="+key+"]").prop("checked","true");
+                            $(".exam_input[value=" + key + "]").prop("checked", "true");
                         }
 
                         for (let value of Object.values(exams)) {
                             console.log(value); // John, then 30
-                          }
-                          
-                
-                        
+                        }
+
+
+
                         $("#first_name").val(response.data.f_name)
                         $("#last_name").val(response.data.l_name)
                         $("#email").val(response.data.email)
@@ -133,7 +151,6 @@ function getStudentData(data) {
         }, success: function (response) {
             if (verifyToken(response)) {
                 if (response.status == 200) {
-                    // console.log(response);
                     if (response.hasOwnProperty('cntry_data')) {
                         // country html...
                         cntry_html += "<option selected='selected' disabled>Select Country</option>";
@@ -244,16 +261,41 @@ $(document).on('click', '.exam_input', function () {
 // when user changes the language based on language exam will appear...
 $("#lang_prior").change(function () {
     var lang_id = $(this).val();
-    var data = { 'val': 'getExamByLanguage', 'id': lang_id };
+    switch (local_data.role) {
 
+        // if role is agent...
+        case "3":
+
+            var data = { 'val': 'getExamByAgent', 'id': lang_id };
+            break;
+
+        // if role is sub agent...
+        case "4":
+            var data = { 'val': 'getExamBySubAgent', 'id': lang_id };
+            break;
+    }
     // calling function to get exams of specific language...
     getStudentData(data);
 })
 
 
 $("#qualification").change(function () {
+
     var grade_id = $(this).val();
-    var data = { 'val': 'getGradeSchemeById', 'id': grade_id };
+    switch (local_data.role) {
+
+        // if role is agent...
+        case "3":
+
+            var data = { 'val': 'getGradeSchemeByAgent', 'id': grade_id };
+            break;
+
+        // if role is sub agent...
+        case "4":
+            var data = { 'val': 'getGradeSchemeBySubAgent', 'id': grade_id };
+            break;
+    }
+
     getStudentData(data);
 })
 
@@ -282,7 +324,19 @@ $("#add_student").submit(function (e) {
 
     var form = document.getElementById('add_student');
     var form_data = new FormData(form);
-    form_data.append('val', 'addStudent');
+
+    switch (local_data.role) {
+
+        // if role is agent...
+        case "3":
+            form_data.append('val', 'addStudentByAgent');
+            break;
+
+        // if role is sub agent...
+        case "4":
+            form_data.append('val', 'addStudentBySubAgent');
+            break;
+    }
 
     $.ajax({
         url: student_server_url + "AddStudent.php",

@@ -75,8 +75,28 @@ $("#filter_applications").submit(function (e) {
 
 })
 
+if (localStorage.getItem('data') != null) {
+    var local_data = JSON.parse(localStorage.getItem('data'));
 
-var data = { 'val': 'getData' };
+    switch (local_data.role) {
+
+        case '3':
+            var data = { 'val': 'getDataByAgent' };
+            break;
+
+        case '4':
+            var data = { 'val': 'getDataBySubAgent' };
+            break;
+
+        default:
+            Swal({
+                title: "No role match found",
+                icon: 'error',
+            })
+    }
+    getDropdownData(data);
+}
+
 
 getDropdownData(data);
 
@@ -251,7 +271,7 @@ $(document).on('click', '.apply', function () {
 
                 if (response.status == 200) {
                     $(this).val("Applied");
-                    $(this).attr('disabled',true);
+                    $(this).attr('disabled', true);
                     setTimeout(function () {
                         location.reload();
                     }, 1000);

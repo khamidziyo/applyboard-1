@@ -1,7 +1,30 @@
-viewStudents();
+
+if (localStorage.getItem('data') != null) {
+    var local_data = JSON.parse(localStorage.getItem('data'));
+
+    switch (local_data.role) {
+
+        case '3':
+            var data = { val: "getStudentsByAgent" };
+            break;
+
+        case '4':
+            var data = { val: "getStudentsBySubAgent" }
+            break;
+
+        default:
+            swal({
+                title: "No role match found",
+                icon: 'error'
+            })
+            break;
+    }
+    viewStudents(data);
+}
 
 
-function viewStudents() {
+function viewStudents(data) {
+
     $("#view_student_table").DataTable({
         "lengthMenu": [1, 2, 3, 4],
         "pageLength": 1,
@@ -19,7 +42,7 @@ function viewStudents() {
         ],
         "ajax": ({
             url: agent_server_url + "Students.php",
-            data: { val: "getStudents" },
+            data: data,
             dataType: "json",
             beforeSend: function (request) {
                 if (!appendToken(request)) {
@@ -60,28 +83,28 @@ $(document).on('click', '.create_application', function () {
 
 
 
-$("#application_form").submit(function (e) {
-    e.preventDefault();
+// $("#application_form").submit(function (e) {
+//     e.preventDefault();
 
-    $.ajax({
-        url: agent_server_url + "AddApplication.php",
-        type: "post",
-        dataType: "json",
-        data: $("#application_form").serializeArray(),
+//     $.ajax({
+//         url: agent_server_url + "AddApplication.php",
+//         type: "post",
+//         dataType: "json",
+//         data: $("#application_form").serializeArray(),
 
-        beforeSend: function (request) {
-            if (!appendToken(request)) {
-                agentRedirectLogin();
-            }
-        }, success: function (response) {
-            if (verifyToken(response)) {
-                sweetalert(response);
-            } else {
-                agentRedirectLogin();
-            }
-        }, error: function (error) {
-            var response = { 'status': 400, 'message': 'Internal Server Error' };
-            errorSwal(response);
-        }
-    })
-})
+//         beforeSend: function (request) {
+//             if (!appendToken(request)) {
+//                 agentRedirectLogin();
+//             }
+//         }, success: function (response) {
+//             if (verifyToken(response)) {
+//                 sweetalert(response);
+//             } else {
+//                 agentRedirectLogin();
+//             }
+//         }, error: function (error) {
+//             var response = { 'status': 400, 'message': 'Internal Server Error' };
+//             errorSwal(response);
+//         }
+//     })
+// })

@@ -4,9 +4,30 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(queryString);
 
     var stu_id = urlParams.get('id');
-    var data = { student: stu_id, 'val': 'getApplications' };
 
-    viewApplications(data);
+
+
+    if (localStorage.getItem('data') != null) {
+        var local_data = JSON.parse(localStorage.getItem('data'));
+
+        switch (local_data.role) {
+
+            case '3':
+                var data = { student: stu_id, 'val': 'getApplicationsByAgent' };
+                break;
+
+            case '4':
+                var data = { student: stu_id, 'val': 'getApplicationsBySubAgent' };
+                break;
+
+            default:
+                swal({
+                    title: "No role match found",
+                    icon: 'error'
+                })
+                break;
+        }
+    } viewApplications(data);
 })
 
 function viewApplications(data) {

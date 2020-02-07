@@ -35,6 +35,12 @@ function getData() {
                 var user = { val: 'agentProfile' };
                 getUserProfile(agent_server_url + "AgentDashboard.php", user, agent_assets_url);
                 break;
+
+            // if the logged in user is agent...
+            case "4":
+                var user = { val: 'subAgentProfile' };
+                getUserProfile(agent_server_url + "AgentDashboard.php", user, agent_assets_url);
+                break;
         }
     }
 }
@@ -69,10 +75,13 @@ function getUserProfile(url, user_data, asset_path) {
                     $("#notif_count").html(response.notification_count);
 
                     $("#user_email").html(response.data.email);
-                    if (response.data.image != null) {
+
+
+                    if (response.data.image != "") {
                         var img = "<img src='" + asset_path + "images/" + response.data.image + "' width='50px' height='50px' id='stu_image'>";
                         $("#user_image").html(img);
                     } else {
+                        // console.log(response.data.image);
                         var img = "<img src='" + asset_path + "images/default_image.png' width='50px' height='50px' id='stu_image'>";
                         $("#user_image").html(img);
                     }
@@ -120,26 +129,38 @@ $("#logout").click(function (e) {
             })
             switch (local_data.role) {
 
+                // if logged in user is school...
                 case 0:
                     setTimeout(function () {
-                        window.location.href = base_url+"school-login/";
+                        window.location.href = base_url + "school-login/";
                     }, 2000)
                     break;
+
+                // if logged in user is student...
                 case "1":
                     setTimeout(function () {
-                        window.location.href = base_url+"student-login/";
+                        window.location.href = base_url + "student-login/";
                     }, 2000)
                     break;
 
+                // if logged in user is admin...
                 case "2":
                     setTimeout(function () {
-                        window.location.href = base_url+"admin-login/";
+                        window.location.href = base_url + "admin-login/";
                     }, 2000)
                     break;
 
+                // if logged in user is agent...
                 case "3":
                     setTimeout(function () {
-                        window.location.href = base_url+"agent-login/";
+                        window.location.href = base_url + "agent-login/";
+                    }, 2000)
+                    break;
+
+                // if logged in user is sub agent...
+                case "4":
+                    setTimeout(function () {
+                        window.location.href = base_url + "sub-agent-login/";
                     }, 2000)
                     break;
             }
@@ -153,13 +174,5 @@ $("#notification").hover(function () {
 })
 
 $("#notification").click(function () {
-    window.location.href = base_url+"notification-detail/";
+    window.location.href = base_url + "notification-detail/";
 })
-
-// function that redirects to login page...
-function adminRedirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function () {
-        window.location.href = base_url+"admin-login/";
-    }, 2000)
-}

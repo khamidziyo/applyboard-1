@@ -33,6 +33,17 @@ function agentVerifyUser()
     return Agent::verifyUser($payload);
 }
 
+function subAgentVerifyUser()
+{
+    global $payload;
+
+    // jwt token class defined in jwttoken.php file inside common directory of plugin...
+    $payload = JwtToken::getBearerToken();
+
+    // Student class defined in student.php file inside common directory of plugin...
+    return SubAgent::verifyUser($payload);
+}
+
 if (!empty($_GET)) {
     try {
         switch ($_GET['val']) {
@@ -44,6 +55,12 @@ if (!empty($_GET)) {
 
             case 'getEligibleCoursesByAgent':
                 if (agentVerifyUser()) {
+
+                }
+                break;
+
+            case 'getEligibleCoursesBySubAgent':
+                if (subAgentVerifyUser()) {
 
                 }
                 break;
@@ -109,6 +126,8 @@ if (!empty($_GET)) {
             if (!empty($schools)) {
                 $filter_sql .= " school_id in  (" . implode(",", $schools) . ")   &&";
             }
+            // echo $filter_sql;
+            // die;
         }
 
         $filter_sql = substr_replace($filter_sql, "", -3);

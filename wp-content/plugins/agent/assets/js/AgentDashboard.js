@@ -7,7 +7,7 @@ function agentDashboard() {
     $.ajax({
         url: agent_server_url + "AgentDashboard.php",
         type: "post",
-        data: { val: "adminDashboard" },
+        data: { val: "agentDashboard" },
         dataType: "json",
         beforeSend: function (request) {
             if (!appendToken(request)) {

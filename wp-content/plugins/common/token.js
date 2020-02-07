@@ -1,6 +1,5 @@
 // appending the token in every api request...
 function appendToken(req) {
-
     // get the token from local storage...
     if (localStorage.getItem('data') != null) {
 
@@ -22,7 +21,9 @@ function appendToken(req) {
 
 // function called there is any error from server regarding token...
 function verifyToken(response) {
-    var arr = [109, 110, 111, 112, 113, 114, 115, 117];
+
+    // 120 code if usera ccount deactivated...
+    var arr = [109, 110, 111, 112, 113, 114, 115, 117, 120];
 
     // if response.status matches with the array...
     if ($.inArray(response.status, arr) != -1) {
@@ -51,5 +52,12 @@ function agentRedirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
         window.location.href = base_url + "agent-login/";
+    }, 1000);
+}
+
+function subAgentRedirectLogin() {
+    localStorage.removeItem('data');
+    setTimeout(function () {
+        window.location.href = base_url + "sub-agent-login/";
     }, 1000);
 }

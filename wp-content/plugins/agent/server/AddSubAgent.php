@@ -54,9 +54,17 @@ if (!empty($_POST['val'])) {
                         throw new Exception("Password and confirm password should be same");
                     }
 
+                    // if the user creates a sub agent with no extra permissions...
+                    $permission = '0';
+
+                    // if agent creates a subagent with extra permissions...
+                    if (isset($_POST['permission'])) {
+                        $permission = $_POST['permission'];
+                    }
+
                     $password = password_hash($password, PASSWORD_DEFAULT);
                     $ins_agent_arr = ['email' => $email, 'created_by' => $id, 'password' => $password,
-                     'role' => '4','created_at'=>Date('Y-m-d h:i:s')];
+                        'role' => '4', 'permission' => $permission, 'created_at' => Date('Y-m-d h:i:s')];
                     $ins_agent_res = $wpdb->insert('agents', $ins_agent_arr);
 
                     if ($ins_agent_res) {

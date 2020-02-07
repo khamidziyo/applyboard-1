@@ -59,3 +59,6 @@ define('Error_Code',400);
 
 // if the user is not verified...
 define('Not_Verified',209);
+
+// if the user account is deactivated...
+define('Account_Deactive',120);

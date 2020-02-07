@@ -52,6 +52,7 @@
 
 	<span id="user_email"></span>
     <span id="user_image"></span>
+	
     <input type="button" class="btn btn-danger" id="logout" value="Logout"  name="logout">
     </span>
 	</div>
