@@ -15,7 +15,7 @@ add_action("admin_menu", function () {
     add_submenu_page("options-general.php", "Add School", "Add School", "manage_options", "Add School", 'addSchool');
 });
 
-$view_arr = ['SchoolLogin', 'SchoolDashboard','SchoolProfile', 'AddSchool',
+$view_arr = ['SchoolLogin', 'SchoolDashboard','SchoolProfile', 'AddSchool','ViewCourseApplication',
  'AccountVerification', 'ViewSchool','Notifications','UserDetail','Messages'];
 foreach ($view_arr as $view_name) {
     include_once "views/" . $view_name . ".php";

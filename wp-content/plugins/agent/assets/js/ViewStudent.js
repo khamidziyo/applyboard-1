@@ -26,8 +26,8 @@ if (localStorage.getItem('data') != null) {
 function viewStudents(data) {
 
     $("#view_student_table").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [10, 20, 30, 40],
+        "pageLength": 10,
         "processing": true,
         "serverSide": true,
         "order": [0, 'desc'],

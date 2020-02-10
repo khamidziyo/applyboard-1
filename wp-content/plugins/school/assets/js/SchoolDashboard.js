@@ -1,65 +1,42 @@
 $(document).ready(function () {
-    viewApplicationTable();
+    schoolDashboard();
 })
 
-function viewApplicationTable() {
-
-    $("#applications_table").DataTable({
-        "lengthMenu": [5, 10, 20, 30, 40],
-        "pageLength": 5,
-        "order":[0,'desc'],
-        "processing": true,
-        "serverSide": true,
-        "language": {
-            "emptyTable": "No application available"
-        },
-
-        "destroy": true,
-        "columnDefs": [
-            // { targets: '_all', visible: true },
-            { "orderable": false, "targets": [3, 5] }
-
-        ],
-        "ajax": ({
-            url: school_server_url + "GetApplications.php",
-            data: { val: "getSchoolApplications" },
-            dataType: "json",
-
-            // appending token in the request...
-            beforeSend: function (request) {
-
-                // calling function that appends the token defined in token.js file 
-                // inside common directory of plugins.
-                if (!appendToken(request)) {
-                    redirectLogin();
-                }
+function schoolDashboard() {
+    $.ajax({
+        url: school_server_url + "SchoolDashboard.php",
+        data: { val: "schoolDashboard" },
+        dataType: "json",
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                schoolRedirectLogin();
             }
-        }),
-        "initComplete": function (seting, response) {
-
-            // calling function that verifies the token defined in token .js file 
-            // inside common directory of plugins.
+        }, success: function (response) {
             if (verifyToken(response)) {
+                if (response.status == 200) {
+                    $("#students").html(response.students.total_students);
+                    $("#courses").html(response.courses.total_courses);
+                    $("#applications").html(response.applications.total_application);
+                    $("#application_approve").html(response.approve_application.total_app_application);
+                    $("#application_decline").html(response.decline_application.total_dec_application);
+                    $("#application_pending").html(response.pending_application.total_pen_application);
+
+
+
+
+
+                }
                 console.log(response);
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
+
+        }, error: function (error) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
-    });
+    })
 }
 
-// when user clicks on view button to view the user...
-$(document).on('click', '.view', function () {
-    var id = $(this).attr('user_id');
-    var app_id = $(this).attr('app_id');
 
-    window.location.href = base_url + "user-detail?id=" + id + "&app_id=" + app_id;
-})
 
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function () {
-        window.location.href = base_url + "school-login/";
-    }, 2000)
-}

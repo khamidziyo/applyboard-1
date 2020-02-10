@@ -24,6 +24,13 @@ function agentVerifyUser()
     return Agent::verifyUser($payload);
 }
 
+function subAgentVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return SubAgent::verifyUser($payload);
+}
+
 if (!empty($_POST['val'])) {
 
     try {
@@ -52,27 +59,61 @@ if (!empty($_POST['val'])) {
                 switch ($_POST['role']) {
                     case '1':
                         if (adminVerifyUser()) {
+                            $id = $payload->userId;
+
                             // query to update the new password...
                             $update = $wpdb->update('users', ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT)],
-                                ['forgot_password_token' => $token, 'id' => $student_id]);
+                                ['forgot_password_token' => $token, 'id' => $id]);
                         }
                         break;
 
                     case '2':
                         break;
 
+                    // if the logged in user is agent...
                     case '3':
                         $role = $_POST['role'];
                         if (agentVerifyUser()) {
                             $id = $payload->userId;
-                          
+
+                            // when agent updates the password of sub agent...
+                            if (!empty($_POST['sub_agent_id'])) {
+
+                                // get the sub agent id...
+                                $sub_agent_id = base64_decode($_POST['sub_agent_id']);
+             
+                                // query to update the new password...
+                                $update = $wpdb->update('agents', [
+                                    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+                                    'updated_at' => Date('Y-m-d h:i:s'),
+                                ],
+                                    ['forgot_password_token' => $token, 'id' => $sub_agent_id, 'role' => '4',
+                                    ]);
+                            } else {
+                                // query to update the new password...
+
+                                $update = $wpdb->update('agents', [
+                                    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+                                    'updated_at' => Date('Y-m-d h:i:s'),
+                                ],
+                                    ['forgot_password_token' => $token, 'id' => $id, 'role' => $role,
+                                    ]);
+                            }
+
+                        }
+                        break;
+
+                    // if the logged in user is sub agent...
+                    case '4':
+                        $role = $_POST['role'];
+
+                        if (subAgentVerifyUser()) {
+                            $id = $payload->userId;
                             // query to update the new password...
-                            $update = $wpdb->update('agents', [
-                                'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
-                                'updated_at' => Date('Y-m-d h:i:s'),
-                            ],
-                                ['forgot_password_token' => $token, 'id' => $id, 'role' => $role,
-                                ]);
+                            $update = $wpdb->update('agents',
+                                ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+                                    'updated_at' => Date('Y-m-d h:i:s')],
+                                ['forgot_password_token' => $token, 'id' => $id, 'role' => $role]);
                         }
                         break;
                 }

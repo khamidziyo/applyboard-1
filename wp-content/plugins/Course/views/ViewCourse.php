@@ -10,6 +10,12 @@ function viewCourse()
         // function to get the course detail by course id defined in server/functions.php file...
         $course_data = getCourseDetailById($course_id);
 
+        if (!empty($course_data[0]->intake)) {
+            $intakes = json_decode($course_data[0]->intake, true);
+
+            $course_intake = getIntakes($intakes);
+        }
+
         ?>
   <div class="container-fluid">
   <?php
@@ -38,6 +44,15 @@ if (!empty($course_data)) {
     <p>Course Start Date: <b><?=date('d/m/Y', strtotime($course_data[0]->start_date))?></b></p>
 
     <p>Course End Date: <b><?=date('d/m/Y', strtotime($course_data[0]->end_date))?></b></p>
+    <p>Course Intake : <b>
+    <?php
+            echo "<ul>";
+            foreach ($course_intake as $key => $obj) {
+                echo "<li>" . $obj->name . "</li>";
+            }
+            echo "</ul>";
+            ?>
+    </b></p>
 
     <p>Processing Time: <b><?=$process_time['day_span'] . " " . $process_time['time_span']?></b></p>
 
@@ -62,7 +77,7 @@ if (!empty($course_data[0]->exam_marks)) {
                 ?>
       <p>Requirements for Course
       <?php
-        $exam_marks = json_decode($course_data[0]->exam_marks, true);
+$exam_marks = json_decode($course_data[0]->exam_marks, true);
                 foreach ($exam_marks as $exam_id => $marks_arr) {
 
                     // get the exam name by exam id...

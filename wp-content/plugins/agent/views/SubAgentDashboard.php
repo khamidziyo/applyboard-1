@@ -2,7 +2,7 @@
 function subAgentDashboard()
 {
     ?>
-    <a href="#">Profile</a><br>
+    <a href="<?=base_url?>sub-agent-profile/">Profile</a><br>
     <a href="<?=base_url?>add-student/">Add Student</a><br>
     <a href="<?=base_url?>view-students/">View Students</a><br>
     <a href="#">View Applications</a><br>

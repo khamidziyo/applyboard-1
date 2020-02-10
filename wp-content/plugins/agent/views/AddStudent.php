@@ -41,7 +41,7 @@ function addStudent()
     </div>
 
     <div class="form-group">
-    <span id="marks"></span>
+    <span id="sub_marks"></span>
     </div>
 
 
@@ -115,7 +115,10 @@ function addStudent()
 
     <div class="form-group">
       <label for="documents">Documents:</label>
-      <input type="file" class="form-control" class="documents" name="documents[]" multiple>
+      <input type="file" class="form-control" class="documents" name="documents[]"><br>
+      <div id="add_more"></div>
+
+      <button type="button" class="btn btn-primary" id="add_more_btn">Add More Documents</button>
     </div>
 
 

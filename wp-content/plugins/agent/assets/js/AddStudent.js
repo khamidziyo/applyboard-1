@@ -26,7 +26,6 @@ if (localStorage.getItem('data') != null) {
 }
 
 
-
 const queryString = window.location.search;
 
 const urlParams = new URLSearchParams(queryString);
@@ -39,6 +38,19 @@ if (urlParams.get('id')) {
     var data = { student: stu_id, 'val': 'editUser' };
     getUserProfile(data);
 }
+
+
+$("#add_more_btn").click(function () {
+    var html = "<span><input type='file' class='form-control' class='documents' name='documents[]'><br>";
+    html += "<input type='button' name='remove' Value='Remove' class='remove'></span>"
+    $("#add_more").append(html);
+})
+
+$(document).on('click', '.remove', function () {
+    $(this).parent().remove();
+})
+
+
 // function that invokes when agent edits any user...
 function getUserProfile(data) {
     var doc_html = "<h2>Documents Uploaded</h2><ul>";
@@ -56,22 +68,32 @@ function getUserProfile(data) {
             if (verifyToken(response)) {
                 if (response.status == 200) {
                     if (response.hasOwnProperty('data')) {
-                        var data = { 'val': 'getExamByLanguage', 'id': response.data.language_prior };
+
+                        switch (local_data.role) {
+
+                            // if role is agent...
+                            case "3":
+                                var data = { 'val': 'getExamByAgent', 'id': response.data.language_prior };
+                                break;
+
+                            // if role is sub agent...
+                            case "4":
+                                var data = { 'val': 'getExamBySubAgent', 'id': response.data.language_prior };
+                                break;
+                        }
 
                         // calling function to get exams of specific language...
                         getStudentData(data);
 
 
                         var exams = JSON.parse(response.data.exam);
-
+                        
                         for (let key of Object.keys(exams)) {
+                            for(let val of Object.entries(key)){
+                                console.log(val);
+                            }
                             $(".exam_input[value=" + key + "]").prop("checked", "true");
                         }
-
-                        for (let value of Object.values(exams)) {
-                            console.log(value); // John, then 30
-                        }
-
 
 
                         $("#first_name").val(response.data.f_name)
@@ -95,7 +117,19 @@ function getUserProfile(data) {
                         $("#image").attr('src', student_assets_url + "images/" + response.data.image)
                         $("#cur_image").val(response.data.image);
 
-                        var data = { 'val': 'getGradeSchemeById', 'id': response.data.grade_id };
+                        switch (local_data.role) {
+
+                            // if role is agent...
+                            case "3":
+                                var data = { 'val': 'getGradeSchemeByAgent', 'id': response.data.grade_id };
+                                break;
+
+                            // if role is sub agent...
+                            case "4":
+                                var data = { 'val': 'getGradeSchemeBySubAgent', 'id': response.data.grade_id };
+                                break;
+                        }
+
                         getStudentData(data);
 
                         $("#grade_scheme").val()
@@ -105,7 +139,7 @@ function getUserProfile(data) {
                         if (response.documents.length > 0) {
                             // console.log(response.documents);
                             $.each(response.documents, function (k, obj) {
-                                doc_html += "<li>" + obj.document + "<button type='button' class='btn btn-primary remove_doc'";
+                                doc_html += "<li>" + obj.document + "<button type='button' class='btn btn-danger remove_doc'";
                                 doc_html += "data_id=" + obj.id + ">Remove</button></li><br>";
                             })
                             doc_html += "</ul>";
@@ -125,10 +159,6 @@ function getUserProfile(data) {
     })
 }
 
-$(document).on('click', '.remove_doc', function () {
-    var doc_id = $(this).attr('data_id');
-    alert(doc_id);
-})
 
 // function to get nationality,language and highest qualification...
 function getStudentData(data) {
@@ -234,6 +264,66 @@ function getStudentData(data) {
     })
 }
 
+
+$(document).on('click', '.remove_doc', function () {
+    var doc_id = $(this).attr('data_id');
+    swal({
+        title: "Are you sure you want to remove this document",
+        icon: "warning",
+        buttons: ['Cancel', 'Yes,remove it'],
+    }).then(function (val) {
+        if (val) {
+            removeDoc(doc_id);
+        }
+    })
+})
+
+function removeDoc(doc_id) {
+
+    switch (local_data.role) {
+
+        // if role is agent...
+        case "3":
+            var data = { doc_id: doc_id, val: 'removeDocumentByAgent' };
+            break;
+
+        // if role is sub agent...
+        case "4":
+            var data = { doc_id: doc_id, val: 'removeDocumentBySubAgent' };
+            break;
+    }
+
+
+
+    $.ajax({
+        url: agent_server_url + "RemoveDocument.php",
+        type: "post",
+        data: data,
+        dataType: "json",
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                agentRedirectLogin();
+            }
+        }, success: function (response) {
+            if (verifyToken(response)) {
+                if (response.status == 200) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+                sweetalert(response);
+            } else {
+                agentRedirectLogin();
+            }
+        }, error: function (error) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+}
+
+
+
 $(document).on('click', '.exam_input', function () {
     var exam = $(this).attr('name');
 
@@ -251,7 +341,7 @@ $(document).on('click', '.exam_input', function () {
         marks_html += "<p>Speaking&nbsp;&nbsp;<input type='text' name=exams[" + exam_id + "][speaking] id='speaking'></p>";
         marks_html += "</span>";
         // setting the marks html...
-        $("#marks").append(marks_html);
+        $("#sub_marks").append(marks_html);
     } else {
         $("#" + exam).remove();
     }

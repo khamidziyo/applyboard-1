@@ -3,8 +3,9 @@ $(document).ready(function () {
 
     $("#c_st_date").datepicker({
         changeMonth: true,
-        changeYear: true
+        changeYear: true,
     });
+    $("#c_st_date").datepicker('setDate', 'Today');
 
     $("#c_end_date").datepicker({
         changeMonth: true,
@@ -53,6 +54,21 @@ function ajaxToGetCourseData() {
                             html += "<option value=" + obj.id + ">" + obj.name + "</option>";
                         })
                         $("#language_of_instruction").html(html);
+                    }
+
+                    if (response.hasOwnProperty('c_intake')) {
+                        var html ="";
+                        $.each(response.c_intake, function (k, obj) {
+                            html += "<option value=" + obj.id + ">" + obj.name + "</option>";
+                        })
+                        $("#intake").html(html);
+
+                        $('#intake').multiselect({
+                            columns: 1,
+                            placeholder: 'Select Intakes',
+                            search: true,
+                            selectAll: true
+                        });
                     }
 
                 } else {

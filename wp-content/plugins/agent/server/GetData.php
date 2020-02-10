@@ -50,7 +50,7 @@ if (!empty($_GET['val'])) {
 
                 // function to verify if a logged in user is agent...
                 if (agentVerifyUser()) {
-                    getFormData($wpdb);
+                    getExamsByLanguage($wpdb);
                 }
                 break;
 

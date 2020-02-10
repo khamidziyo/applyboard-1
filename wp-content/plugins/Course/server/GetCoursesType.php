@@ -20,16 +20,13 @@ if (!empty($_GET['data'])) {
 
     try {
         if (verifyUser()) {
+            $c_types = $wpdb->get_results("select * from type where status='1'");
+            $c_categories = $wpdb->get_results("select * from category where status='1'");
+            $c_language = $wpdb->get_results("select * from language where status='1'");
+            $c_intakes = $wpdb->get_results("select * from intakes where status='1'");
 
-            $type_query = "select * from type";
-            $category_query = "select * from category";
-            $language_query = "select * from language";
-
-            $c_types = $wpdb->get_results($type_query);
-            $c_categories = $wpdb->get_results($category_query);
-            $c_language = $wpdb->get_results($language_query);
-
-            $response = ['status' => 200, 'c_type' => $c_types, 'c_category' => $c_categories, 'c_language' => $c_language];
+            $response = ['status' => 200, 'c_type' => $c_types, 'c_category' => $c_categories,
+                'c_language' => $c_language, 'c_intake' => $c_intakes];
 
         }
     } catch (Exception $e) {

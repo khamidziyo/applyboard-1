@@ -34,85 +34,108 @@ function addCourse()
 
     <form method="post" id="course_form">
 
-	<p>Course Name (required) <br/>
-	 <input type="text"  name="course_name" value="<?=!empty($course_data) ? $course_data[0]->name : ''?>" size="40" />
-	 </p>
+    <div class="form-group">
+      <label for="course_name">Course Name (required)</label>
+      <input type="text"  name="course_name" id="course_name" class="form-control" placeholder="Enter Course name" value="<?=!empty($course_data) ? $course_data[0]->name : ''?>" size="40" />
+      </div>
 
-	 <p>
-	  Course Code (required) <br/>
-	 <input type="text"  name="course_code" value="<?=!empty($course_data) ? $course_data[0]->code : ''?>" size="40" required/>
-	 </p>
 
-   <p>Course Description (required) <br/>
-	 <textarea rows="10" cols="35" name="course_description" id="course_description" required><?=!empty($course_data) ? $course_data[0]->description : ''?></textarea>
-	 </p>
+      <div class="form-group">
+      <label for="course_code">Course Code (required)</label>
+      <input type="text"  name="course_code" class="form-control" placeholder="Enter Course code" value="<?=!empty($course_data) ? $course_data[0]->code : ''?>" size="40" />
+      </div>
 
-   <p>Course Type  (required) <br/>
+      <div class="form-group">
+      <label for="course_description">Course Description (required)</label>
+	 <textarea rows="10" cols="35" class="form-control" placeholder="Give a short description about course" name="course_description" id="course_description" required><?=!empty($course_data) ? $course_data[0]->description : ''?></textarea>
+  </div>
 
-   <select name="course_type" id="course_type" required>
+
+  <div class="form-group">
+      <label for="course_type">Course Type  (required)</label>
+      <select class="form-control" name="course_type" id="course_type" required>
    <option selected disabled> Select Course Type</option>
    </select>
-   </p>
+      </div>
 
-
-   <p>
-   Course Category  (required) <br/>
-   <select name="category" id="course_category" required>
+      <div class="form-group">
+      <label for="course_category">Course Category  (required)</label>
+     <select class="form-control" name="category" id="course_category" required>
    <option selected disabled> Select Course Category</option>
    </select>
-	 </p>
+    </div>
 
-	 <p>
-	 Course Start Date (required) <br/>
+    <div class="form-group">
+      <label for="c_st_date">Course Start Date (required)</label>
+	 <input type="text" class="form-control" name="c_st_date" id="c_st_date"  value="<?=!empty($course_data) ? $course_data[0]->start_date : ''?>" size="40" required/>
+	 </div>
 
-	 <input type="text"  name="c_st_date" id="c_st_date"  value="<?=!empty($course_data) ? $course_data[0]->start_date : ''?>" size="40" required/>
-	 </p>
+   <div class="form-group">
+      <label for="c_end_date">Course End Date (required)</label>
+      <input type="text"   name="c_end_date" id="c_end_date" class="form-control" placeholder="Enter course end date" value="<?=!empty($course_data) ? $course_data[0]->end_date : ''?>" size="40" required/>
+      </div>
 
-	 <p>
-	 Course End Date (required) <br/>
-	 <input type="text"   name="c_end_date" id="c_end_date"  value="<?=!empty($course_data) ? $course_data[0]->end_date : ''?>" size="40" required/>
-	 </p>
+   <div class="form-group">
+      <label for="intake">Intakes</label>
+
+      <select class="form-control" id="intake" name="intake[]" multiple required>
+        <option selected disabled>Select Intake</option>
+      </select>
+    </div>
+
+
 
 <?php
 if (!empty($course_data)) {
         $duration = json_decode($course_data[0]->duration, true);
     }
     ?>
-   <p>
-	 Course Duration (required) <br/>
-   <select name="c_duration[time_span]" id="c_duration">
+
+   <div class="form-group">
+      <label for="c_duration">Course Duration (required) </label>
+   <select name="c_duration[time_span]" id="c_duration" class="form-control">
    <option selected disabled>Select Duration</option>
    <option <?php if (!empty($duration)) {if ($duration['time_span'] == "day") {?>selected="selected"<?php }}?>value="day">Days</option>
    <option <?php if (!empty($duration)) {if ($duration['time_span'] == "week") {?>selected="selected"<?php }}?>value="week">Week</option>
    <option <?php if (!empty($duration)) {if ($duration['time_span'] == "month") {?>selected="selected"<?php }}?>value="month">Month</option>
    <option <?php if (!empty($duration)) {if ($duration['time_span'] == "year") {?>selected="selected"<?php }}?> value="year">Year</option>
    </select></br>
-	 <input type="text"  name="c_duration[day_span]"  value="<?=!empty($duration) ? $duration['day_span'] : ''?>" size="40" required/>
-	 </p>
+   </div>
 
-	 <p> Application Fee  (required) <br/>
-	 <input type="text"  name="app_fee" value="<?=!empty($course_data) ? $course_data[0]->application_fee : ''?>" size="40" required/>
-	 </p>
+   <div class="form-group">
+   <label for="days">Enter Day</label>
+	 <input type="text" id="days" name="c_duration[day_span]" class="form-control" value="<?=!empty($duration) ? $duration['day_span'] : ''?>" size="40" required/>
+    </div>
 
-	 <p><h2>International Fees</h2><br/>
-   <p> Tution Fee  per semester(required)
-   <input type="text"  name="int_tution_fee" value="<?=!empty($course_data) ? $course_data[0]->int_tution_fee : ''?>" size="40" required/>
-    </p>
+    <div class="form-group">
+    <label for="app_fee">Application Fee  (required)</label>
+	 <input type="text"  name="app_fee" class="form-control" placeholder="Enter Application fees" value="<?=!empty($course_data) ? $course_data[0]->application_fee : ''?>" size="40" required/>
+    </div>
 
-    <p> Total Fee  (required)
-   <input type="text"  name="int_total_fee" value="<?=!empty($course_data) ? $course_data[0]->int_total_fee : ''?>" size="40" required/>
-    </p>
-    </p>
+    <p><h2>International Fees</h2><br/>
+
+    <div class="form-group">
+    <label for="int_tution_fee">Tution Fee  per semester(required)</label>
+    <input type="text"  name="int_tution_fee" class="form-control" placeholder="Enter international Course fee" value="<?=!empty($course_data) ? $course_data[0]->int_tution_fee : ''?>" size="40" required/>
+    </div>
+
+    <div class="form-group">
+    <label for="int_total_fee">Tution Fee  per semester(required)</label>
+    <input type="text" class="form-control" name="int_total_fee" placeholder="Enter total Course fee" value="<?=!empty($course_data) ? $course_data[0]->int_total_fee : ''?>" size="40" required/>
+    </div>
+
 
 	 <p><h2>Domestic Fees</h2><br/>
-   <p> Tution Fee per semester (required)
-   <input type="text"  name="dom_tution_fee" value="<?=!empty($course_data) ? $course_data[0]->dom_tution_fee : ''?>" size="40" required/>
-    </p>
 
-    <p> Total Fee  (required)
-   <input type="text"  name="dom_total_fee" value="<?=!empty($course_data) ? $course_data[0]->dom_total_fee : ''?>" size="40" required/>
-    </p>
-	 </p>
+   <div class="form-group">
+   <label for="dom_tution_fee">Tution Fee  per semester(required)</label>
+   <input type="text"  name="dom_tution_fee" class="form-control" placeholder="Enter domestic Course fee" value="<?=!empty($course_data) ? $course_data[0]->dom_tution_fee : ''?>" size="40" required/>
+   </div>
+
+   <div class="form-group">
+   <label for="dom_total_fee">Total Fee  (required)</label>
+   <input type="text"  name="dom_total_fee" class="form-control" placeholder="Enter domestic total Course fee" value="<?=!empty($course_data) ? $course_data[0]->dom_total_fee : ''?>" size="40" required/>
+    </div>
 
     <?php
 
@@ -123,38 +146,47 @@ if (!empty($course_data)) {
 }
     ?>
 
-    <p> Internship :
-		  Yes <input type="radio" name="internship" <?php if (!empty($course_data)) {if ($course_data[0]->internship == 1) {?>checked<?php }}?> value="1" id="inerternship-yes" required>
-		  No <input type="radio" name="internship" <?php if (!empty($course_data)) {if ($course_data[0]->internship == 0) {?>checked<?php }}?> value="0" id="inerternship-no" required>
-	 </p>
+    <div class="form-group">
+    <label for="internship">Internship:</label>
+    Yes <input type="radio" name="internship" class="form-control" <?php if (!empty($course_data)) {if ($course_data[0]->internship == 1) {?>checked<?php }}?> value="1" id="inerternship-yes" required>
+		  No <input type="radio" name="internship" class="form-control" <?php if (!empty($course_data)) {if ($course_data[0]->internship == 0) {?>checked<?php }}?> value="0" id="inerternship-no" required>
+    </div>
 
-   <p>Language of instruction  (required) <br/>
-      <select name="language_of_instruction" id="language_of_instruction">
+    <div class="form-group">
+    <label for="language_of_instruction">Language of instruction  (required)</label>
+
+    <select class="form-control" name="language_of_instruction" id="language_of_instruction">
       <option selected disabled> Select Language</option>
       </select>
-      </p>
+    </div>
 
-      <p>Processing Time <br>
-      <?php
+    <?php
 if (!empty($course_data)) {
 
         $process_time = json_decode($course_data[0]->process_time, true);
-        // echo "<pre>";
-        // print_r($process_time);
     }
     ?>
-      <select name="process_time[time_span]" id="process_time">
+
+    <div class="form-group">
+    <label for="process_time">Processing Time</label>
+    <select name="process_time[time_span]" id="process_time" class="form-control">
    <option selected disabled>Select Time span</option>
    <option <?php if (!empty($process_time)) {if ($process_time['time_span'] == "day") {?>selected="selected"<?php }}?>value="day">Days</option>
    <option <?php if (!empty($process_time)) {if ($process_time['time_span'] == "week") {?>selected="selected"<?php }}?>value="week">Week</option>
    <option <?php if (!empty($process_time)) {if ($process_time['time_span'] == "month") {?>selected="selected"<?php }}?>value="month">Month</option>
    <option <?php if (!empty($process_time)) {if ($process_time['time_span'] == "year") {?>selected="selected"<?php }}?> value="year">Year</option>
    </select></br>
-	 <input type="text"  name="process_time[day_span]"  value="<?=!empty($process_time) ? $process_time['day_span'] : ''?>" size="40" required/>      </p>
+    </div>
 
-   <p>Do you allow student for english proficiency test
-   <input type="checkbox" id="eng_prof_test">
-   </p>
+    <div class="form-group">
+    <input type="text"  name="process_time[day_span]"  class="form-control" placeholder="Enter days" value="<?=!empty($process_time) ? $process_time['day_span'] : ''?>" size="40" required/>      </p>
+    </div>
+
+    <div class="form-group">
+    <label for="eng_prof_test">Do you allow student for english proficiency test</label>
+    <input type="checkbox" id="eng_prof_test">
+    </div>
+
 
 
 

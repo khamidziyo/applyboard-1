@@ -1,7 +1,5 @@
 $(document).ready(function () {
 
-alert();
-return false;
 
     viewCourses();
 

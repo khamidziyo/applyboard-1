@@ -28,11 +28,11 @@ if (!empty($_GET['val'])) {
                     $length = $_GET['length'];
                     $limit = 'limit ' . $start . ',' . $length;
 
-                    $sort_arr = ['a.id', 'u.email', 'c.name', '', 'a.created_at'];
+                    $sort_arr = ['a.id', '', 'c.name', '', 'a.created_at'];
 
                     $order_by = 'order by ' . $sort_arr[$_GET['order'][0][column]] . ' ' . $_GET['order'][0][dir];
 
-                    $srch_arr = ['a.id', 'u.email', 'c.name'];
+                    $srch_arr = ['a.id', 'u.f_name', 'u.l_name', 'c.name'];
 
                     if (!empty($_GET['search'][value])) {
                         $where = " && ";
@@ -44,10 +44,10 @@ if (!empty($_GET['val'])) {
 
                         $where = substr_replace($where, '', -3);
                     }
-
-                    $sql = "select a.id,a.status,a.created_at,c.name as c_name,u.id as 
-                    u_id,u.f_name,u.l_name as u_lname from applications as a join courses as c on 
-                    c.id=a.course_id join users as u on u.id=a.user_id where a.school_id=" . $id;
+                    
+                    $sql = "select a.id,a.status,a.created_at,CONCAT(u.f_name, ' ', u.l_name) AS name,
+                    c.name as c_name,u.id as u_id from applications as a join courses as c on
+                    c.id=a.course_id join users as u on u.id=a.student_id where a.school_id=" . $id;
 
                     // all the courses that matches with user interest in user_interest table...
                     $total_applications = $wpdb->get_results($sql . $where);
@@ -62,9 +62,9 @@ if (!empty($_GET['val'])) {
                         foreach ($display_applications as $key => $obj) {
                             $record = [];
                             $record[] = $obj->id;
-                            $record[] = $obj->f_name." ".$obj->u_lname;
+                            $record[] = $obj->name;
                             $record[] = $obj->c_name;
-                            
+
                             switch ($obj->status) {
                                 case "0":
                                     $record[] = "<input type='button' class='btn btn-primary' Value='No Action Taken'>";
@@ -77,7 +77,7 @@ if (!empty($_GET['val'])) {
                                     break;
                             }
                             $record[] = date("d-m-Y h:i:s", strtotime($obj->created_at));
-                            $record[] = "<input type='button' class='btn btn-primary view' user_id=".base64_encode($obj->u_id)." app_id=".base64_encode($obj->id)." name='View' Value='View'>";
+                            $record[] = "<input type='button' class='btn btn-primary view' user_id=" . base64_encode($obj->u_id) . " app_id=" . base64_encode($obj->id) . " name='View' Value='View'>";
                             $output['aaData'][] = $record;
                         }
                     } else {

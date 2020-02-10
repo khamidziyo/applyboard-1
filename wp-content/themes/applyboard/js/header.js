@@ -77,7 +77,7 @@ function getUserProfile(url, user_data, asset_path) {
                     $("#user_email").html(response.data.email);
 
 
-                    if (response.data.image != "") {
+                    if (response.data.image != null) {
                         var img = "<img src='" + asset_path + "images/" + response.data.image + "' width='50px' height='50px' id='stu_image'>";
                         $("#user_image").html(img);
                     } else {

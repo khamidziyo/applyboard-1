@@ -61,3 +61,10 @@ function subAgentRedirectLogin() {
         window.location.href = base_url + "sub-agent-login/";
     }, 1000);
 }
+
+function schoolRedirectLogin() {
+    localStorage.removeItem('data');
+    setTimeout(function () {
+        window.location.href = base_url + "school-login//";
+    }, 1000);
+}

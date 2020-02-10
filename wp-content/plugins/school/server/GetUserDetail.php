@@ -47,7 +47,7 @@ if (!empty($_GET['val'])) {
                     $exam_id = array_keys($exam_data)[0];
 
                     $application_status = $wpdb->get_results("select status from applications where
-                     user_id=" . $user_id . " && id=" . $application_id);
+                     student_id=" . $user_id . " && id=" . $application_id);
                     // echo $exam_id;
                     $exam_sql = "select name from exams where id=" . $exam_id;
                     $exam_data = $wpdb->get_results($exam_sql);

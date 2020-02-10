@@ -15,7 +15,7 @@
  **/
 
 $view_arr = ['AddAgent', 'ViewAgent', 'AgentLogin', 'AgentDashboard', 'AddStudent', 'ViewStudents',
-    'ViewApplication', 'AgentProfile', 'SubAgents', 'SubAgentLogin', 'SubAgentDashboard'];
+    'ViewApplication', 'AgentProfile', 'SubAgents', 'SubAgentLogin', 'SubAgentDashboard','SubAgentProfile'];
 foreach ($view_arr as $view_name) {
     include_once "views/" . $view_name . ".php";
 }

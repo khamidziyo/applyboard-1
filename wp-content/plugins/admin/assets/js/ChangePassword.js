@@ -21,8 +21,8 @@ $("#change_password_form").submit(function (e) {
         type: "post",
         data: form_data,
         dataType: "json",
-        contentType:false,
-        processData:false,
+        contentType: false,
+        processData: false,
         beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
@@ -31,6 +31,21 @@ $("#change_password_form").submit(function (e) {
         // if success ajax response...
         success: function (response) {
             if (verifyToken(response)) {
+                switch (window.role) {
+                    case '1':
+                        break;
+
+                    case '2':
+                        break;
+
+                    case '3':
+                        window.location.href = base_url + "agent-dashboard/";
+                        break;
+
+                    case '4':
+                        window.location.href = base_url + "sub-agent-dashboard/";
+                        break;
+                }
                 $("#reset").attr('disabled', false);
 
                 sweetalert(response);

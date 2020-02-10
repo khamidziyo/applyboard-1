@@ -65,9 +65,11 @@ if (!empty($_POST['val'])) {
             if (subAgentVerifyUser()) {
                 $id = $payload->userId;
 
-                $sql = "select id,email,status,image from agents where id=" . $id . " && role='4'";
+                $sql = "select id,name,created_by,email,contact_number,status,image from agents where id=" . $id . " && role='4'";
 
                 $user = $wpdb->get_results($sql);
+
+                $created_user = $wpdb->get_results("select name from agents where id=" . $user[0]->created_by);
 
                 if (!empty($user)) {
 
@@ -75,7 +77,10 @@ if (!empty($_POST['val'])) {
 
                         // is an active user...
                         case '1':
-                            $response = ['status' => Success_Code, 'message' => "Profile fetched Successfully", 'data' => $user[0]];
+                            $response = ['status' => Success_Code,
+                                'message' => "Profile fetched Successfully",
+                                'data' => $user[0], 'created_user' => $created_user[0]];
+
                             break;
 
                         // is account deactivated...
