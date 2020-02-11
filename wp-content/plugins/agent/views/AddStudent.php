@@ -18,7 +18,7 @@ function addStudent()
 
     <div class="form-group">
       <label for="email">Email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Enter email " name="email" required>
+      <input type="email" class="form-control" id="stu_email" placeholder="Enter email " name="email" required>
     </div>
 
 
@@ -105,6 +105,7 @@ function addStudent()
     <div class="form-group">
       <label for="image">Profile Image:</label>
       <img src="" id="image" width="200px" height="200px" style="display:none">
+
       <input type="hidden" name="cur_image" id="cur_image">
       <input type="file" class="form-control" id="img_input" name="img_input" required>
     </div>

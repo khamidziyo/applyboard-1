@@ -138,7 +138,7 @@ if(!empty($data[0]) && $data[0]->accomodation==1){
         ?>
         <p>Profile Image <input type="file" name="profile_image" id="profile_image_input">
          <input type="hidden" name="pro_image" value="<?=$data[0]->profile_image?>">
-        <img src="<?=asset_url?>images/<?=$data[0]->profile_image?>" id="profile_image" name="profile_image" width="200px" height="200px"></p>
+        <img src="<?=school_asset_url?>images/<?=$data[0]->profile_image?>" id="profile_image" name="profile_image" width="200px" height="200px"></p>
 <?php
        
     }else{
@@ -158,7 +158,7 @@ if(!empty($data[0]) && $data[0]->accomodation==1){
     <input type="hidden" name="school_id" id="school_id" value="<?=$_GET['sch']?>">
      <p>Cover Image<input type="file" name="cover_image" id="cover_image_input">
         <input type="hidden" name="co_image" value="<?=$data[0]->cover_image?>">
-        <img src="<?=asset_url?>images/<?=$data[0]->cover_image?>" id="cover_image" name="cover_image" width="200px" height="200px"></p>
+        <img src="<?=school_asset_url?>images/<?=$data[0]->cover_image?>" id="cover_image" name="cover_image" width="200px" height="200px"></p>
 <?php
        
     }else{
@@ -185,7 +185,7 @@ if(!empty($data[0]) && $data[0]->accomodation==1){
         <input type="file" name="document[]" class="document_input">
         <input type="button" value="Remove" id="delete">
         <input type="hidden" name="certificates[]" value="<?=$obj->document?>">
-        <img src="<?=asset_url.'certificates/'.$obj->document?>" id="document_0" name="document" width="200px" height="200px">
+        <img src="<?=school_asset_url.'certificates/'.$obj->document?>" id="document_0" name="document" width="200px" height="200px">
         <br>
         </span>
         <?php

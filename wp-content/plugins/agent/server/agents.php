@@ -52,8 +52,8 @@ if (!empty($_GET['val'])) {
                     }
 
                     $sql = "select a.id,u.email as u_email,a.name,a.email as a_email,a.contact_number,
-                    a.address,a.image from agents as a inner join users as u on u.id=a.created_by ";
-
+                    a.address,a.image from agents as a join users as u on u.id=a.created_by  where a.role='3'";
+               
                     // query to get the total results...
                     $total_agents = $wpdb->get_results($sql);
 
@@ -72,7 +72,7 @@ if (!empty($_GET['val'])) {
                             $record[] = $obj->a_email;
                             $record[] = $obj->contact_number;
                             $record[] = $obj->address;
-                            $record[] = "<img src='".agent_asset_url.'images/'.$obj->image."' width='50px' height='50px'>";
+                            $record[] = "<img src='" . agent_asset_url . 'images/' . $obj->image . "' width='50px' height='50px'>";
                             $record[] = "<input type='button' value='View' class='btn btn-primary view'>&nbsp;&nbsp;";
                             $output['aaData'][] = $record;
                         }

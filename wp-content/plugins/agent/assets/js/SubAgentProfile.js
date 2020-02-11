@@ -45,6 +45,7 @@ function getAgentProfile() {
                     if (data.name != null) {
                         $("#name").val(data.name);
                     }
+                    console.log(data.email);
                     $("#email").val(data.email);
 
                     if (data.image != null) {
@@ -143,11 +144,12 @@ $("#sub_agent_profile").submit(function (e) {
         }, success: function (response) {
             if (verifyToken(response)) {
                 if (response.status == 200) {
-                    sweetalert(response);
 
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
+                }else{
+                    sweetalert(response);
                 }
             } else {
                 subAgentRedirectLogin();

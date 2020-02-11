@@ -126,8 +126,6 @@ if (!empty($_GET)) {
             if (!empty($schools)) {
                 $filter_sql .= " school_id in  (" . implode(",", $schools) . ")   &&";
             }
-            // echo $filter_sql;
-            // die;
         }
 
         $filter_sql = substr_replace($filter_sql, "", -3);
@@ -190,7 +188,6 @@ if (!empty($_GET)) {
             }
         }
 
-        // print_r($cmplt_eligible_arr);
         // print_r($partial_eligible_arr);
         // die;
 
@@ -233,7 +230,7 @@ if (!empty($_GET)) {
                 $output['aaData'][] = $record;
             }
         }
-        if (empty($cmplt_eligible_arr) && empty($partial_eligible_arr)) {
+        if (empty($complete_eligible_arr) && empty($partial_eligible_arr)) {
             $output['aaData'] = [];
         }
 

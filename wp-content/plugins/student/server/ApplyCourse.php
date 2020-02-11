@@ -54,6 +54,33 @@ if (!empty($_POST['val'])) {
 
         switch ($_POST['val']) {
 
+            case 'courseIntakeByAgent':
+                if (agentVerify()) {
+                    $data = $wpdb->get_results("select intake from courses where id=" . $course_id);
+                    $intakes = json_decode($data[0]->intake, true);
+                    $intake_months = $wpdb->get_results("select id,name from intakes where status='1' && id in (" . implode(",", $intakes) . ")");
+
+                    // get the current month...
+                    $month = date('m');
+
+                    foreach ($intake_months as $key => $obj) {
+
+                        if ($obj->id >= $month) {
+                            $intake_avail[] = ['id' => $obj->id, 'name' => $obj->name];
+                        } else {
+                            $intake_avail_next[] = ['id' => $obj->id, 'name' => $obj->name];
+                        }
+                    }
+                    $response = ['status' => Success_Code, 'message' => 'Intake Fetched successfully',
+                        'intake_avail' => $intake_avail, 'intake_avail_next' => $intake_avail_next];
+
+                    // returning the json response...
+                    echo json_encode($response);
+                    exit;
+                }
+
+                break;
+
             // when user clicks on apply button to apply for particular course...
             case 'applyCourseByStudent':
                 if (studentVerify()) {

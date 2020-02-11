@@ -29,7 +29,7 @@ function viewApplications() {
                 // calling function that appends the token defined in token.js file 
                 // inside common directory of plugins.
                 if (!appendToken(request)) {
-                    redirectLogin();
+                    studentRedirectLogin();
                 }
             }
         }),
@@ -38,17 +38,9 @@ function viewApplications() {
             // calling function that verifies the token defined in token .js file 
             // inside common directory of plugins.
             if (verifyToken(response)) { } else {
-                redirectLogin();
+                studentRedirectLogin();
             }
         }
     });
 
-}
-
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function() {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/student-login/";
-    }, 2000)
 }

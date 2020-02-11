@@ -62,6 +62,15 @@ function subAgentRedirectLogin() {
     }, 1000);
 }
 
+
+// function that redirects to login page...
+function studentRedirectLogin() {
+    localStorage.removeItem('data');
+    setTimeout(function () {
+        window.location.href = base_url + "student-login/";
+    }, 2000)
+}
+
 function schoolRedirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {

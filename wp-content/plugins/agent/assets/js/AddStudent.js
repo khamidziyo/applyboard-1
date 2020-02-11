@@ -6,27 +6,27 @@ $("#dob").datepicker({
 });
 var local_data;
 
-if (localStorage.getItem('data') != null) {
-    local_data = JSON.parse(localStorage.getItem('data'));
-    switch (local_data.role) {
+local_data = JSON.parse(localStorage.getItem('data'));
 
-        // if role is agent...
-        case "3":
-            var data = { val: 'getDataByAgent' };
+switch (local_data.role) {
 
-            break;
+    // if role is agent...
+    case "3":
+        var data = { val: 'getDataByAgent' };
+        break;
 
-        // if role is sub agent...
-        case "4":
-            var data = { val: 'getDataBySubAgent' };
-            break;
-    }
-    getStudentData(data);
-
+    // if role is sub agent...
+    case "4":
+        var data = { val: 'getDataBySubAgent' };
+        break;
 }
+
+// function that calls to get the language country and qualifications in dropdown
+getStudentData(data);
 
 
 const queryString = window.location.search;
+var stu_id = '';
 
 const urlParams = new URLSearchParams(queryString);
 if (urlParams.get('id')) {
@@ -34,10 +34,28 @@ if (urlParams.get('id')) {
     $("#img_input").attr('required', false);
     $("#grade_scheme").attr('required', false);
 
-    var stu_id = urlParams.get('id');
-    var data = { student: stu_id, 'val': 'editUser' };
+    stu_id = urlParams.get('id');
+
+    switch (local_data.role) {
+
+        // if role is agent...
+        case "3":
+            var data = { student: stu_id, 'val': 'editUserByAgent' };
+
+            break;
+
+        // if role is sub agent...
+        case "4":
+            var data = { student: stu_id, 'val': 'editUserBySubAgent' };
+
+            break;
+    }
+
+    // function that calls when student updates the profile
     getUserProfile(data);
 }
+
+
 
 
 $("#add_more_btn").click(function () {
@@ -54,6 +72,7 @@ $(document).on('click', '.remove', function () {
 // function that invokes when agent edits any user...
 function getUserProfile(data) {
     var doc_html = "<h2>Documents Uploaded</h2><ul>";
+    var sub_marks_html = "";
 
     $.ajax({
         url: agent_server_url + "GetStudentProfile.php",
@@ -86,19 +105,39 @@ function getUserProfile(data) {
                         getStudentData(data);
 
 
+                        // decoding json to get the exams...
                         var exams = JSON.parse(response.data.exam);
-                        
-                        for (let key of Object.keys(exams)) {
-                            for(let val of Object.entries(key)){
-                                console.log(val);
-                            }
-                            $(".exam_input[value=" + key + "]").prop("checked", "true");
-                        }
+                        // console.log(exams);
+                        var sub_arr = Object.values(exams);
+                        // console.log(sub_arr);
 
+                        // loop over subject array to get the exams and marks stored in array...
+                        $.each(sub_arr, function (k, obj) {
+
+                            var exam_id = Object.keys(exams)[k];
+
+                            $(".exam_input[value=" + exam_id + "]").prop("checked", "true");
+
+                            var exam_name = $(".exam_input[value=" + exam_id + "]").attr('name');
+
+                            sub_marks_html += "<span id='" + exam_name + "'><h2>Marks Scored In " + exam_name + " </h2>";
+
+                            for (arr_key in Object.keys(obj)) {
+
+                                // to get the subject... 
+                                sub_marks_html += "<label>" + Object.keys(obj)[arr_key] + "</label>&nbsp;&nbsp;&nbsp"
+
+                                // to get the marks...
+                                sub_marks_html += "<input type='text' name='exams[" + exam_id + "][" + Object.keys(obj)[arr_key] + "]' value=" + Object.values(obj)[arr_key] + "><br><br>"
+                            }
+                            sub_marks_html += "</span>"
+                        })
+
+                        $("#sub_marks").html(sub_marks_html);
 
                         $("#first_name").val(response.data.f_name)
                         $("#last_name").val(response.data.l_name)
-                        $("#email").val(response.data.email)
+                        $("#stu_email").val(response.data.email)
                         $("#pass_number").val(response.data.passport_no)
 
                         if (response.data.gender == "1") {
@@ -131,8 +170,7 @@ function getUserProfile(data) {
                         }
 
                         getStudentData(data);
-
-                        $("#grade_scheme").val()
+                        $("#grade_scheme").val(response.data.grade_scheme);
                         // console.log(response.data);
                     }
                     if (response.hasOwnProperty('documents')) {
@@ -351,6 +389,7 @@ $(document).on('click', '.exam_input', function () {
 // when user changes the language based on language exam will appear...
 $("#lang_prior").change(function () {
     var lang_id = $(this).val();
+    $("#sub_marks").html('');
     switch (local_data.role) {
 
         // if role is agent...
@@ -414,6 +453,10 @@ $("#add_student").submit(function (e) {
 
     var form = document.getElementById('add_student');
     var form_data = new FormData(form);
+
+    if (stu_id != '') {
+        form_data.append('student_id', stu_id);
+    }
 
     switch (local_data.role) {
 

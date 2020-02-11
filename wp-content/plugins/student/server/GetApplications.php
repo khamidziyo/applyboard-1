@@ -35,7 +35,7 @@ if (!empty($_GET['val'])) {
                     $length = $_GET['length'];
                     $limit = 'limit ' . $start . ',' . $length;
 
-                    $sort_arr = ['a.id', 's.name', 'c.name','','a.created_at'];
+                    $sort_arr = ['a.id', 's.name', 'c.name', '', 'a.created_at'];
 
                     $order_by = 'order by ' . $sort_arr[$_GET['order'][0][column]] . ' ' . $_GET['order'][0][dir];
 
@@ -54,15 +54,14 @@ if (!empty($_GET['val'])) {
 
                     $sql = "select a.id,a.status,a.created_at,c.name as c_name,s.name as s_name from
                      applications as a join courses as c on c.id=a.course_id join
-                      school as s on s.id=a.school_id where a.user_id=" . $id;
+                      school as s on s.id=a.school_id where a.student_id=" . $id;
 
-            
                     // all the courses that matches with user interest in user_interest table...
                     $total_applications = $wpdb->get_results($sql . $where);
-                    
+
                     $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
                     // echo $sql;die;
-                    
+
                     $display_applications = $wpdb->get_results($sql);
 
                     if (!empty($display_applications)) {
@@ -85,7 +84,7 @@ if (!empty($_GET['val'])) {
                                     $record[] = "<input type='button' class='btn btn-danger' value='Declined'>";
                                     break;
                             }
-                            $record[] = date('d-m-Y h:i:s',strtotime($obj->created_at));
+                            $record[] = date('d-m-Y h:i:s', strtotime($obj->created_at));
                             $record[] = "<input type='button' class='btn btn-danger delete' value='Delete' a_id=" . base64_encode($obj->id) . '>';
                             $output['aaData'][] = $record;
                         }

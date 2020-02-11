@@ -1,3 +1,9 @@
+
+
+$("#create_sublogin").click(function () {
+    $("#sub_login_modal").modal('show');
+})
+
 // calling function to get user id from local storage...
 getData();
 
@@ -44,6 +50,46 @@ function getData() {
         }
     }
 }
+
+
+// when agent creates the profile of sub agent...
+$("#sub_agent_form").submit(function (e) {
+    e.preventDefault();
+
+    var form = document.getElementById('sub_agent_form');
+    var form_data = new FormData(form);
+    $.ajax({
+        url: agent_server_url + "AddSubAgent.php",
+        type: "post",
+        data: form_data,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                agentRedirectLogin();
+            }
+        },
+        success: function (response) {
+            if (verifyToken(response)) {
+                if (response.status == 200) {
+                    $("#sub_login_modal").modal('hide');
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+                sweetalert(response);
+            } else {
+                agentRedirectLogin();
+            }
+        },
+        error: function (error) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+})
 
 
 

@@ -27,7 +27,7 @@ function viewCourseTable(data) {
         "processing": true,
         "serverSide": true,
         "language": {
-            "emptyTable": "No school available"
+            "emptyTable": "No course available"
         },
 
         "destroy": true,
@@ -235,13 +235,27 @@ $(document).on('click', '.not_eligible_btn', function () {
 // when user clicks on apply button of a particular course...
 $(document).on('click', '.apply', function () {
 
-    var course = $(this).attr('c_id');
+    var course_id = $(this).attr('c_id');
+    var avail_html = "";
+    var nxt_avail_html = "";
 
-    if (window.stu_id != null) {
-        var data = { val: "applyCourseByAgent", course: course, 'student': window.stu_id }
-    } else {
-        var data = { val: "applyCourseByStudent", course: course };
+    if (localStorage.getItem('data') != null) {
+        var local_data = JSON.parse(localStorage.getItem('data'));
+        switch (local_data.role) {
+            case '3':
+                var data = { course: course_id, val: "courseIntakeByAgent" };
+                break;
+        }
     }
+
+    // $("#password_modal").modal('show');
+
+    // if (window.stu_id != null) {
+    //     var data = { val: "applyCourseByAgent", course: course_id, 'student': window.stu_id }
+    // } else {
+    //     var data = { val: "applyCourseByStudent", course: course_id };
+    // }
+
 
     $.ajax({
         url: student_server_url + "ApplyCourse.php",
@@ -267,14 +281,35 @@ $(document).on('click', '.apply', function () {
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
             if (verifyToken(response)) {
-                sweetalert(response);
 
                 if (response.status == 200) {
-                    $(this).val("Applied");
-                    $(this).attr('disabled', true);
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1000);
+                    $("#intake_modal").modal('show');
+
+                    if (response.hasOwnProperty('intake_avail')) {
+                        if (response.intake_avail != null) {
+                            var d = new Date();
+                            var year = d.getFullYear();
+                            avail_html += "<h2>Intakes Available for year " + year + "</h2>";
+
+                            $.each(response.intake_avail, function (k, obj) {
+                                avail_html += "<input type='radio' name='intake_avail' value='" + obj.id + "'>" + obj.name
+                            })
+                        }
+                    }
+                    if (response.hasOwnProperty('intake_avail_next')) {
+
+                        if (response.intake_avail_next != null) {
+                            var nxtyr = year + 1;
+
+                            avail_html += "<h2>Intakes Available for year " + nxtyr + "</h2>";
+
+                            $.each(response.intake_avail_next, function (k, obj) {
+                                avail_html += "<input type='radio' name='intake_avail' value='" + obj.id + "'>" + obj.name
+                            })
+                        }
+                    }
+                    $("#intakes").html(avail_html);
+
                 }
             } else {
                 redirectLogin();

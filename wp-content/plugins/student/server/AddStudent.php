@@ -56,19 +56,23 @@ if (!empty($_POST['val'])) {
 function createStudent($wpdb, $id)
 {
     try {
-
+        
+        // allowed image types... 
         $allowedExtensions = ['jpg', 'jpeg', 'png'];
 
+        // require form paramters...
         $req_arr = ['first_name', 'last_name', 'email', 'dob', 'pass_number', 'marks'];
         foreach ($req_arr as $form_inputs) {
 
             trim($_POST[$form_inputs]);
 
+            // if any form input is missing then throw error...
             if (!array_key_exists($form_inputs, $_POST)) {
                 throw new Exception("Please enter your " . $form_inputs);
             }
         }
-
+        
+        //if exams are empty when a new student is created...
         if (!isset($_POST['exams'])) {
             throw new Exception("Please select the exam you appeared for");
         }
@@ -93,8 +97,10 @@ function createStudent($wpdb, $id)
             throw new Exception("Please select the grading scheme");
         }
 
-        if (empty($_FILES['img_input']['name'])) {
-            throw new Exception("Please upload the profile image");
+        if (empty($_POST['student_id'])) {
+            if (empty($_FILES['img_input']['name'])) {
+                throw new Exception("Please upload the profile image");
+            }
         }
 
         if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -103,12 +109,37 @@ function createStudent($wpdb, $id)
 
         $email = $_POST['email'];
 
-        $check_mail = $wpdb->get_results("select * from users where email='" . $email . "'");
+        // when a new student is created...
+        if (empty($_POST['student_id'])) {
 
-        if (!empty($check_mail[0])) {
-            throw new Exception("This email already exists.Try another");
+            // validation for image when a new student is added...
+            if (empty($_FILES['img_input']['name'])){
+                throw new Exception("Please upload the profile image");
+            }
+            // check whether a email exists ...
+            $check_mail = $wpdb->get_results("select * from users where email='" . $email . "'");
+
+            // if email already exists...
+            if (!empty($check_mail[0])) {
+                throw new Exception("This email already exists.Try another");
+            }
         }
 
+        // when edit the student...
+        else {
+            // decode the student id...
+            $student_id = base64_decode($_POST['student_id']);
+
+            // check whether a new email exists excluding student id...
+            $check_mail = $wpdb->get_results("select * from users where email='" . $email . "' && id!=" . $student_id);
+
+            // if email already exists...
+            if (!empty($check_mail[0])) {
+                throw new Exception("This email already exists.Try another");
+            }
+        }
+
+        // converting the date of birth to Y-m-d...
         $dob = Date('Y-m-d', strtotime($_POST['dob']));
 
         if ($_POST['gender'] = "male") {
@@ -117,61 +148,146 @@ function createStudent($wpdb, $id)
             $gender = '2';
         }
 
+        // decode the json to store the exam...
         $exams = json_encode($_POST['exams']);
 
-        $image = $_FILES['img_input']['name'];
+        // echo "<pre>";
+        // print_r($_POST);
+        // print_r($_FILES);
+        // die;
 
-        $img_type = pathinfo($image, PATHINFO_EXTENSION);
+        if (!empty($_FILES['img_input']['name'])) {
+            $image = $_FILES['img_input']['name'];
 
-        if (!in_array($img_type, $allowedExtensions)) {
-            throw new Exception("Only jpg,jpeg and png formats are allowed");
+            // get the image type...
+            $img_type = pathinfo($image, PATHINFO_EXTENSION);
+
+            // if image type not found in the allowed array...
+            if (!in_array($img_type, $allowedExtensions)) {
+                throw new Exception("Only jpg,jpeg and png formats are allowed");
+            }
+
+            // if image size exceeds more than 2 MB..
+            if ($_FILES['img_input']['size'] > 2 * 1024 * 1024) {
+                throw new Exception("Image size should not exceed more than 2 MB");
+            }
+
+            // creating a new name for the image...
+            $image_name = microtime() . '_' . $id . '.' . $img_type;
+
+            // storage path of image...
+            $path = dirname(__DIR__) . "/assets/images/";
+
+            // if the student uploads a new image on edit time then delete the previous image
+            //  from folder...
+
+            if (!empty($_POST['cur_image'])) {
+                // echo $path . $_POST['cur_image'];
+                // die;
+                if (!unlink($path . $_POST['cur_image'])) {
+                    throw new Exception("Previous image could not be deleted from server");
+                }
+            }
+        } else {
+
+            // else the image is same...
+            $image_name = $_POST['cur_image'];
         }
-
-        if ($_FILES['img_input']['size'] > 2 * 1024 * 1024) {
-            throw new Exception("Image size should not exceed more than 2 MB");
-        }
-
-        $image_name = microtime() . '_' . $id . '.' . $img_type;
-
-        $path = dirname(__DIR__) . "/assets/images/" . $image_name;
-
-        $ins_stu_arr = ['agent_id' => $id, 'f_name' => trim($_POST['first_name']),
-            'l_name' => trim($_POST['last_name']), 'email' => trim($_POST['email']),
-            'dob' => $dob, 'language_prior' => $_POST['lang_prior'], 'nationality' => $_POST['nationality'],
-            'passport_no' => trim($_POST['pass_number']), 'gender' => $gender, 'grade_id' => $_POST['qualification'],
-            'score' => $_POST['marks'], 'exam' => $exams, 'has_visa' => $_POST['visa'],
-            'image' => $image_name, 'created_at' => Date('Y-m-d h:i:s')];
 
         // to start the transaction...
         $wpdb->query('START TRANSACTION');
 
-        $ins_stu_res = $wpdb->insert('users', $ins_stu_arr);
+        // if student id is in the request...
+        if (!empty($_POST['student_id'])) {
+            $student_id = base64_decode($_POST['student_id']);
 
-        if ($ins_stu_res) {
-            if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path)) {
-                throw new Exception("Image could not be uploaded in the sever directory.Try again");
+            // update the student...
+            $update_res_arr = ['agent_id' => $id, 'f_name' => trim($_POST['first_name']),
+                'l_name' => trim($_POST['last_name']), 'email' => trim($_POST['email']),
+                'dob' => $dob, 'language_prior' => $_POST['lang_prior'], 'nationality' => $_POST['nationality'],
+                'passport_no' => trim($_POST['pass_number']), 'gender' => $gender, 'grade_id' => $_POST['qualification'],
+                'grade_scheme' => $_POST['grade_scheme'], 'score' => $_POST['marks'], 'exam' => $exams, 'has_visa' => $_POST['visa'],
+                'image' => $image_name, 'updated_at' => Date('Y-m-d h:i:s')];
+
+                // update query...
+            $update_stu_res = $wpdb->update('users', $update_res_arr, ['id' => $student_id]);
+
+            // if student updated successfully...
+            if ($update_stu_res) {
+
+                // if a student uploads the new image...
+                if (!empty($_FILES['img_input']['name'])) {
+
+                    // moving image to folder...
+                    if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path.$image_name)) {
+                        throw new Exception("Image could not be uploaded in the sever directory.Try again");
+                    }
+                }
+
+                // if student uploads the documents...
+                if (!empty($_FILES['documents']['name'][0])) {
+
+                    // calling function to upload student documents...
+                    if (uploadStudentDocuments($student_id, $wpdb)) {
+                        // commit the transaction...
+                        $wpdb->query('COMMIT');
+                        $response = ['status' => Success_Code, 'message' => "Student Updated Successfully"];
+                    }
+                } else {
+
+                    // commit the transaction...
+                    $wpdb->query('COMMIT');
+                    $response = ['status' => Success_Code, 'message' => "Student Updated Successfully"];
+                }
+
+            } else {
+                throw new Exception("Student not updated due to internal server error");
             }
+        } else {
 
-            $student_id = $wpdb->insert_id;
+            // if a student is newly created...
+            $ins_stu_arr = ['agent_id' => $id, 'f_name' => trim($_POST['first_name']),
+                'l_name' => trim($_POST['last_name']), 'email' => trim($_POST['email']),
+                'dob' => $dob, 'language_prior' => $_POST['lang_prior'], 'nationality' => $_POST['nationality'],
+                'passport_no' => trim($_POST['pass_number']), 'gender' => $gender, 'grade_id' => $_POST['qualification'],
+                'grade_scheme' => $_POST['grade_scheme'], 'score' => $_POST['marks'], 'exam' => $exams, 'has_visa' => $_POST['visa'],
+                'image' => $image_name, 'created_at' => Date('Y-m-d h:i:s')];
 
-            if (!empty($_FILES['documents']['name'])) {
+                // insert query to add new student...
+            $ins_stu_res = $wpdb->insert('users', $ins_stu_arr);
 
-                // calling function to upload student documents...
-                if (uploadStudentDocuments($student_id, $wpdb)) {
+            // if student inserted successfully...
+            if ($ins_stu_res) {
+
+                // to upload the image inside a folder...
+                if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path.$image_name)) {
+                    throw new Exception("Image could not be uploaded in the sever directory.Try again");
+                }
+
+                // get the id of newly inserted student...
+                $student_id = $wpdb->insert_id;
+
+                // if student wants to upload the documents also...
+                if (!empty($_FILES['documents']['name'][0])) {
+
+                    // calling function to upload student documents...
+                    if (uploadStudentDocuments($student_id, $wpdb)) {
+                        // commit the transaction...
+                        $wpdb->query('COMMIT');
+                        $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
+                    }
+                } else {
+
                     // commit the transaction...
                     $wpdb->query('COMMIT');
                     $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
                 }
+
             } else {
-
-                // commit the transaction...
-                $wpdb->query('COMMIT');
-                $response = ['status' => Success_Code, 'message' => "Student Created Successfully"];
+                throw new Exception("Student not created due to internal server error");
             }
-
-        } else {
-            throw new Exception("Student not created due to internal server error");
         }
+
     } catch (Exception $e) {
         $wpdb->query('ROLLBACK');
         $response = ['status' => Error_Code, 'message' => $e->getMessage()];
@@ -180,13 +296,16 @@ function createStudent($wpdb, $id)
     exit;
 }
 
+// function to upload documents...
 function uploadStudentDocuments($id, $wpdb)
 {
 
+    // allowed document type...
     $allowedDocExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
 
     $docs = $_FILES['documents']['name'];
 
+    // llop to get each document name size and type...
     foreach ($docs as $key => $doc_name) {
         $doc_type = pathinfo($doc_name, PATHINFO_EXTENSION);
 
@@ -197,15 +316,19 @@ function uploadStudentDocuments($id, $wpdb)
         if ($_FILES['documents']['size'][$key] > 2 * 1024 * 1024) {
             throw new Exception("Document size should not exceed more than 2 MB");
         }
+
+        // creating a new name for the document...
         $doc_name = microtime() . '.' . $doc_type;
         $path = dirname(__DIR__) . "/assets/documents/" . $doc_name;
 
+        // to move document inside the folder...
         if (!move_uploaded_file($_FILES['documents']['tmp_name'][$key], $path)) {
             throw new Exception("Document could not be uploaded in the sever directory.Try again");
         }
 
+        // inserting the documents inside the folder...
         $wpdb->insert('user_documents', ['user_id' => $id, 'document' => $doc_name, 'created_at' => Date('Y-m-d h:i:s')]);
     }
-
+// if all done return true...
     return true;
 }

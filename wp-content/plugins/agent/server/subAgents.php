@@ -70,17 +70,20 @@ if (!empty($_GET['val'])) {
                             $record = [];
                             $record[] = $obj->id;
                             $record[] = $obj->email;
-                            if ($obj->status == 0) {
-                                $record[] = "<a class='btn btn-danger'>Account Deactivated</a>";
-                            } elseif ($obj->status == 1) {
+
+                            if ($obj->status == 1) {
+                                $active = 'selected="selected"';
                                 $record[] = "<a class='btn btn-success'>Account Active</a>";
+                            } elseif ($obj->status == 2) {
+                                $inactive = 'selected="selected"';
+                                $record[] = "<a class='btn btn-danger'>Account Deactivated</a>";
                             }
                             $record[] = Date('d-m-Y h:i:s', strtotime($obj->created_at));
 
                             ?>
-                           <?php $record[] = "<select>
-                            <option value='0' $obj->status =='0' ? 'selected=selected':''>Deactived</option>
-                            <option value='1' $obj->status =='1' ? 'selected=selected' :''>Active</option>
+                           <?php $record[] = "<select class='sub_agent_status' data_id=$obj->id>
+                            <option value='2'" . $inactive . ">Inactive</option>
+                            <option value='1'" . $active . ">Active</option>
                             </select>&nbsp;&nbsp;<a class='btn btn-primary change_password' data_id=" . $obj->id . ">Change Password</a>";
                             $output['aaData'][] = $record;
                         }
