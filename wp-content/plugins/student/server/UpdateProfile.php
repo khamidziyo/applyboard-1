@@ -106,37 +106,80 @@ if (!empty($_POST['val'])) {
                 // case to update the user profile...
                 case 'updateProfile':
 
+                    $id = $payload->userId;
+
+                    $require_arr = ['first_name', 'last_name', 'email', 'dob', 'marks', 'pass_number'];
+                    foreach ($require_arr as $form_input) {
+
+                        if (!array_key_exists($form_input, $_POST)) {
+                            throw new Exception("Please enter your " . $form_input);
+                        }
+                    }
+
+                    if (empty($_POST['lang_prior'])) {
+                        throw new Exception("Please select the language");
+                    }
+
+                    if (empty($_POST['exams'])) {
+                        throw new Exception("Please select atleast one exam");
+                    }
+
+                    if (empty($_POST['nationality'])) {
+                        throw new Exception("Please select your nationality");
+                    }
+
+                    if (empty($_POST['gender'])) {
+                        throw new Exception("Please select your gender");
+                    }
+
+                    if (empty($_POST['qualification'])) {
+                        throw new Exception("Please select the qualification");
+                    }
+
+                    if (empty($_POST['grade_scheme'])) {
+                        throw new Exception("Please select the grade scheme");
+                    }
+
+                    if (empty($_POST['visa'])) {
+                        throw new Exception("Please select the visa");
+                    }
+
+                    $email = $_POST['email'];
+
+                    if (!filter_var($email, FILTER_DEFAULT)) {
+                        throw new Exception("Invalid email address");
+                    }
                     // get the user email...
                     $email = $_POST['email'];
 
-                    // validating the user mail...
-                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        throw new Exception('Invalid email address');
+                    $email_exists = $wpdb->get_results("select email from users where email='" . $email . "' && id!=" . $id);
+
+                    $exams = json_encode($_POST['exams']);
+
+                    if (!empty($email_exists)) {
+                        throw new Exception("This email already exists.Try another");
                     }
 
-                    // query to get email...
-                    $sql = "select email from users where email='" . $email . "' && id!=" . $id;
-                    $user = $wpdb->get_results($sql);
+                    $dob = Date('Y-m-d', strtotime($_POST['dob']));
 
-                    // if the email not already exists...
-                    if (!empty($user)) {
-                        throw new Exception('This email already exists.Try another');
+                    if ($_POST['gender'] == "male") {
+                        $gender = '1';
+                    } else {
+                        $gender = '2';
                     }
-
-                    // get old image...
-                    $image_sql = 'select image from users where id=' . $id;
-
-                    $old_image = $wpdb->get_results($image_sql);
-
+                    // echo "<pre>";
+                    // print_r($_POST);
+                    // print_r($_FILES);
+                    // die;
                     // if user updates the image...
-                    if (!empty($_FILES['profile_image']['name'])) {
+                    if (!empty($_FILES['img_input']['name'])) {
 
-                        $image_name = $_FILES['profile_image']['name'];
+                        $image_name = $_FILES['img_input']['name'];
 
                         // get the type of image...
                         $type = pathinfo($image_name, PATHINFO_EXTENSION);
 
-                        $size = $_FILES['profile_image']['size'];
+                        $size = $_FILES['img_input']['size'];
 
                         // if image size exceeds 2 MB...
                         if ($size > 2 * 1024 * 1024) {
@@ -148,10 +191,10 @@ if (!empty($_POST['val'])) {
                         }
 
                         // if oldimage exists...
-                        if (!empty($old_image[0]->image)) {
-
+                        if (!empty($_POST['cur_image'])) {
+                            $old_image = $_POST['cur_image'];
                             // deleting the image from folder...
-                            if (!unlink($path . '/assets/images/' . $old_image[0]->image)) {
+                            if (!unlink($path . '/assets/images/' . $old_image)) {
                                 throw new Exception('Image not deleted due to internal server error');
                             }
                         }
@@ -160,78 +203,52 @@ if (!empty($_POST['val'])) {
                         $image_name = microtime() . '.' . $type;
 
                         // upload image to folder...
-                        if (!move_uploaded_file($_FILES['profile_image']['tmp_name'], $path . '/assets/images/' . $image_name)) {
+                        if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path . '/assets/images/' . $image_name)) {
                             throw new Exception('File not uploaded');
                         }
                     }
 
                     // if user not changes the image...
                     else {
-                        $image_name = $old_image[0]->image;
+                        $image_name = $_POST['cur_image'];
                     }
+
+                    $wpdb->query('START TRANSACTION');
+
+                    $update_arr = ['f_name' => $_POST['first_name'], 'l_name' => $_POST['last_name'],
+                        'email' => $_POST['email'], 'dob' => $dob, 'language_prior' => $_POST['lang_prior'],
+                        'nationality' => $_POST['nationality'], 'passport_no' => $_POST['pass_number'],
+                        'gender' => $gender, 'grade_id' => $_POST['qualification'], 'grade_scheme' => $_POST['grade_scheme'],
+                        'score' => $_POST['marks'], 'has_visa' => $_POST['visa'], 'exam' => $exams,
+                         'image' => $image_name,'updated_at'=>Date('Y-m-d h:i:s')];
+
+                        // echo "<pre>";
+                        // print_r($update_arr);
+                        // die;
 
                     // update query to update profile...
-                    $wpdb->update('users', ['email' => $email, 'image' => $image_name], ['id' => $id]);
-                    $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
+                    $update_stu_res = $wpdb->update('users', $update_arr, ['id' => $id]);
 
-                    break;
+                    if ($update_stu_res) {
 
-                // when user updates the data before applying...
-                case 'updateUserData':
-                    foreach ($_POST as $key => $value) {
-                        if (empty($value)) {
-                            throw new Exception($key . " is required");
+                        if (!empty($_FILES['documents']['name'][0])) {
+
+                            // calling function to upload user documents...
+                            if (uploadStudentDocuments($wpdb, $id)) {
+                                $wpdb->query('COMMIT');
+                                $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
+                            }
+                        } else {
+                            $wpdb->query('COMMIT');
+                            $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
                         }
-                    }
-                    if (empty($_FILES['image']['name'])) {
-                        throw new Exception("Profile image is required");
-                    }
 
-                    $image_name = $_FILES['image']['name'];
-
-                    // get the type of image...
-                    $type = pathinfo($image_name, PATHINFO_EXTENSION);
-
-                    $size = $_FILES['image']['size'];
-
-                    // if image size exceeds 2 MB...
-                    if ($size > 2 * 1024 * 1024) {
-                        throw new Exception('Image should not exceed more than 2 MB');
-                    }
-                    // if image type is not allowed...
-                    if (!in_array($type, $allowedExtensions)) {
-                        throw new Exception('Only jpg,jpeg and png formats are allowed');
-                    }
-
-                    // generating a new image name using time function...
-                    $image_name = microtime() . '.' . $type;
-
-                    // upload image to folder...
-                    if (!move_uploaded_file($_FILES['image']['tmp_name'], $path . '/assets/images/' . $image_name)) {
-                        throw new Exception('File not uploaded');
-                    }
-
-                    // update array to update the user...
-                    $update_user = ['f_name' => $_POST['f_name'], 'l_name' => $_POST['l_name'],
-                        'dob' => date('Y-m-d', strtotime($_POST['dob'])), 'passport_no' => $_POST['passport'],
-                        'language_prior' => $_POST['lang_prior'], 'gender' => $_POST['gender'],
-                        'image' => $image_name, 'updated_at' => date('Y-m-d h:i:s')];
-
-                    // update query to update...
-                    $update = $wpdb->update('users', $update_user, ['id' => $id]);
-
-                    // if user profile updated successfully...
-                    if ($update) {
-                        $response = ['status' => Success_Code,
-                            'message' => 'You successfully updated your profile.Now you can apply to any course.'];
-                    }
-
-                    // if profile not updated...
-                    else {
-                        throw new Exception("Profile not update due to internal server error");
+                    } else {
+                        throw new Exception("Profile not updated due to internal server error");
                     }
 
                     break;
+
                 // if no case matches...
                 default:
                     throw new Exception('No match Found.');
@@ -242,6 +259,7 @@ if (!empty($_POST['val'])) {
 
     // catch the exception...
      catch (Exception $e) {
+        $wpdb->query('ROLLBACK');
         $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }
 }
@@ -249,6 +267,43 @@ if (!empty($_POST['val'])) {
 // if user directly access this page...
 else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
+}
+
+function uploadStudentDocuments($wpdb, $student_id)
+{
+    // allowed document type...
+    $allowedDocExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+
+    $docs = $_FILES['documents']['name'];
+
+    // llop to get each document name size and type...
+    foreach ($docs as $key => $doc_name) {
+        $doc_type = pathinfo($doc_name, PATHINFO_EXTENSION);
+
+        if (!in_array($doc_type, $allowedDocExtensions)) {
+            throw new Exception("Only jpg,jpeg,png and pdf formats are allowed");
+        }
+
+        if ($_FILES['documents']['size'][$key] > 2 * 1024 * 1024) {
+            throw new Exception("Document size should not exceed more than 2 MB");
+        }
+
+        // creating a new name for the document...
+        $doc_name = microtime() . '.' . $doc_type;
+        $path = dirname(__DIR__) . "/assets/documents/" . $doc_name;
+
+        // to move document inside the folder...
+        if (!move_uploaded_file($_FILES['documents']['tmp_name'][$key], $path)) {
+            throw new Exception("Document could not be uploaded in the sever directory.Try again");
+        }
+
+        // inserting the documents inside the folder...
+        $doc_ins_res = $wpdb->insert('user_documents', ['user_id' => $student_id, 'document' => $doc_name, 'created_at' => Date('Y-m-d h:i:s')]);
+    }
+
+    if ($doc_ins_res) {
+        return true;
+    }
 }
 
 // returning json response...

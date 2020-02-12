@@ -74,6 +74,14 @@ function studentRedirectLogin() {
 function schoolRedirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {
-        window.location.href = base_url + "school-login//";
+        window.location.href = base_url + "school-login/";
     }, 1000);
 }
+
+function staffRedirectLogin() {
+    localStorage.removeItem('data');
+    setTimeout(function () {
+        window.location.href = base_url + "staff-login/";
+    }, 1000);
+}
+

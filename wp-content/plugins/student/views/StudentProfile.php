@@ -108,7 +108,7 @@ function studentProfile()
       <img src="" id="image" width="200px" height="200px" style="display:none">
 
       <input type="hidden" name="cur_image" id="cur_image">
-      <input type="file" class="form-control" id="img_input" name="img_input" required>
+      <input type="file" class="form-control" id="img_input" name="img_input">
     </div>
 
     <div class="form-group">

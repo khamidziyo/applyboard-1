@@ -1,25 +1,52 @@
 
-
 var queryString = window.location.search;
+var stu_id;
+var course_id;
 
-if (window.location.href.indexOf("id") > -1) {
-    const urlParams = new URLSearchParams(queryString);
 
-    var stu_id = urlParams.get('id');
+const urlParams = new URLSearchParams(queryString);
+
+
+if (urlParams.get('id') != null) {
+    stu_id = urlParams.get('id');
+
     var data = { student: stu_id, 'val': 'getEligibleCoursesByAgent' };
-    viewCourseTable(data);
+} else {
+    var data = { 'val': 'getEligibleCoursesbyStudent' };
 }
 
+viewCourseTable(data);
 
 
 $("#dob").datepicker({
     changeMonth: true,
     changeYear: true
 });
+var local_data = JSON.parse(localStorage.getItem('data'));
 
+switch (local_data.role) {
+
+    case '3':
+        var data = { 'val': 'getDataByAgent' };
+        break;
+
+    case '4':
+        var data = { 'val': 'getDataBySubAgent' };
+        break;
+
+    case '1':
+        var data = { 'val': 'getDataByStudent' }
+        break;
+    default:
+        swal({
+            title: "No role match found",
+            icon: 'error',
+        })
+}
 
 // function to view the courses to those i can apply...
 function viewCourseTable(data) {
+    // console.log(data);
 
     $("#eligible_course_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
@@ -47,7 +74,7 @@ function viewCourseTable(data) {
                 // calling function that appends the token defined in token.js file 
                 // inside common directory of plugins.
                 if (!appendToken(request)) {
-                    redirectLogin();
+                    redirect();
                 }
             }
         }),
@@ -56,7 +83,7 @@ function viewCourseTable(data) {
             // calling function that verifies the token defined in token .js file 
             // inside common directory of plugins.
             if (verifyToken(response)) { } else {
-                redirectLogin();
+                redirect();
             }
         }
     });
@@ -75,27 +102,7 @@ $("#filter_applications").submit(function (e) {
 
 })
 
-if (localStorage.getItem('data') != null) {
-    var local_data = JSON.parse(localStorage.getItem('data'));
 
-    switch (local_data.role) {
-
-        case '3':
-            var data = { 'val': 'getDataByAgent' };
-            break;
-
-        case '4':
-            var data = { 'val': 'getDataBySubAgent' };
-            break;
-
-        default:
-            Swal({
-                title: "No role match found",
-                icon: 'error',
-            })
-    }
-    getDropdownData(data);
-}
 
 
 getDropdownData(data);
@@ -113,7 +120,7 @@ function getDropdownData(data) {
 
         beforeSend: function (request) {
             if (!appendToken(request)) {
-                agentRedirectLogin();
+                redirect();
             }
         }, success: function (response) {
             if (verifyToken(response)) {
@@ -204,7 +211,7 @@ function getDropdownData(data) {
                 }
                 errorSwal(response);
             } else {
-                agentRedirectLogin();
+                redirect();
             }
         }, error: function (error) {
             var response = { 'status': 400, 'message': 'Internal Server Error' };
@@ -226,7 +233,7 @@ $("#countries").change(function () {
 
 // // when user clicks on not eligible button...
 $(document).on('click', '.not_eligible_btn', function () {
-    var course_id = $(this).attr('c_id');
+    course_id = $(this).attr('c_id');
 
     window.location.href = base_url + "view-course?c_id=" + course_id;
 });
@@ -235,7 +242,7 @@ $(document).on('click', '.not_eligible_btn', function () {
 // when user clicks on apply button of a particular course...
 $(document).on('click', '.apply', function () {
 
-    var course_id = $(this).attr('c_id');
+    course_id = $(this).attr('c_id');
     var avail_html = "";
     var nxt_avail_html = "";
 
@@ -247,15 +254,6 @@ $(document).on('click', '.apply', function () {
                 break;
         }
     }
-
-    // $("#password_modal").modal('show');
-
-    // if (window.stu_id != null) {
-    //     var data = { val: "applyCourseByAgent", course: course_id, 'student': window.stu_id }
-    // } else {
-    //     var data = { val: "applyCourseByStudent", course: course_id };
-    // }
-
 
     $.ajax({
         url: student_server_url + "ApplyCourse.php",
@@ -271,7 +269,7 @@ $(document).on('click', '.apply', function () {
             if (!appendToken(request)) {
 
                 // if the token is not in the localStorage...
-                redirectLogin();
+                redirect();
             }
         },
 
@@ -292,7 +290,7 @@ $(document).on('click', '.apply', function () {
                             avail_html += "<h2>Intakes Available for year " + year + "</h2>";
 
                             $.each(response.intake_avail, function (k, obj) {
-                                avail_html += "<input type='radio' name='intake_avail' value='" + obj.id + "'>" + obj.name
+                                avail_html += "<input type='radio' name='intake' value='" + obj.id + '/' + year + "'>" + obj.name
                             })
                         }
                     }
@@ -304,7 +302,7 @@ $(document).on('click', '.apply', function () {
                             avail_html += "<h2>Intakes Available for year " + nxtyr + "</h2>";
 
                             $.each(response.intake_avail_next, function (k, obj) {
-                                avail_html += "<input type='radio' name='intake_avail' value='" + obj.id + "'>" + obj.name
+                                avail_html += "<input type='radio' name='intake' value='" + obj.id + '/' + nxtyr + "'>" + obj.name
                             })
                         }
                     }
@@ -312,7 +310,7 @@ $(document).on('click', '.apply', function () {
 
                 }
             } else {
-                redirectLogin();
+                redirect();
             }
         },
 
@@ -324,12 +322,89 @@ $(document).on('click', '.apply', function () {
     })
 })
 
+$("#applyCourse").submit(function (e) {
+    e.preventDefault();
+    // alert(course_id);
+    // return false;
+    switch (local_data.role) {
+
+        // if logged in user is student...
+        case '1':
+            var data = { course: course_id, val: 'applyCourseByStudent', intake: $("#applyCourse").serializeArray() };
+            break;
+
+        // if logged in user is agent...
+        case '3':
+            var data = { course: course_id, val: 'applyCourseByAgent', student_id: stu_id, intake: $("#applyCourse").serializeArray() };
+            break;
+
+        // if logged in user is subagent...
+        case '4':
+            var data = { course: course_id, val: 'applyCourseBySubAgent', student_id: stu_id, intake: $("#applyCourse").serializeArray() };
+            break;
+
+        default:
+            swal({
+                title: "No role match found",
+                icon: 'error',
+            })
+    }
+
+    $.ajax({
+        url: student_server_url + "ApplyCourse.php",
+        type: "post",
+        data: data,
+        dataType: "json",
+
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                redirect();
+            }
+        }, success: function (response) {
+            if (verifyToken(response)) {
+                sweetalert(response);
+                if (response.status == 200) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+            } else {
+                redirect();
+            }
+        }, error: function (error) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+})
+
 
 
 // function to redirect on login page if any authentication requires...
-function redirectLogin() {
+function redirect() {
     localStorage.removeItem('data');
-    setTimeout(function () {
-        window.location.href = base_url + "student-login/";
-    }, 1000)
+
+    switch (local_data.role) {
+
+        // if logged in user is student...
+        case '1':
+            studentRedirectLogin();
+            break;
+
+        // if logged in user is agent...
+        case '3':
+            agentRedirectLogin();
+            break;
+
+        // if logged in user is subagent...
+        case '4':
+            subAgentRedirectLogin();
+            break;
+
+        default:
+            swal({
+                title: "No role match found",
+                icon: 'error',
+            })
+    }
 }

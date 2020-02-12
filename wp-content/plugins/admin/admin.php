@@ -39,7 +39,7 @@ function adminLogin(){
 
 add_shortcode('admin_login','adminLogin');
 
-$view_arr=['AdminProfile','AdminDashboard','ViewSchools','ChangePassword','ViewCourses'];
+$view_arr=['AddStaff','AdminProfile','AdminDashboard','ViewSchools','ChangePassword','ViewCourses'];
 
 foreach($view_arr as $view_name){
     include_once 'views/'.$view_name.'.php';

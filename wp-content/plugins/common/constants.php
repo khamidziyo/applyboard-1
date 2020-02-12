@@ -26,6 +26,8 @@ define('admin_asset_url',content_url('plugins/admin/assets/'));
 
 define('agent_asset_url',content_url('plugins/agent/assets/'));
 
+define('staff_asset_url',content_url('plugins/staff/assets/'));
+
 
 // algorithm for generating token...
 define('algo',['HS256']);

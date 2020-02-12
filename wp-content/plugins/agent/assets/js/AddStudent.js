@@ -92,22 +92,21 @@ function getUserProfile(data) {
 
                             // if role is agent...
                             case "3":
-                                var data = { 'val': 'getExamByAgent', 'id': response.data.language_prior };
+                                var get_exam_data = { 'val': 'getExamByAgent', 'id': response.data.language_prior };
                                 break;
 
                             // if role is sub agent...
                             case "4":
-                                var data = { 'val': 'getExamBySubAgent', 'id': response.data.language_prior };
+                                var get_exam_data = { 'val': 'getExamBySubAgent', 'id': response.data.language_prior };
                                 break;
                         }
 
                         // calling function to get exams of specific language...
-                        getStudentData(data);
-
+                        getStudentData(get_exam_data);
 
                         // decoding json to get the exams...
                         var exams = JSON.parse(response.data.exam);
-                        // console.log(exams);
+                        // console.log(response.data);
                         var sub_arr = Object.values(exams);
                         // console.log(sub_arr);
 

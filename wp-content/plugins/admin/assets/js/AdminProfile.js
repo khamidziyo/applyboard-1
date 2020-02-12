@@ -28,20 +28,15 @@ function getAdminProfile() {
                     console.log(response.data);
 
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response)
                 }
             } else {
                 adminRedirectLogin();
             }
         },
         error: function(error) {
-            swal({
-                title: "Internal Server error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response)
         }
     })
 }
@@ -79,20 +74,15 @@ function verifyOldPassword(password_val) {
                     window.location.href = base_url+"change-password/?tok=" + response.data.token + "&& student=" + btoa(response.data.id);
 
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response)
                 }
             } else {
                 adminRedirectLogin();
             }
         },
         error: function(response) {
-            swal({
-                title: "Internal Server error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response)
         }
     })
 }
@@ -132,30 +122,20 @@ $("#update_profile_form").submit(function(e) {
         },
         success: function(response) {
             if (verifyToken(response)) {
-                if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+                sweetalert(response);
+
+                if (response.status == 200) {              
                     setTimeout(function() {
                         location.reload();
                     }, 1000);
-
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
-                }
+                } 
             } else {
                 adminRedirectLogin();
             }
         },
         error: function(error) {
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response)
         }
     })
 })

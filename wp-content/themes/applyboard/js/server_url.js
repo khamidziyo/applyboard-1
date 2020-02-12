@@ -29,5 +29,10 @@ var agent_server_url = "http://localhost/wordpress/wordpress/wp-content/plugins/
 // assets path of agent plugin...
 var agent_assets_url = "http://localhost/wordpress/wordpress/wp-content/plugins/agent/assets/";
 
+// server path of staff plugin...
+var staff_assets_url= "http://localhost/wordpress/wordpress/wp-content/plugins/staff/assets/";
+
+// assets path of staff plugin...
+var staff_server_url= "http://localhost/wordpress/wordpress/wp-content/plugins/staff/server/";
 
 var base_url = "http://localhost/wordpress/wordpress/index.php/";

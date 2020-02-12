@@ -31,9 +31,21 @@ function agentVerify()
     return Agent::verifyUser($payload);
 }
 
+function subAgentVerify()
+{
+    global $payload;
+    // jwt token class defined in jwttoken.php file inside common directory of plugin...
+    $payload = JwtToken::getBearerToken();
+
+    // Student class defined in student.php file inside common directory of plugin...
+    return SubAgent::verifyUser($payload);
+}
+
 if (!empty($_POST['val'])) {
     try {
-
+        // echo "<pre>";
+        // print_r($_POST);
+        // die;
         // to check whether the course is empty or not...
         if (empty($_POST['course'])) {
             throw new Exception("Course id is required");
@@ -78,36 +90,31 @@ if (!empty($_POST['val'])) {
                     echo json_encode($response);
                     exit;
                 }
-
                 break;
 
             // when user clicks on apply button to apply for particular course...
             case 'applyCourseByStudent':
                 if (studentVerify()) {
-                    $id = $payload->userId;
 
-                    $insert_app = ['student_id' => $id, 'school_id' => $school_id, 'course_id' => $course_id, 'created_at' => date('Y-m-d h:i:s')];
+                    $id = $payload->userId;
+                    echo $id;
+                    die;
 
                 }
                 break;
 
             case 'applyCourseByAgent':
                 if (agentVerify()) {
+                    // logged in agent id...
                     $id = $payload->userId;
 
-                    if (empty($_POST['student'])) {
-                        throw new Exception("Student id is required");
-                    }
-                    $student_id = base64_decode($_POST['student']);
+                    applyCourseByAgent($wpdb, $id);
+                }
+                break;
 
-                    $stu_exist = $wpdb->get_results("select * from users where id=" . $student_id . " && role='1'");
-
-                    if (empty($stu_exist)) {
-                        throw new Exception("Student does not exist.Invalid student id");
-                    }
-
-                    $insert_app = ['student_id' => $student_id, 'school_id' => $school_id, 'agent_id' => $id,
-                        'course_id' => $course_id, 'created_at' => date('Y-m-d h:i:s')];
+            case 'applyCourseBySubAgent':
+                if (subAgentVerify()) {
+                    applyCourseByAgent($wpdb);
                 }
                 break;
 
@@ -115,14 +122,6 @@ if (!empty($_POST['val'])) {
             default:
                 throw new Exception("No Match Found");
                 break;
-        }
-
-        // insert the application record in applications table...
-        $application_res = $wpdb->insert('applications', $insert_app);
-
-        // if application submitted successfully...
-        if ($application_res) {
-            $response = ['status' => Success_Code, 'message' => 'your application submitted Successfully'];
         }
 
         // catch the exception...
@@ -134,6 +133,64 @@ if (!empty($_POST['val'])) {
 // if user directly access this page...
 else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
+}
+
+function applyCourseByAgent($wpdb, $id)
+{
+
+    if (empty($_POST['student_id'])) {
+        throw new Exception("Student id is required");
+    }
+
+    if (empty($_POST['intake'][0]['value'])) {
+        throw new Exception("Please select the intake you want");
+    }
+
+    $course_id = base64_decode($_POST['course']);
+    $student_id = base64_decode($_POST['student_id']);
+
+    // query to check whether that school applications are managed by staff or by itself...
+    $application_manage = $wpdb->get_results("select id,staff from school where id
+    =(select school_id from courses where id=" . $course_id . ")");
+
+    // to get the staff from school table....
+    $manage_staff = $application_manage[0]->staff;
+    $school_id=$application_manage[0]->id;
+    
+    // if the staff is 1...
+    if ($manage_staff) {
+
+        // 1 if applications to be manage by staff...
+        $manage_by = '1';
+    }
+    // else it will be manage by school themeself...
+    else {
+
+        // 0 if application to be manage by school...
+        $manage_by = '0';
+    }
+
+    $intake = json_encode(explode("/", $_POST['intake'][0]['value']));
+
+    $stu_exist = $wpdb->get_results("select * from users where id=" . $student_id . " && role='1'");
+
+    if (empty($stu_exist)) {
+        throw new Exception("Student does not exist.Invalid student id");
+    }
+
+    $insert_app = ['student_id' => $student_id, 'school_id' => $school_id, 'agent_id' => $id,
+        'course_id' => $course_id, 'intake' => $intake, 'manage_by' => $manage_by, 'created_at' => Date('Y-m-d h:i:s')];
+
+    // insert the application record in applications table...
+    $application_res = $wpdb->insert('applications', $insert_app);
+
+    // if application submitted successfully...
+    if ($application_res) {
+        $response = ['status' => Success_Code, 'message' => 'your application submitted Successfully'];
+    }
+    echo json_encode($response);
+    exit;
+
 }
 
 // returning the json response...

@@ -52,21 +52,53 @@ if (!empty($_GET)) {
                         'categories' => $categories, 'disciplines' => $discipline_data];
                     break;
 
-                    case 'getExams':
-                        echo "<pre>";
-                        print_r($_GET);
-                        die;
+                case 'getExams':
+
+                    // to get the language id...
+                    if (empty($_GET['id'])) {
+                        throw new Exception("Language id is required");
+                    }
+                    $lang_id = $_GET['id'];
+
+                    // get the exams based on language id...
+                    $exams = $wpdb->get_results("select id,name from exams where language_id=" . $lang_id);
+                    if (!empty($exams)) {
+                        $response = ['status' => Success_Code, 'message' => 'Exams fetched Successfully',
+                            'exam_data' => $exams];
+                    }
+
+                    // if no exam found ...
+                    else {
+                        throw new Exception("No exams found");
+                    }
                     break;
+
+                case 'getGradeScheme':
+                    if (empty($_GET['id'])) {
+                        throw new Exception("Please select the language first");
+                    }
+                    $id = $_GET['id'];
+
+                    // sql to get all the exams of specific language...
+                    $grade_sql = "select id,grade_scheme from grade where id=" . $id;
+                    $grade_data = $wpdb->get_results($grade_sql);
+
+                    // storing all data in an array...
+                    $response = ['status' => Success_Code, 'message' => 'Grade scheme fetched successfully',
+                        'grade_data' => json_decode($grade_data[0]->grade_scheme)];
+                    break;
+                // if no case matches...
                 default:
                     throw new Exception("No match found");
                     break;
             }
         }
     } catch (Exception $e) {
-
+        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }
 } else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is Required'];
 }
 
+// return the json response...
 echo json_encode($response);

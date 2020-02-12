@@ -166,14 +166,15 @@ if(localStorage.getItem('data')!=null){
 			html+="<a href='<?=base_url?>student-dashboard/'>Home</a><br>";
 			html+="<a href='<?=base_url?>student-profile/'>Profile</a><br><a href='<?=base_url?>messages/'>My Messages</a><br>";
 			html+="<a href='<?=base_url?>student-applications/'>View Applications</a><br>";
-			html+="<a href='#'>View Eligible Programs</a><br><br>";
+			html+="<a href='<?=base_url?>eligible-programs/'>View Eligible Programs</a><br><br>";
 			break;
 
 		// if the logged in user is admin...
 		case '2':
-			html+="<a href='<?=base_url?>admin-dashboard/'>Home</a><br>";
+			html+="<a href='<?=base_url?>admin-dashboard/'>Home</a>";
 			html+="<a href='<?=base_url?>admin-profile/'><h4>Profile</h4></a><a href='<?=base_url?>add-agent/'><h4>Add Agent</h4></a>";
 			html+="<a href='<?=base_url?>view-agents/'><h4>View Agents</h4></a><a href='<?=base_url?>add-school/'><h4>Add School</h4></a>";
+			html+="<a href='<?=base_url?>add-staff/'><h4>Add Staff Member</h4></a>";
 			html+="<a href='<?=base_url?>view-all-schools/'><h4>View Schools</h4></a><a href='<?=base_url?>view-courses-by-admin/'><h4>View Courses</h4></a>";
 
 		break;
@@ -186,11 +187,18 @@ if(localStorage.getItem('data')!=null){
 			html+="<a class='btn btn-primary' id='create_sublogin'>Create Sub agents</a><br><br>";
 		break;
 
+		// if logged in user is sub agent...
 		case '4':
 			html+="<a href='<?=base_url?>sub-agent-dashboard/'>Home</a><br>";
 			html+="<a href='<?=base_url?>sub-agent-profile/'>Profile</a><br><a href='<?=base_url?>add-student/'>Add Student</a><br>";
     		html+="<a href='<?=base_url?>view-students/'>View Students</a><br>";
 		break;
+
+		// if logged in user is staff...
+		case '5':
+			html+="<a href='<?=base_url?>staff-dashboard/'>Home</a><br><a href='<?=base_url?>staff-profile/'>Profile</a><br>";
+			html+="<a href='#'>Applications</a><br>"
+			break;
 
 	}
 	$("#sidebar").html(html);

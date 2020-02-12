@@ -91,7 +91,7 @@ if (!empty($_POST['val'])) {
                         'contact_number' => $_POST['person_number'], 'address' => $_POST['person_address'],
                         'business_name' => $_POST['business_name'], 'business_email' => $_POST['business_email'],
                         'business_phone' => $_POST['business_phone'], 'business_address' => $_POST['business_address'],
-                        'business_website' => $_POST['business_site'], 'image' => $img_name];
+                        'business_website' => $_POST['business_site'], 'image' => $img_name,'updated_at'=>Date('Y-m-d h:i:s')];
 
                     $update_profile = $wpdb->update('agents', $update_arr, ['id' => $id]);
 

@@ -54,13 +54,13 @@ function eligibleProgram()
     </button>
     <h4 class = 'modal-title'>Available Intakes</h4>
     </div>
-    <form name="course_intake" id="course_intake">
+    <form name="applyCourse" id="applyCourse">
 
     <div class = 'modal-body'>
     <span id="intakes"></span>
     </div>
     <div class = 'modal-footer'>
-    <button type = 'submit' class = 'btn btn-success' id = 'check_password'>Apply Now</button>
+    <button type = 'submit' class = 'btn btn-success' id = 'apply_btn'>Apply Now</button>
     </form>
 
     <button type = 'button' class = 'btn btn-default' data-dismiss = 'modal'>Close</button>

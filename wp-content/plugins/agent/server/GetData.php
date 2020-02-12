@@ -25,6 +25,13 @@ function subAgentVerifyUser()
     return SubAgent::verifyUser($payload);
 }
 
+function studentVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Student::verifyUser($payload);
+}
+
 if (!empty($_GET['val'])) {
     try {
 
@@ -42,6 +49,12 @@ if (!empty($_GET['val'])) {
 
                 // function to verify if a logged in user is sub agent...
                 if (subAgentVerifyUser()) {
+                    getFormData($wpdb);
+                }
+                break;
+
+            case 'getDataByStudent':
+                if (studentVerifyUser()) {
                     getFormData($wpdb);
                 }
                 break;
@@ -175,7 +188,7 @@ function getExamsByLanguage($wpdb)
 function getGradeSchemeById($wpdb)
 {
     if (empty($_GET['id'])) {
-        throw new Exception("Please select the language first");
+        throw new Exception("Please select the grade first");
     }
     $id = $_GET['id'];
 

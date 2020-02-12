@@ -40,7 +40,7 @@ if (!empty($_GET)) {
 
                     $data = $wpdb->get_results($sql);
 
-                    $documents=$wpdb->get_results("select id,document from user_documents where id=".$id);
+                    $documents=$wpdb->get_results("select id,document from user_documents where user_id=".$id);
 
                     // if user profile founds...
                     if (!empty($data)) {

@@ -47,6 +47,11 @@ function getData() {
                 var user = { val: 'subAgentProfile' };
                 getUserProfile(agent_server_url + "AgentDashboard.php", user, agent_assets_url);
                 break;
+
+            case '5':
+                var user = { val: 'getStaffProfile' };
+                getUserProfile(staff_server_url + "StaffProfile.php", user, staff_assets_url);
+                break;
         }
     }
 }
@@ -207,6 +212,13 @@ $("#logout").click(function (e) {
                 case "4":
                     setTimeout(function () {
                         window.location.href = base_url + "sub-agent-login/";
+                    }, 2000)
+                    break;
+
+                      // if logged in user is sub agent...
+                case "5":
+                    setTimeout(function () {
+                        window.location.href = base_url + "staff-login//";
                     }, 2000)
                     break;
             }

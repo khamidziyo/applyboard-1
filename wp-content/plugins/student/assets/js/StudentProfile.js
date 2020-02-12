@@ -1,5 +1,12 @@
 
 var doc_html = "";
+var sub_marks_html = "";
+
+$("#dob").datepicker({
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "1980:2014"
+});
 
 getUserProfile();
 
@@ -30,30 +37,32 @@ function getUserProfile() {
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
             if (verifyToken(response)) {
-                console.log(response);
+                // console.log(response);
+
                 // if status is 200...
                 if (response.status == 200) {
                     var data = response.data;
 
+                    // calling function to get languages countries and grades...
                     var get_data = { val: 'getDataByStudent' };
                     getStudentData(get_data);
 
                     $("#image").show();
 
-                    if (data.f_name != null || data.f_name != '') {
+                    if (data.f_name != null || data.f_name == '') {
                         $("#first_name").val(data.f_name)
                     }
 
-                    if (data.l_name != null || data.l_name != '') {
+                    if (data.l_name != null || data.l_name == '') {
                         $("#last_name").val(data.l_name)
                     }
 
                     $("#stu_email").val(data.email);
 
-                    if (data.dob != null || data.dob != '') {
+                    if (data.dob != null || data.dob == '') {
                         $("#dob").val(data.dob)
                     }
-                    if (data.passport_no != null || data.passport_no != '') {
+                    if (data.passport_no != null || data.passport_no == '') {
                         $("#pass_number").val(data.passport_no)
                     }
 
@@ -63,39 +72,84 @@ function getUserProfile() {
                         $("#gender").val("female").prop('checked', true);
                     }
 
-                    if (data.score != null || data.score != '') {
+                    if (data.score != null || data.score == '') {
                         $("#marks").val(data.score)
                     }
 
-                    if (data.language_prior != null || data.language_prior != '') {
+                    // console.log(data.language_prior);
+
+                    if (data.language_prior != null || data.language_prior == '') {
                         $("#lang_prior").val(data.language_prior);
+                        // alert();
+                        var get_exam_data = { 'val': 'getExams', 'id': data.language_prior };
+                        getStudentData(get_exam_data);
                     }
 
 
-                    var data = { 'val': 'getExams', 'id': data.language_prior };
-                    getStudentData(data);
+
+                    if (data.exam != null) {
+                        // decoding json to get the exams...
+                        var exams = JSON.parse(data.exam);
+                        // console.log(exams);
+
+                        var sub_arr = Object.values(exams);
+                        // console.log(sub_arr);
+
+                        // loop over subject array to get the exams and marks stored in array...
+                        $.each(sub_arr, function (k, obj) {
+
+                            var exam_id = Object.keys(exams)[k];
+
+                            $(".exam_input[value=" + exam_id + "]").prop("checked", "true");
+
+                            var exam_name = $(".exam_input[value=" + exam_id + "]").attr('name');
+
+                            sub_marks_html += "<span id='" + exam_name + "'><h2>Marks Scored In " + exam_name + " </h2>";
+
+                            for (arr_key in Object.keys(obj)) {
+
+                                // to get the subject... 
+                                sub_marks_html += "<label>" + Object.keys(obj)[arr_key] + "</label>&nbsp;&nbsp;&nbsp"
+
+                                // to get the marks...
+                                sub_marks_html += "<input type='text' name='exams[" + exam_id + "][" + Object.keys(obj)[arr_key] + "]' value=" + Object.values(obj)[arr_key] + "><br><br>"
+                            }
+                            sub_marks_html += "</span>"
+                        })
+
+                        $("#sub_marks").html(sub_marks_html);
+                    }
 
 
-
-                    if (data.nationality != null || data.nationality != '') {
+                    if (data.nationality != null || data.nationality == '') {
                         $("#nationality").val(data.nationality);
                     }
 
-
-                    if (data.grade_id != null || data.grade_id != '') {
+                    // console.log(data.grade_id);
+                    if (data.grade_id != null || data.grade_id == '') {
                         $("#qualification").val(data.grade_id);
+
+                        var grade_scheme_data = { 'val': 'getGradeScheme', 'id': data.grade_id };
+
+                        // calling function to get grades...
+                        getStudentData(grade_scheme_data);
+
+                        $("#grade_scheme").val(data.grade_scheme);
                     }
 
 
-                    if (data.has_visa != null || data.has_visa != '') {
+                    if (data.has_visa != null || data.has_visa == '') {
                         $("#visa").val(data.has_visa);
                     }
 
-                    if (data.image != null || data.image != '') {
+                    if (data.image != null || data.image == '') {
                         $("#image").attr('src', student_assets_url + "images/" + data.image);
+                        $("#cur_image").val(data.image);
                     } else {
                         $("#image").attr('src', student_assets_url + "images/default_image.png");
                     }
+
+                    console.log(response.documents);
 
                     if (response.documents.length > 0) {
                         // console.log(response.documents);
@@ -127,10 +181,125 @@ function getUserProfile() {
     })
 }
 
+
+$("#img_input").change(function () {
+    previewImage(this);
+})
+
+function previewImage(file_input) {
+    $("#image").show();
+    if (file_input.files && file_input.files[0]) {
+
+        // creating file reader object...
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            // setting the source of document file
+            $('#image').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(file_input.files[0]);
+    }
+}
+
+$("#qualification").change(function () {
+
+    var grade_id = $(this).val();
+
+    var data = { 'val': 'getGradeScheme', 'id': grade_id };
+
+    getStudentData(data);
+})
+
+// when user changes the language based on language exam will appear...
+$("#lang_prior").change(function () {
+    var lang_id = $(this).val();
+    $("#exams").html('');
+    $("#sub_marks").html('');
+
+    var data = { 'val': 'getExams', 'id': lang_id };
+
+    // calling function to get exams of specific language...
+    getStudentData(data);
+})
+
+$("#add_more_btn").click(function () {
+    var html = "<span><input type='file' class='form-control' class='documents' name='documents[]'><br>";
+    html += "<input type='button' name='remove' Value='Remove' class='remove'></span>"
+    $("#add_more").append(html);
+})
+$(document).on('click', '.remove', function () {
+    $(this).parent().remove();
+})
+
+$(document).on('click', '.exam_input', function () {
+    var exam = $(this).attr('name');
+
+    var exam_id = $(this).val();
+
+    if ($(this).prop('checked')) {
+        // when user selects the exam...
+        var marks_html = "";
+
+        // then defining the text fields to enter marks in different subjects...
+        marks_html += "<span id='" + exam + "'><h2>Marks Scored In " + exam + "</h2>"
+        marks_html += "<p>Reading&nbsp;&nbsp;<input type='text' name=exams[" + exam_id + "][reading] id='reading'></p>";
+        marks_html += "<p>Writing&nbsp;&nbsp;<input type='text' name=exams[" + exam_id + "][writing] id='writing'></p>";
+        marks_html += "<p>Listening&nbsp;&nbsp;<input type='text' name=exams[" + exam_id + "][listening] id='listening'></p>";
+        marks_html += "<p>Speaking&nbsp;&nbsp;<input type='text' name=exams[" + exam_id + "][speaking] id='speaking'></p>";
+        marks_html += "</span>";
+        // setting the marks html...
+        $("#sub_marks").append(marks_html);
+    } else {
+        $("#" + exam).remove();
+    }
+
+})
+
+
 $(document).on('click', '.remove_doc', function () {
     var doc_id = $(this).attr('data_id');
-    console.log(doc_id);
+    swal({
+        title: "Are you sure you want to remove this document",
+        icon: "warning",
+        buttons: ['Cancel', 'Yes,remove it'],
+    }).then(function (val) {
+        if (val) {
+            removeDoc(doc_id);
+        }
+    })
 })
+
+function removeDoc(doc_id) {
+
+    var data = { doc_id: doc_id, val: 'removeDocument' };
+
+    $.ajax({
+        url: student_server_url + "RemoveDocument.php",
+        type: "post",
+        data: data,
+        dataType: "json",
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                studentRedirectLogin();
+            }
+        }, success: function (response) {
+            if (verifyToken(response)) {
+                if (response.status == 200) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+                sweetalert(response);
+            } else {
+                studentRedirectLogin();
+            }
+        }, error: function (error) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+}
 
 
 // function to get nationality,language and highest qualification...
