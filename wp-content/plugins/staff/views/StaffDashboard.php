@@ -61,6 +61,7 @@ function staffDashboard()
 
 </div>
 
+<script src="<?=staff_asset_url?>js/StaffDashboard.js"></script>
 
     <?php
 }

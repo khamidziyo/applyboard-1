@@ -197,7 +197,7 @@ if(localStorage.getItem('data')!=null){
 		// if logged in user is staff...
 		case '5':
 			html+="<a href='<?=base_url?>staff-dashboard/'>Home</a><br><a href='<?=base_url?>staff-profile/'>Profile</a><br>";
-			html+="<a href='#'>Applications</a><br>"
+			html+="<a href='<?=base_url?>view-applications-by-staff'>Applications</a><br><a href='<?=base_url?>review-applications'>Applications Under Review</a><br>"
 			break;
 
 	}

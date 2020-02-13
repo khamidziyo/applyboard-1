@@ -24,7 +24,7 @@ if (!empty($_POST['val'])) {
                 case 'getStaffProfile':
 
                     $id = $payload->userId;
-                    $sql = 'select id,email,image,status from staff where id=' . $id;
+                    $sql = 'select id,name,email,image,status from staff where id=' . $id;
                     $data = $wpdb->get_results($sql);
 
                     if (!empty($data)) {

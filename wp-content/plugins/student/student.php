@@ -1,25 +1,23 @@
 <?php
-   /**
-    * Plugin Name:       Student
-    * Plugin URI:        https://example.com/plugins/the-basics/
-    * Description:       Handle the basics with this plugin.
-    * Version:           1.10.3
-    * Requires at least: 5.2
-    * Requires PHP:      7.2
-    * Author:            Mukul
-    * Author URI:        https://author.example.com/
-    * License:           GPL v2 or later
-    /* License URI:       https://www.gnu.org/licenses/gpl-2.0.html*/
-    /* Text Domain:       Student
-    * Domain Path:        languages
-   */
- 
+/**
+ * Plugin Name:       Student
+ * Plugin URI:        https://example.com/plugins/the-basics/
+ * Description:       Handle the basics with this plugin.
+ * Version:           1.10.3
+ * Requires at least: 5.2
+ * Requires PHP:      7.2
+ * Author:            Mukul
+ * Author URI:        https://author.example.com/
+ * License:           GPL v2 or later
+/* License URI:       https://www.gnu.org/licenses/gpl-2.0.html*/
+/* Text Domain:       Student
+ * Domain Path:        languages
+ */
 
+include_once dirname(__DIR__, 1) . "/common/constants.php";
 
-  include_once(dirname(__DIR__,1)."/common/constants.php");
-
-
-   function studentSignUp(){
+function studentSignUp()
+{
     ?>
     <div class="container-fluid">
     <form name="student_reg_form" id="student_reg_form">
@@ -45,18 +43,18 @@
      <a id="facebook-button" class="btn  btn-social btn-facebook">
       <i class="fa fa-facebook"></i> Sign up with Facebook
 
-      
+
     </div>
-  
+
 
     <script src="https://cdn.rawgit.com/oauth-io/oauth-js/c5af4519/dist/oauth.js"></script>
-    <script src="<?=constant('student_asset_url')."/js/StudentSignup.js"?>"></script>
+    <script src="<?=constant('student_asset_url') . "/js/StudentSignup.js"?>"></script>
      <?php
-   }
+}
 
-
-   function studentLogin(){
-  ?>
+function studentLogin()
+{
+    ?>
     <div class="container-fluid">
     <form name="student_login_form" id="student_login_form">
     <p>Email
@@ -86,23 +84,19 @@
       </p>
 
     </div>
-    <script type="text/javascript" src="<?= constant('student_asset_url')."/js/StudentLogin.js"?>"></script>
+    <script type="text/javascript" src="<?=constant('student_asset_url') . "/js/StudentLogin.js"?>"></script>
 
     <?php
-   }
+}
 
+add_shortcode('student_sign_up', 'studentSignUp');
 
+add_shortcode('student_login', 'studentLogin');
 
-   add_shortcode('student_sign_up','studentSignUp');
+// views array to load all the views...
+$views = ['StudentDashboard', 'EligibleProgram', 'StudentProfile', 'ForgotPassword',
+    'ResetPassword', 'MyApplications', 'StudentDetail'];
 
-   add_shortcode('student_login','studentLogin');
-   
-   // views array to load all the views...
-   $views=['StudentDashboard','EligibleProgram','StudentProfile','ForgotPassword',
-   'ResetPassword','MyApplications'];
-
-   foreach($views as $view_name){
-      include_once "views/".$view_name.".php";
-   }
-  
-
+foreach ($views as $view_name) {
+    include_once "views/" . $view_name . ".php";
+}

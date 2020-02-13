@@ -246,13 +246,21 @@ $(document).on('click', '.apply', function () {
     var avail_html = "";
     var nxt_avail_html = "";
 
-    if (localStorage.getItem('data') != null) {
-        var local_data = JSON.parse(localStorage.getItem('data'));
-        switch (local_data.role) {
-            case '3':
-                var data = { course: course_id, val: "courseIntakeByAgent" };
-                break;
-        }
+    var local_data = JSON.parse(localStorage.getItem('data'));
+    switch (local_data.role) {
+
+        case '1':
+            var data = { course: course_id, val: "courseIntakeByStudent" };
+
+            break;
+
+
+        case '3':
+            var data = { course: course_id, val: "courseIntakeByAgent" };
+            break;
+
+
+
     }
 
     $.ajax({
@@ -308,6 +316,8 @@ $(document).on('click', '.apply', function () {
                     }
                     $("#intakes").html(avail_html);
 
+                }else{
+                    errorSwal(response);
                 }
             } else {
                 redirect();

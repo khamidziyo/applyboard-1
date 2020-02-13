@@ -68,38 +68,69 @@ if (!empty($_POST['val'])) {
 
             case 'courseIntakeByAgent':
                 if (agentVerify()) {
-                    $data = $wpdb->get_results("select intake from courses where id=" . $course_id);
-                    $intakes = json_decode($data[0]->intake, true);
-                    $intake_months = $wpdb->get_results("select id,name from intakes where status='1' && id in (" . implode(",", $intakes) . ")");
-
-                    // get the current month...
-                    $month = date('m');
-
-                    foreach ($intake_months as $key => $obj) {
-
-                        if ($obj->id >= $month) {
-                            $intake_avail[] = ['id' => $obj->id, 'name' => $obj->name];
-                        } else {
-                            $intake_avail_next[] = ['id' => $obj->id, 'name' => $obj->name];
-                        }
-                    }
-                    $response = ['status' => Success_Code, 'message' => 'Intake Fetched successfully',
-                        'intake_avail' => $intake_avail, 'intake_avail_next' => $intake_avail_next];
-
-                    // returning the json response...
-                    echo json_encode($response);
-                    exit;
+                    getCourseIntake($wpdb, $course_id);
                 }
+                break;
+
+            case 'courseIntakeByStudent':
+                if (studentVerify()) {
+                    getCourseIntake($wpdb, $course_id);
+                }
+
                 break;
 
             // when user clicks on apply button to apply for particular course...
             case 'applyCourseByStudent':
                 if (studentVerify()) {
 
-                    $id = $payload->userId;
-                    echo $id;
-                    die;
+                    $student_id = $payload->userId;
 
+                    if (empty($_POST['intake'][0]['value'])) {
+                        throw new Exception("Please select the intake you want");
+                    }
+                    $course_id = base64_decode($_POST['course']);
+
+                    // query to check whether that school applications are managed by staff or by itself...
+                    $application_manage = $wpdb->get_results("select id,staff from school where id
+                                        =(select school_id from courses where id=" . $course_id . ")");
+
+                    // to get the staff from school table....
+                    $manage_staff = $application_manage[0]->staff;
+                    $school_id = $application_manage[0]->id;
+
+                    // if the staff is 1...
+                    if ($manage_staff) {
+
+                        // 1 if applications to be manage by staff...
+                        $manage_by = '1';
+                    }
+                    // else it will be manage by school themeself...
+                    else {
+
+                        // 0 if application to be manage by school...
+                        $manage_by = '0';
+                    }
+
+                    $intake = json_encode(explode("/", $_POST['intake'][0]['value']));
+
+                    $stu_exist = $wpdb->get_results("select * from users where id=" . $student_id . " && role='1'");
+
+                    if (empty($stu_exist)) {
+                        throw new Exception("Student does not exist.Invalid student id");
+                    }
+
+                    $insert_app = ['student_id' => $student_id, 'school_id' => $school_id, 'course_id' => $course_id,
+                        'intake' => $intake, 'manage_by' => $manage_by, 'created_at' => Date('Y-m-d h:i:s')];
+
+                    // insert the application record in applications table...
+                    $application_res = $wpdb->insert('applications', $insert_app);
+
+                    // if application submitted successfully...
+                    if ($application_res) {
+                        $response = ['status' => Success_Code, 'message' => 'your application submitted Successfully'];
+                    } else {
+                        throw new Exception("Application not created due to internal server error");
+                    }
                 }
                 break;
 
@@ -135,6 +166,32 @@ else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
 }
 
+function getCourseIntake($wpdb, $course_id)
+{
+
+    $data = $wpdb->get_results("select intake from courses where id=" . $course_id);
+    $intakes = json_decode($data[0]->intake, true);
+    $intake_months = $wpdb->get_results("select id,name from intakes where status='1' && id in (" . implode(",", $intakes) . ")");
+
+    // get the current month...
+    $month = date('m');
+
+    foreach ($intake_months as $key => $obj) {
+
+        if ($obj->id >= $month) {
+            $intake_avail[] = ['id' => $obj->id, 'name' => $obj->name];
+        } else {
+            $intake_avail_next[] = ['id' => $obj->id, 'name' => $obj->name];
+        }
+    }
+    $response = ['status' => Success_Code, 'message' => 'Intake Fetched successfully',
+        'intake_avail' => $intake_avail, 'intake_avail_next' => $intake_avail_next];
+
+    // returning the json response...
+    echo json_encode($response);
+    exit;
+}
+
 function applyCourseByAgent($wpdb, $id)
 {
 
@@ -155,8 +212,8 @@ function applyCourseByAgent($wpdb, $id)
 
     // to get the staff from school table....
     $manage_staff = $application_manage[0]->staff;
-    $school_id=$application_manage[0]->id;
-    
+    $school_id = $application_manage[0]->id;
+
     // if the staff is 1...
     if ($manage_staff) {
 

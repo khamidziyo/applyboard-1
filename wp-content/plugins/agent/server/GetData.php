@@ -146,7 +146,7 @@ function getFormData($wpdb)
     $country_data = $wpdb->get_results($country_sql);
 
     // sql to get all the grades...
-    $grade_scheme_sql = "select id,grade_scheme from grade where status='1'";
+    $grade_scheme_sql = "select id,name from grade where status='1'";
     $grade_data = $wpdb->get_results($grade_scheme_sql);
 
     // sql to get all the exams...
@@ -193,7 +193,7 @@ function getGradeSchemeById($wpdb)
     $id = $_GET['id'];
 
     // sql to get all the exams of specific language...
-    $grade_sql = "select id,grade_scheme from grade where id=" . $id;
+    $grade_sql = "select id,name from grade where id=" . $id;
     $grade_data = $wpdb->get_results($grade_sql);
 
     // storing all data in an array...
