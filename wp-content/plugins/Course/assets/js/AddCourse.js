@@ -1,17 +1,5 @@
 $(document).ready(function () {
     ajaxToGetCourseData();
-
-    $("#c_st_date").datepicker({
-        changeMonth: true,
-        changeYear: true,
-    });
-    $("#c_st_date").datepicker('setDate', 'Today');
-
-    $("#c_end_date").datepicker({
-        changeMonth: true,
-        changeYear: true
-    });
-
 })
 
 
@@ -57,9 +45,9 @@ function ajaxToGetCourseData() {
                     }
 
                     if (response.hasOwnProperty('c_intake')) {
-                        var html ="";
+                        var html = "";
                         $.each(response.c_intake, function (k, obj) {
-                            html += "<option value=" + obj.id + ">" + obj.name + "</option>";
+                            html += "<option class='month' value='" + obj.id + "' month_name='" + obj.name + "'>" + obj.name + "&nbsp;&nbsp;" + obj.year + "</option>";
                         })
                         $("#intake").html(html);
 
@@ -72,10 +60,7 @@ function ajaxToGetCourseData() {
                     }
 
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
                 }
             } else {
                 redirectLogin();
@@ -83,14 +68,34 @@ function ajaxToGetCourseData() {
 
         },
         error: function (err) {
-            swal({
-                title: 'Internal Error',
-                icon: 'error'
-            })
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
         }
     });
 }
 
+
+$("#intake").change(function (evt, params) {
+    alert($(this).children("option").prop('checked'));
+
+    if ($(this).prop('checked')) {
+
+        var name = $(this).children("option:selected").attr('month_name');
+        console.log(name);
+        var d = new Date();
+        var year = d.getFullYear();
+        var val = $(this).val();
+        var html = "<span id=" + name + ">Enter start and end date of " + name + " intake";
+        html += "<p>Start Date</p><input type='text' class='start" + name + year + "' name=start_date[" + val + "][" + year + "] required>";
+        html += "<p>End Date</p><input type='text' class='end" + name + year + "' name=end_date[" + val + "][" + year + "] required>";
+        html += "</span><br>";
+        $("#intakes").append(html);
+    } else {
+        $("#" + name).html('');
+    }
+
+
+})
 $("#eng_prof_test").click(function () {
     var chk = $(this).prop('checked');
     if (chk) {

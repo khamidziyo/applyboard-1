@@ -6,8 +6,8 @@ viewStudentApplication();
 function viewStudentApplication() {
 
     $("#student_application").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [10, 20, 30, 40],
+        "pageLength": 10,
         "processing": true,
         "serverSide": true,
         "order": [0, 'desc'],

@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    var student_id;
+
     const queryString = window.location.search;
 
     const urlParams = new URLSearchParams(queryString);
@@ -66,3 +68,63 @@ function viewApplications(data) {
         }
     });
 }
+
+$("#add_more_btn").click(function () {
+    var html = "<span><input type='file' name='upload_document[]' required><button class='btn btn-danger remove_btn'>Remove</button></span><br>";
+    $("#add_more_docs").append(html);
+})
+
+$(document).on('click', '.remove_btn', function () {
+    $(this).parent().remove();
+})
+
+$(document).on('click', '.upload_document', function () {
+    student_id = $(this).attr('data_id');
+    $("#document_modal").modal('show');
+})
+
+$("#upload_document_form").submit(function (e) {
+    e.preventDefault();
+
+    var form = document.getElementById('upload_document_form');
+    var form_data = new FormData(form);
+    form_data.append('student_id', student_id);
+
+    form_data.append('val', 'uploadDocument');
+
+    $.ajax({
+        url: agent_server_url + "UploadDocument.php",
+        type: "post",
+        data: form_data,
+        dataType: 'json',
+        processData: false,
+        contentType: false,
+        beforeSend: function (request) {
+            $("#upload_btn").attr('disabled', true);
+            if (!appendToken(request)) {
+                agentRedirectLogin();
+            }
+        }, success: function (response) {
+            $("#upload_btn").attr('disabled', false);
+            if (verifyToken(response)) {
+
+                sweetalert(response);
+
+                if (response.status == 200) {
+                    form.reset();
+                    
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                }
+
+            } else {
+                agentRedirectLogin();
+            }
+        }, error: function (err) {
+            $("#upload_btn").attr('disabled', false);
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
+        }
+    })
+})

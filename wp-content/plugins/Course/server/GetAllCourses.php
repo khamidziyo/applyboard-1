@@ -29,12 +29,13 @@ if (!empty($_GET['val'])) {
                     $start = $_GET['start'];
                     $length = $_GET['length'];
                     $limit = "limit " . $start . "," . $length;
-
+                    // echo $start;
+                    // die;
                     $sort_arr = ['id'];
 
                     $order_by = "order by " . $sort_arr[$_GET['order'][0][column]] . " " . $_GET['order'][0][dir];
 
-                    $srch_arr = ['c.id', 'c.name', 'c.code', 'c.start_date', 'c.end_date', 'c.created_at', 'type.name', 'category.name'];
+                    $srch_arr = ['c.id', 'c.name', 'c.code', 'c.created_at', 'type.name', 'category.name'];
 
                     if (!empty($_GET['search'][value])) {
                         $where = "&& ";
@@ -51,14 +52,13 @@ if (!empty($_GET['val'])) {
 
                     $school_id = $payload->userId;
 
-                    $sql = "select c.id,c.name,c.code,c.start_date,c.end_date,c.created_at,type.name as
-                     t_name,category.name as cat_name  from courses as c join type on type.id=c.type_id
+                    $sql = "select c.id,c.name,c.code,c.created_at,type.name as t_name,category.name as cat_name  from courses as c join type on type.id=c.type_id
                       join category  on c.category_id=category.id where c.school_id=" . $school_id;
 
-                    $total_records = $wpdb->get_results($sql.$where);
+                    $total_records = $wpdb->get_results($sql . $where);
 
                     $sql = $sql . " " . $where . " " . $order_by . " " . $limit;
-           
+
                     $display_records = $wpdb->get_results($sql);
 
                     if (!empty($display_records)) {
@@ -69,9 +69,8 @@ if (!empty($_GET['val'])) {
                             $record[] = $obj->code;
                             $record[] = $obj->t_name;
                             $record[] = $obj->cat_name;
-                            $record[] = date("d-m-Y", strtotime($obj->start_date));
-                            $record[] = date("d-m-Y", strtotime($obj->end_date));
                             $record[] = date("d-m-Y", strtotime($obj->created_at));
+                            $record[] = "<button class='btn btn-default intake' c_id=$obj->id>Intake</button>";
 
                             $record[] = "<input type='button' value='View' c_id=" . base64_encode($obj->id) . " class='btn btn-primary view'>&nbsp;&nbsp;
                     <input type='button' value='Edit' c_id=" . base64_encode($obj->id) . " class='btn btn-primary edit'>&nbsp;&nbsp;

@@ -52,13 +52,13 @@ if (!empty($_GET['val'])) {
                     $id = $payload->userId;
                     $agent = $wpdb->get_results("select id,created_by,permission from agents where
                     id=$id");
-                 
+
                     if ($agent[0]->permission) {
                         $agent_id = $agent[0]->created_by;
                         $agent_ids = $id . "," . $agent_id;
-                     
+
                         $where_agent = " where applications.agent_id in (" . $agent_ids . ")";
-     
+
                     } else {
                         $where_agent = " where applications.agent_id=" . $id;
                     }
@@ -110,55 +110,56 @@ function getApplicationsByAgents($wpdb, $where_agent)
         }
     }
 
-        // repalcing the 'or' from last of the string...
-        $where = substr_replace($where, '', -3);
+    // repalcing the 'or' from last of the string...
+    $where = substr_replace($where, '', -3);
 
-        $sql = "select applications.*,s.name as s_name,c.name as c_name,CONCAT( users.f_name,' ',users.l_name)
-        AS u_name,agents.name as agent_name from agents join applications on 
+    $sql = "select applications.*,s.name as s_name,c.name as c_name,users.id as u_id,CONCAT( users.f_name,' ',users.l_name)
+        AS u_name,agents.name as agent_name from agents join applications on
         applications.agent_id=agents.id join users on users.id=applications.student_id join school as s
-         on s.id=applications.school_id join courses as c on c.id=applications.course_id ".$where."&&
+         on s.id=applications.school_id join courses as c on c.id=applications.course_id " . $where . "&&
         applications.student_id=" . $student_id;
-  
-        // query to get the total results...
-        $total_applications = $wpdb->get_results($sql.$where);
 
-        $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
+    // query to get the total results...
+    $total_applications = $wpdb->get_results($sql . $where);
 
-        // query to display the filter results....
-        $display_applications = $wpdb->get_results($sql);
+    $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
 
-        // if the records is not empty...
-        if (!empty($display_applications)) {
-            foreach ($display_applications as $key => $obj) {
-                $record = [];
-                $record[] = $obj->id;
-                $record[] = $obj->u_name;
-                $record[] = $obj->agent_name;
-                $record[] = $obj->s_name;
-                $record[] = $obj->c_name;
-                $record[] = Date('d-m-Y', strtotime($obj->created_at));
+    // query to display the filter results....
+    $display_applications = $wpdb->get_results($sql);
 
-                if ($obj->status == '0') {
-                    $record[] = "Pending";
-                } elseif ($obj->status == '1') {
-                    $record[] = "Approved";
-                } elseif ($obj->status == '2') {
-                    $record[] = "Decline";
-                }
-                $record[] = "<input type='button' value='Delete Application'
-                        class='btn btn-danger delete_application' data_id=" . base64_encode($obj->id) . ">";
+    // if the records is not empty...
+    if (!empty($display_applications)) {
+        foreach ($display_applications as $key => $obj) {
+            $record = [];
+            $record[] = $obj->id;
+            $record[] = $obj->u_name;
+            $record[] = $obj->agent_name;
+            $record[] = $obj->s_name;
+            $record[] = $obj->c_name;
+            $record[] = Date('d-m-Y', strtotime($obj->created_at));
 
-                $output['aaData'][] = $record;
+            if ($obj->status == '0') {
+                $record[] = "Pending";
+            } elseif ($obj->status == '1') {
+                $record[] = "Approved";
+            } elseif ($obj->status == '2') {
+                $record[] = "Decline";
             }
-            $output['iTotalDisplayRecords'] = count($total_applications);
-            $output['iTotalRecords'] = count($display_applications);
-        } else {
-            $output['aaData'] = [];
-            $output['iTotalDisplayRecords'] = 0;
-            $output['iTotalRecords'] = 0;
-        }
+            $record[] = "<input type='button' value='Delete Application'class='btn btn-danger delete_application'
+                data_id=" . base64_encode($obj->id) . "><button class='btn btn-primary upload_document'
+                 data_id=$obj->u_id>Upload Documents</button>";
 
-        // return the json output...
-        echo json_encode($output);
-        exit;
+            $output['aaData'][] = $record;
+        }
+        $output['iTotalDisplayRecords'] = count($total_applications);
+        $output['iTotalRecords'] = count($display_applications);
+    } else {
+        $output['aaData'] = [];
+        $output['iTotalDisplayRecords'] = 0;
+        $output['iTotalRecords'] = 0;
     }
+
+    // return the json output...
+    echo json_encode($output);
+    exit;
+}

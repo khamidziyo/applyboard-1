@@ -41,9 +41,6 @@ if (!empty($course_data)) {
 
     <p>Course Duration: <b><?=$duration['day_span'] . " " . $duration['time_span']?></b></p>
 
-    <p>Course Start Date: <b><?=date('d/m/Y', strtotime($course_data[0]->start_date))?></b></p>
-
-    <p>Course End Date: <b><?=date('d/m/Y', strtotime($course_data[0]->end_date))?></b></p>
     <p>Course Intake : <b>
     <?php
             echo "<ul>";

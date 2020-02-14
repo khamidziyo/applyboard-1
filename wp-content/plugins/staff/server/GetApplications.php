@@ -29,9 +29,11 @@ if (!empty($_GET['val'])) {
                     $sql = "SELECT app.*,u.id as stu_id, concat(u.f_name,'',u.l_name) as stu_name,agents.id as agent_id,
                     agents.name as agent_name,c.id as c_id,c.name as c_name,s.id as s_id,s.name as s_name FROM applications
                      as app JOIN users as u ON u.id=app.student_id JOIN school as s on s.id=app.school_id JOIN courses as c
-                      ON c.id=app.course_id LEFT JOIN agents ON agents.id=app.agent_id where is_reviewed='0'";
+                      ON c.id=app.course_id LEFT JOIN agents ON agents.id=app.agent_id";
 
-                    getApplications($wpdb, $sql);
+                    $id = $payload->userId;
+
+                    getApplications($wpdb, $sql, $id);
 
                     break;
 
@@ -43,7 +45,7 @@ if (!empty($_GET['val'])) {
                      as app JOIN users as u ON u.id=app.student_id JOIN school as s on s.id=app.school_id JOIN courses as c
                       ON c.id=app.course_id LEFT JOIN agents ON agents.id=app.agent_id where is_reviewed='1' && review_by=" . $id;
 
-                    getApplications($wpdb, $sql);
+                    getApplications($wpdb, $sql, $id);
                     break;
 
                 default:
@@ -59,7 +61,7 @@ if (!empty($_GET['val'])) {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
 }
 
-function getApplications($wpdb, $sql)
+function getApplications($wpdb, $sql, $id)
 {
     $start = $_GET['start'];
     $length = $_GET['length'];
@@ -78,7 +80,7 @@ function getApplications($wpdb, $sql)
 
     // if search value is not empty....
     if (!empty($_GET['search'][value])) {
-        $where = '&& ';
+        $where = ' where ';
 
         $srch_val = $_GET['search'][value];
         foreach ($srch_arr as $col_name) {
@@ -94,6 +96,7 @@ function getApplications($wpdb, $sql)
 
     $sql = $sql . ' ' . $where . ' ' . $order_by . ' ' . $limit;
 
+    // echo $sql;die;
     // query to display the applications per page....
     $display_applications = $wpdb->get_results($sql);
 
@@ -142,15 +145,23 @@ function getApplications($wpdb, $sql)
                  <option value='1'" . $approve . ">Approve</option>
                  <option value='2'" . $decline . ">Decline</option>
                  </select>";
+
+                if ($obj->review_by = $id) {
+                    $record[] = "Reviewing by me";
+                }
+                // if application is not reviewed by me...
+                else {
+                    $staff_id = $obj->review_by;
+                    $staff = $wpdb->get_results("select id,name from staff where id=" . $staff_id);
+
+                    $staff_name = $staff[0]->name;
+
+                    $record[] = "Reviewing By " . $staff_name;
+                }
+
             } else {
                 $record[] = "Pending";
-
-            }
-
-            if ($obj->is_reviewed == '0') {
                 $record[] = "<input type='button' class='btn btn-primary mark_review' value='Mark Review' data_id='" . $obj->id . "'>";
-            } else {
-                $record[] = "<input type='button' class='btn btn-success' value='Reviewed'>";
             }
 
             $output['aaData'][] = $record;

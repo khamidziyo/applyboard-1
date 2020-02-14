@@ -65,22 +65,14 @@ function addCourse()
    </select>
     </div>
 
-    <div class="form-group">
-      <label for="c_st_date">Course Start Date (required)</label>
-	 <input type="text" class="form-control" name="c_st_date" id="c_st_date"  value="<?=!empty($course_data) ? $course_data[0]->start_date : ''?>" size="40" required/>
-	 </div>
-
-   <div class="form-group">
-      <label for="c_end_date">Course End Date (required)</label>
-      <input type="text"   name="c_end_date" id="c_end_date" class="form-control" placeholder="Enter course end date" value="<?=!empty($course_data) ? $course_data[0]->end_date : ''?>" size="40" required/>
-      </div>
-
    <div class="form-group">
       <label for="intake">Intakes</label>
 
       <select class="form-control" id="intake" name="intake[]" multiple required>
         <option selected disabled>Select Intake</option>
       </select>
+
+      <span id="intakes"></span>
     </div>
 
 
