@@ -33,7 +33,7 @@ function viewAllCourse()
     <span id="intakes"></span>
     </div>
     <div class = 'modal-footer'>
-    <button type = 'submit' class = 'btn btn-success' id = 'apply_btn'>Apply Now</button>
+    <button type = 'submit' class = 'btn btn-success' id = 'apply_btn'>Add Intake</button>
     </form>
 
     <button type = 'button' class = 'btn btn-default' data-dismiss = 'modal'>Close</button>

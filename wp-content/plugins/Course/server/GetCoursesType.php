@@ -24,34 +24,9 @@ if (!empty($_GET['data'])) {
             $c_categories = $wpdb->get_results("select * from category where status='1'");
             $c_language = $wpdb->get_results("select * from language where status='1'");
 
-            $month = Date('m');
-            // echo $month;
-            // die;
-
-            $c_intake_next = $wpdb->get_results("select * from intakes where status='1' && id>" . $month);
-            $nxt_intakes = [];
-            $previous_intakes = [];
-
-            if (!empty($c_intake_next)) {
-                foreach ($c_intake_next as $key => $obj) {
-                    $obj->year = Date('Y');
-                    $nxt_intakes[] = $obj;
-                }
-            }
-
-            $c_intake_previous = $wpdb->get_results("select * from intakes where status='1' && id<=" . $month);
-
-            if (!empty($c_intake_previous)) {
-                foreach ($c_intake_previous as $key => $obj) {
-                    $obj->year = Date('Y') + 1;
-                    $previous_intakes[] = $obj;
-                }
-            }
-
-            $c_intakes = array_merge($nxt_intakes, $previous_intakes);
 
             $response = ['status' => 200, 'c_type' => $c_types, 'c_category' => $c_categories,
-                'c_language' => $c_language, 'c_intake' => $c_intakes];
+                'c_language' => $c_language];
 
         }
     } catch (Exception $e) {

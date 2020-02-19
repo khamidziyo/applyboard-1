@@ -44,21 +44,6 @@ function ajaxToGetCourseData() {
                         $("#language_of_instruction").html(html);
                     }
 
-                    if (response.hasOwnProperty('c_intake')) {
-                        var html = "";
-                        $.each(response.c_intake, function (k, obj) {
-                            html += "<option class='month' value='" + obj.id + "' month_name='" + obj.name + "'>" + obj.name + "&nbsp;&nbsp;" + obj.year + "</option>";
-                        })
-                        $("#intake").html(html);
-
-                        $('#intake').multiselect({
-                            columns: 1,
-                            placeholder: 'Select Intakes',
-                            search: true,
-                            selectAll: true
-                        });
-                    }
-
                 } else {
                     errorSwal(response);
                 }
@@ -74,28 +59,6 @@ function ajaxToGetCourseData() {
     });
 }
 
-
-$("#intake").change(function (evt, params) {
-    alert($(this).children("option").prop('checked'));
-
-    if ($(this).prop('checked')) {
-
-        var name = $(this).children("option:selected").attr('month_name');
-        console.log(name);
-        var d = new Date();
-        var year = d.getFullYear();
-        var val = $(this).val();
-        var html = "<span id=" + name + ">Enter start and end date of " + name + " intake";
-        html += "<p>Start Date</p><input type='text' class='start" + name + year + "' name=start_date[" + val + "][" + year + "] required>";
-        html += "<p>End Date</p><input type='text' class='end" + name + year + "' name=end_date[" + val + "][" + year + "] required>";
-        html += "</span><br>";
-        $("#intakes").append(html);
-    } else {
-        $("#" + name).html('');
-    }
-
-
-})
 $("#eng_prof_test").click(function () {
     var chk = $(this).prop('checked');
     if (chk) {

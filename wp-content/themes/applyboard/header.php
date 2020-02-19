@@ -15,8 +15,10 @@
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/font-awesome.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.dataTables.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery-ui.css')?>">
-		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>">
-
+		<!-- <link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>"> -->
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/multi-select.css')?>">
+		
+		
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/bootstrap.min.js")?>"></script>
@@ -24,8 +26,10 @@
 
 		<script src="<?=content_url("themes/applyboard/js/datatable.min.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/server_url.js")?>"></script>
-		<script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multiselect.js")?>"></script>
-
+		<!-- <script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multiselect.js")?>"></script> -->
+		<script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multi-select.js")?>"></script>
+		
+		
     	<script type="text/javascript" src="<?=content_url("plugins/common/token.js")?>"></script>
 		<script type="text/javascript" src="<?=content_url("plugins/common/sweetalert.js")?>"></script>
 

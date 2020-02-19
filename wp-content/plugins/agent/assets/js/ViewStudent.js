@@ -1,5 +1,6 @@
 
 if (localStorage.getItem('data') != null) {
+    
     var local_data = JSON.parse(localStorage.getItem('data'));
 
     switch (local_data.role) {

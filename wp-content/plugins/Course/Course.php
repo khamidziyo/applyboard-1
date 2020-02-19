@@ -9,20 +9,18 @@
  * Author:            Mukul
  * Author URI:        https://author.example.com/
  * License:           GPL v2 or later
-* License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-* Text Domain:       Course
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       Course
  * Domain Path:        languages
-*/
-
+ */
 
 include_once 'server/functions.php';
 
-
 // function to view all courses
 
-$view_arr = ['AddCourse', 'ViewAllCourse', 'ViewCourse'];
+$view_arr = ['AddCourse', 'ViewAllCourse', 'ViewCourse', 'AddIntake'];
 foreach ($view_arr as $view_name) {
-    if(file_exists("views/" . $view_name . ".php")){
+    if (file_exists("views/" . $view_name . ".php")) {
         echo "views/" . $view_name . ".php";
 
     }

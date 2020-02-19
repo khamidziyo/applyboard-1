@@ -94,6 +94,24 @@ function viewCourses() {
 //                         }
 //                     }
 //                     $("#intakes").html(avail_html);
+
+//                     // if (response.hasOwnProperty('current_course_intakes')) {
+
+//                     //     if (response.current_course_intakes != null) {
+
+//                     //         $.each(response.current_course_intakes, function (k, obj) {
+//                     //             $('.intake_month[value='+obj.intake_id+']').prop('checked', true);
+//                     //             // console.log(obj.start_date + " " + obj.end_date);
+
+//                     //             // date_html += "<p>Start Date</p><input type='text' class='start" + month_name + year + "' name=start_date[" + month_id + "][" + year + "] required>";
+//                     //             // date_html += "<p>End Date</p><input type='text' class='end" + month_name + year + "' name=end_date[" + month_id + "][" + year + "] required>";
+//                     //             // $("#" + month_name).html(date_html);
+//                     //         })
+//                     //     }
+//                     // }
+
+//                     // console.log(response.current_course_intakes);
+
 //                 } else {
 //                     errorSwal(response);
 //                 }
@@ -110,31 +128,40 @@ function viewCourses() {
 
 // });
 
-$(document).on('click', '.intake_month', function () {
-    var date_html = "";
-    var month_id = $(this).val();
-    var year = $(this).attr('year');
-    var month_name = $(this).attr('data_name');
+$(document).on('click', '.add_intake', function () {
+    var c_id = $(this).attr('c_id');
 
-    if ($(this).prop('checked')) {
-        date_html += "<p>Start Date</p><input type='text' class='start" + month_name + year + "' name=start_date[" + month_id + "][" + year + "] required>";
-        date_html += "<p>End Date</p><input type='text' class='end" + month_name + year + "' name=end_date[" + month_id + "][" + year + "] required>";
-        $("#" + month_name).html(date_html);
-    } else {
-        $("#" + month_name).html('');
-    }
-    var startDate = new Date(year, month_id - 1);
-    var endDate = new Date(year, month_id, 0);
-
-
-    $(".start" + month_name + year).datepicker();
-    $(".end" + month_name + year).datepicker();
-
-    $(".start" + month_name + year).datepicker("setDate", startDate);
-
-    $(".end" + month_name + year).datepicker("setDate", endDate);
-
+    window.location.href = base_url + "add-intake?c_id=" + btoa(c_id);
 });
+
+
+
+
+// $(document).on('click', '.intake_month', function () {
+//     var date_html = "";
+//     var month_id = $(this).val();
+//     var year = $(this).attr('year');
+//     var month_name = $(this).attr('data_name');
+
+//     if ($(this).prop('checked')) {
+//         date_html += "<p>Start Date</p><input type='text' class='start" + month_name + year + "' name=start_date[" + month_id + "][" + year + "] required>";
+//         date_html += "<p>End Date</p><input type='text' class='end" + month_name + year + "' name=end_date[" + month_id + "][" + year + "] required>";
+//         $("#" + month_name).html(date_html);
+//     } else {
+//         $("#" + month_name).html('');
+//     }
+//     var startDate = new Date(year, month_id - 1);
+//     var endDate = new Date(year, month_id, 0);
+
+
+//     $(".start" + month_name + year).datepicker();
+//     $(".end" + month_name + year).datepicker();
+
+//     $(".start" + month_name + year).datepicker("setDate", startDate);
+
+//     $(".end" + month_name + year).datepicker("setDate", endDate);
+
+// });
 
 
 

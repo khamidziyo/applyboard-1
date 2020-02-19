@@ -9,10 +9,12 @@ function addCourse()
         $course_id = base64_decode($_GET['c_id']);
 
         $course_data = getCourseDetailById($course_id);
-        // echo "<pre>";
-        // print_r($course_data);
 
+        $intakes = json_decode($course_data[0]->intake, true);
+        // echo "<pre>";
+        // print_r($intakes);
         ?>
+
     <h2>Update Course !</h2>
     <?php
 
@@ -64,17 +66,6 @@ function addCourse()
    <option selected disabled> Select Course Category</option>
    </select>
     </div>
-
-   <div class="form-group">
-      <label for="intake">Intakes</label>
-
-      <select class="form-control" id="intake" name="intake[]" multiple required>
-        <option selected disabled>Select Intake</option>
-      </select>
-
-      <span id="intakes"></span>
-    </div>
-
 
 
 <?php
@@ -187,6 +178,9 @@ if (!empty($course_data)) {
         ?>
      <span id="exam_test">
 
+     <?php
+
+        ?>
 
       <script>
    setTimeout(function(){
@@ -194,7 +188,7 @@ if (!empty($course_data)) {
       $('#course_category').children("option[value="+<?=$course_data[0]->category_id?>+"]").attr('selected',true)
       $('#course_type').children("option[value="+<?=$course_data[0]->type_id?>+"]").attr('selected',true)
 
-    },3000);
+    },1000);
    </script>
 
 

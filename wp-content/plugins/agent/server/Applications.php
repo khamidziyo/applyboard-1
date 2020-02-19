@@ -138,16 +138,19 @@ function getApplicationsByAgents($wpdb, $where_agent)
             $record[] = $obj->c_name;
             $record[] = Date('d-m-Y', strtotime($obj->created_at));
 
+            $upload_btn = "";
+
             if ($obj->status == '0') {
+                $upload_btn = "<button class='btn btn-primary upload_document' data_id=$obj->u_id>Upload Documents</button>";
                 $record[] = "Pending";
+
             } elseif ($obj->status == '1') {
                 $record[] = "Approved";
             } elseif ($obj->status == '2') {
                 $record[] = "Decline";
             }
             $record[] = "<input type='button' value='Delete Application'class='btn btn-danger delete_application'
-                data_id=" . base64_encode($obj->id) . "><button class='btn btn-primary upload_document'
-                 data_id=$obj->u_id>Upload Documents</button>";
+                data_id=" . base64_encode($obj->id) . ">".$upload_btn;
 
             $output['aaData'][] = $record;
         }

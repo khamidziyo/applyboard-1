@@ -31,7 +31,7 @@ if (!empty($_GET['val'])) {
                     $limit = "limit " . $start . "," . $length;
                     // echo $start;
                     // die;
-                    $sort_arr = ['id'];
+                    $sort_arr = ['id','c.name','c.code'];
 
                     $order_by = "order by " . $sort_arr[$_GET['order'][0][column]] . " " . $_GET['order'][0][dir];
 
@@ -70,7 +70,7 @@ if (!empty($_GET['val'])) {
                             $record[] = $obj->t_name;
                             $record[] = $obj->cat_name;
                             $record[] = date("d-m-Y", strtotime($obj->created_at));
-                            $record[] = "<button class='btn btn-default intake' c_id=$obj->id>Intake</button>";
+                            $record[] = "<button class='btn btn-default add_intake' c_id=$obj->id>Add Intake</button>";
 
                             $record[] = "<input type='button' value='View' c_id=" . base64_encode($obj->id) . " class='btn btn-primary view'>&nbsp;&nbsp;
                     <input type='button' value='Edit' c_id=" . base64_encode($obj->id) . " class='btn btn-primary edit'>&nbsp;&nbsp;
@@ -91,7 +91,7 @@ if (!empty($_GET['val'])) {
             }
         }
     } catch (Exception $e) {
-        $response = ['status' => 400, 'message' => $e->getMessage()];
+        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
         echo json_encode($response);
 
     }

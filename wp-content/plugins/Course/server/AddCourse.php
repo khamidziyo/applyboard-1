@@ -77,12 +77,6 @@ if (!empty($_POST)) {
                 throw new Exception('Domestic tution fees cannot be greater than total fees');
             }
 
-            if (empty($_POST['intake'])) {
-                throw new Exception("Please select the course intake");
-            }
-
-            $intakes = json_encode($_POST['intake']);
-
             // update course ...
             if (!empty($_POST['course_id'])) {
                 $c_id = $_POST['course_id'];
@@ -136,7 +130,7 @@ if (!empty($_POST)) {
 
                 $update_course_arr = ['name' => $_POST['course_name'], 'code' => $_POST['course_code'],
                     'description' => $_POST['course_description'], 'type_id' => $_POST['course_type'], 'category_id' => $_POST['category'],
-                    'intake' => $intakes, 'duration' => $duration, 'application_fee' => $_POST['app_fee'], 'int_tution_fee' => $_POST['int_tution_fee'],
+                    'duration' => $duration, 'application_fee' => $_POST['app_fee'], 'int_tution_fee' => $_POST['int_tution_fee'],
                     'int_total_fee' => $_POST['int_total_fee'], 'dom_tution_fee' => $_POST['dom_tution_fee'],
                     'dom_total_fee' => $_POST['dom_total_fee'], 'internship' => $_POST['internship'],
                     'language_id' => $_POST['language_of_instruction'], 'process_time' => $process_time,
