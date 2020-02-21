@@ -48,11 +48,13 @@ if (!empty($_GET['val'])) {
                     }
 
                     $intake = json_decode($user[0]->intake, true);
-                    $month = $intake[0];
-                    $year = $intake[1];
-                    $intake_month = $wpdb->get_results("select name from intakes where id=" . $month);
+                    $year = $intake['year'];
 
-                    $intake = ['month' => $intake_month[0]->name, 'year' => $year];
+                    // get the month name from its id..
+                    $dateObj = DateTime::createFromFormat('!m', $intake['month']);
+                    $monthName = $dateObj->format('F');
+
+                    $intake = ['month' => $monthName, 'year' => $year];
 
                     $documents = $wpdb->get_results("select * from user_documents where user_id=" . $stu_id);
 

@@ -12,15 +12,15 @@ function getDataBYAjax(data) {
         url: school_server_url + 'GetProfileData.php',
         type: 'get',
         dataType: 'json',
+        data: data,
         async: false,
         beforeSend: function (request) {
             if (!appendToken(request)) {
 
                 // if the token is not in the localStorage...
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
-        data: data,
 
         // if there is a success response...
         success: function (response) {
@@ -70,24 +70,18 @@ function getDataBYAjax(data) {
                 }
                 // if any error response code 400...
                 else {
-                    // $("#" + val).html(html);
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
 
         // if not a success response...
         error: function (err) {
             console.error(err);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }
@@ -107,7 +101,7 @@ function getSchoolProfile() {
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
             if (!appendToken(request)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         success: function (response) {
@@ -186,21 +180,16 @@ function getSchoolProfile() {
                     }
 
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
             console.error(error);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }
@@ -296,7 +285,7 @@ function deleteCertificate(data) {
             if (!appendToken(request)) {
 
                 // if the token is not in the localStorage...
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
 
@@ -307,36 +296,25 @@ function deleteCertificate(data) {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
+                sweetalert(response);
                 // if status is 200...
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
-
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             }
 
             //if token not verified...
             else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
 
         // if error response from server...
         error: function (error) {
-            swal({
-                title: "Internal Server Error",
-                icon: "error"
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
             console.error(error);
         }
     })
@@ -381,7 +359,7 @@ $("#check_password").click(function () {
                 if (!appendToken(request)) {
 
                     // if the token is not in the localStorage...
-                    redirectLogin();
+                    schoolRedirectLogin();
                 }
             },
 
@@ -394,24 +372,23 @@ $("#check_password").click(function () {
 
                     // if status is 200...
                     if (response.status == 200) {
-                        window.location.href = base_url+"change-password/?tok=" + response.data.token;
+                        window.location.href = base_url + "change-password/?tok=" + response.data.token;
                     } else {
-                        swal({
-                            title: response.message,
-                            icon: 'error'
-                        })
+                        errorSwal(response);
                     }
                 }
 
                 //if token not verified...
                 else {
-                    redirectLogin();
+                    schoolRedirectLogin();
                 }
             },
 
             // if error response from server...
             error: function (error) {
                 console.error(error);
+                var response = { 'status': 400, 'message': 'Internal Server Error' };
+                errorSwal(response)
             }
         })
     }
@@ -438,38 +415,26 @@ $("#school_update_profile").submit(function (e) {
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
             if (!appendToken(request)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         success: function (response) {
             if (verifyToken(response)) {
-                if (response.status == 200) {
+                sweetalert(response);
 
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+                if (response.status == 200) {
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
-
-                    console.log(response);
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
             console.error(error);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 })
@@ -478,12 +443,3 @@ $("#school_update_profile").submit(function (e) {
 $("#change_password").click(function () {
     $("#password_modal").modal('show');
 })
-
-
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function () {
-        window.location.href = base_url+"school-login/";
-    }, 2000)
-}

@@ -21,12 +21,8 @@ function schoolDashboard() {
                     $("#application_decline").html(response.decline_application.total_dec_application);
                     $("#application_pending").html(response.pending_application.total_pen_application);
 
-
-
-
-
                 }
-                console.log(response);
+                // console.log(response);
             } else {
                 schoolRedirectLogin();
             }

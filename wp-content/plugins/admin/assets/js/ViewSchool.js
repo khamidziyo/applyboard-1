@@ -95,10 +95,8 @@ function deleteSchool(data) {
             }
         },
         error: function (error) {
-            swal({
-                title: response.message,
-                icon: 'error',
-            })
+            var response = { status: 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }

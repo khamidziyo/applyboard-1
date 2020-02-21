@@ -198,7 +198,7 @@ function getGradeSchemeById($wpdb)
 
     // storing all data in an array...
     $response = ['status' => Success_Code, 'message' => 'Grade scheme fetched successfully',
-        'grade_data' => json_decode($grade_data[0]->grade_scheme)];
+        'grade_data' => json_decode($grade_data[0]->name)];
     echo json_encode($response);
     exit;
 }

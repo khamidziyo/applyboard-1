@@ -1,17 +1,19 @@
-$(document).ready(function() {
-
+$(document).ready(function () {
     // signing in with facebook..
-    $('#facebook-button').on('click', function() {
+    $('#facebook-button').on('click', function () {
         // Initialize with your OAuth.io app public key
         OAuth.initialize(Facebook_Oauth_Key);
+
         // Use popup for oauth
         OAuth.popup('facebook').then(facebook => {
-            // console.log('facebook:', facebook);
+            console.log('facebook:', facebook);
 
             // Prompts 'welcome' message with User's email on successful login
             // #me() is a convenient method to retrieve user data without requiring you
             // to know which OAuth provider url to call
             facebook.me().then(data => {
+                console.log('me data:', data);
+
                 var data = {
                     val: "facebookLogin",
                     social_id: data.id,
@@ -30,7 +32,7 @@ $(document).ready(function() {
 
     // /signing in with google
 
-    $('#google-button').on('click', function() {
+    $('#google-button').on('click', function () {
         // Initialize with your OAuth.io app public key
         OAuth.initialize(Google_Oauth_Key);
         // Use popup for oauth
@@ -65,40 +67,31 @@ $(document).ready(function() {
     // function to login the user...
     function socialLogin(data) {
         $.ajax({
-            url: student_asset_url + "StudentLogin.php",
+            url: student_server_url + "StudentLogin.php",
             type: "post",
             dataType: "json",
             data: data,
-            success: function(response) {
+            success: function (response) {
+                sweetalert(response);
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+
                     localStorage.setItem('data', JSON.stringify(response.data));
 
                     // displaying the student dashboard page...
-                    setTimeout(function() {
-                        window.location.href = "http://localhost/wordpress/wordpress/index.php/student-dashboard/";
+                    setTimeout(function () {
+                        window.location.href = base_url + "student-dashboard/";
                     }, 2000);
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             },
-            error: function(err) {
-                swal({
-                    title: "Internal Server error while login.",
-                    icon: 'error'
-                })
+            error: function (err) {
+                var response = { status: 400, message: 'Internal Server error while login.' };
+                errorSwal(response);
             }
         })
     }
 
 
-    $("#student_login_form").submit(function(e) {
+    $("#student_login_form").submit(function (e) {
         e.preventDefault();
         $("#load_img").show();
         $("#sign_in").hide();
@@ -118,7 +111,7 @@ $(document).ready(function() {
             data: data,
             contentType: false,
             processData: false,
-            success: function(response) {
+            success: function (response) {
                 $("#load_img").hide();
                 $("#sign_in").show();
 
@@ -126,19 +119,17 @@ $(document).ready(function() {
 
                     // if status is suuccess...
                     case 200:
-                        swal({
-                            title: response.message,
-                            icon: 'success'
-                        })
+                        sweetalert(response)
+
                         localStorage.setItem('data', JSON.stringify(response.data));
 
                         // displaying the student dashboard page...
-                        setTimeout(function() {
-                            window.location.href = "http://localhost/wordpress/wordpress/index.php/student-dashboard/";
+                        setTimeout(function () {
+                            window.location.href = base_url + "student-dashboard/";
                         }, 2000);
                         break;
 
-                        // if user is not verified...
+                    // if user is not verified...
                     case 209:
                         // displaying warning message...
                         swal({
@@ -148,7 +139,7 @@ $(document).ready(function() {
                                 'Cancel',
                                 'Yes Verify'
                             ]
-                        }).then(function(val) {
+                        }).then(function (val) {
                             if (val) {
                                 $("#load_img").show();
                                 $("#sign_in").hide();
@@ -159,52 +150,33 @@ $(document).ready(function() {
                                     type: "post",
                                     data: response.data,
                                     dataType: "json",
-                                    success: function(response) {
+                                    success: function (response) {
                                         $("#load_img").hide();
                                         $("#sign_in").show();
-
-                                        if (response.status == 200) {
-                                            swal({
-                                                title: response.message,
-                                                icon: "success"
-                                            })
-                                        } else {
-                                            swal({
-                                                title: response.message,
-                                                icon: "error"
-                                            })
-                                        }
+                                        sweetalert(response)
                                     },
-                                    error: function(error) {
+                                    error: function (error) {
                                         $("#load_img").hide();
                                         $("#sign_in").show();
-                                        swal({
-                                            title: "Internal Server Error",
-                                            icon: "error"
-                                        })
+                                        var response = { status: 400, 'message': 'Internal Server Error' };
+                                        errorSwal(response);
                                     }
                                 })
                             }
                         })
                         break;
 
-                        // if account is deactivated by admin...
+                    // if account is deactivated by admin...
                     case 400:
-
-                        swal({
-                            title: response.message,
-                            icon: "error"
-                        })
+                        errorSwal(response);
                         break;
                 }
             },
-            error: function(error) {
+            error: function (error) {
                 $("#load_img").hide();
                 $("#sign_in").show();
-                swal({
-                    title: "Internal server error",
-                    icon: 'error'
-                });
+                var response = { status: 400, 'message': 'Internal Server Error' };
+                errorSwal(response);
             }
         })
     })

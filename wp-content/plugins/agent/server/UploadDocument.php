@@ -23,7 +23,7 @@ if (!empty($_POST['val'])) {
             switch ($_POST['val']) {
                 case 'uploadDocument':
 
-                    $allowedTypes = ['jpg', 'jpeg', 'png', 'pdf'];
+                    $allowedTypes = ['jpg', 'jpeg', 'png', 'pdf','docx'];
 
                     if (empty($_POST['student_id'])) {
                         throw new Exception("Student id is required");
@@ -40,7 +40,7 @@ if (!empty($_POST['val'])) {
                         $doc_type = pathinfo($doc_name, PATHINFO_EXTENSION);
 
                         if (!in_array($doc_type, $allowedTypes)) {
-                            throw new Exception("Only jpg,jpeg and png formats are allowed");
+                            throw new Exception("Only jpg,jpeg,png,pdf and docs formats are allowed");
                         }
 
                         if ($_FILES['upload_document']['size'][$key] > 2 * 1024 * 1024) {

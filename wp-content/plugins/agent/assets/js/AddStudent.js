@@ -4,6 +4,9 @@ $("#dob").datepicker({
     changeYear: true,
     yearRange: "1980:2014"
 });
+
+
+
 var local_data;
 
 local_data = JSON.parse(localStorage.getItem('data'));
@@ -169,7 +172,7 @@ function getUserProfile(data) {
                         }
 
                         getStudentData(data);
-                        $("#grade_scheme").val(response.data.grade_scheme);
+                        $("#grade_scheme").val(response.data.name);
                         // console.log(response.data);
                     }
                     if (response.hasOwnProperty('documents')) {
@@ -232,16 +235,14 @@ function getStudentData(data) {
                     }
 
                     if (response.hasOwnProperty('grade')) {
-                        grade_html += "<option selected='selected' disabled>Select Grade</option>";
+                        grade_html+="<option selected disabled>Select Highest Qualification</option>";
 
                         // each loop to dynamically display all classes in drop down...
                         $.each(response.grade, function (k, obj) {
 
-                            // decoding the json...
-                            grades.push(JSON.parse(obj.grade_scheme));
-
                             // loop to get all the classess extracted from json...
-                            $.each(JSON.parse(obj.grade_scheme), function (grade) {
+                            $.each(JSON.parse(obj.name), function (grade) {
+                                // console.log(grade);
                                 grade_html += "<option value=" + obj.id + ">" + grade + "</option>";
                             })
 

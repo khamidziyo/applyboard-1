@@ -13,7 +13,8 @@
 /* Text Domain:       Staff
  * Domain Path:        languages
  **/
-$view_arr = ['StaffLogin','StaffDashboard','StaffProfile','ViewStudentApplications','ReviewApplication'];
+$view_arr = ['StaffLogin', 'StaffDashboard', 'StaffProfile', 'ViewStudentApplications',
+ 'ReviewApplication', 'ApplicationDetail'];
 
 foreach ($view_arr as $view_name) {
     include_once 'views/' . $view_name . '.php';

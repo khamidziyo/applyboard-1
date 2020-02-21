@@ -115,10 +115,11 @@ function getApplications($wpdb, $sql, $id)
             $record[] = $obj->stu_name . "<br><a href='" . base_url . 'student-detail?stu_id=' . base64_encode($obj->stu_id) . "' class='view_student'>View Student</a>";
             $intakes = json_decode($obj->intake, true);
 
-            $intake_month = $wpdb->get_results("select name from intakes where id=" . $intakes[0]);
-            $month = $intake_month[0]->name;
+            // get the month name from its id..
+            $dateObj = DateTime::createFromFormat('!m', $intakes['month']);
+            $monthName = $dateObj->format('F');
 
-            $record[] = $month . "-" . $intakes[1];
+            $record[] = $monthName . "-" . $intakes['year'];
             $record[] = Date('d-m-Y', strtotime($obj->created_at));
 
             $pending = false;
@@ -147,7 +148,8 @@ function getApplications($wpdb, $sql, $id)
                  </select>";
 
                 if ($obj->review_by = $id) {
-                    $record[] = "Reviewing by me";
+
+                    $record[] = "Reviewing by me. <br><a href='" . base_url . "application-detail?a_id=" . base64_encode($obj->id) . "'>View Application</a>";
                 }
                 // if application is not reviewed by me...
                 else {

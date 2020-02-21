@@ -155,11 +155,12 @@ function getEligibleCourses($wpdb, $student_id)
 
     $filter_sql = substr_replace($filter_sql, "", -3);
 
-    $order_by = 'order by ' . $sort_arr[$_GET['order'][0][column]] . ' ' . $_GET['order'][0][dir];
+    $order_by = 'order by ' . $sort_arr[$_GET['order'][0][column]] . ' ' . $_GET['order'][0][dir] . ' ';
 
     $srch_arr = ['c.id', 'c.name', 'c.code', 'type.name', 'category.name'];
 
     if (!empty($_GET['search'][value])) {
+        $where = "where ";
 
         $srch_val = $_GET['search'][value];
         foreach ($srch_arr as $col_name) {
@@ -171,15 +172,18 @@ function getEligibleCourses($wpdb, $student_id)
 
     $sql = "select c.id,c.name,c.code,c.exam_marks,s.name as s_name,type.name as type_name,
     category.name as category_name from courses as c join type on type.id=c.type_id join category
-    on category.id=c.category_id join school as s on s.id=c.school_id  " . $filter_sql . "order by id desc";
+    on category.id=c.category_id join school as s on s.id=c.school_id  " . $filter_sql;
+    // echo $sql;
+    // die;
+    $total_courses = $wpdb->get_results($sql . $where . $order_by);
 
-    $total_courses = $wpdb->get_results($sql);
+    $display_courses = $wpdb->get_results($sql . $where . $order_by . $limit);
 
     $user = $wpdb->get_results("select exam from users where id=$student_id");
 
     $user_exam = json_decode($user[0]->exam, true);
 
-    foreach ($total_courses as $key => $course_obj) {
+    foreach ($display_courses as $key => $course_obj) {
         $count = 0;
 
         $course_exam = json_decode($course_obj->exam_marks, true);
@@ -224,11 +228,38 @@ function getEligibleCourses($wpdb, $student_id)
             $record[] = $arr['code'];
             $record[] = $arr['type_name'];
             $record[] = $arr['category_name'];
+
             $applications = $wpdb->get_results("select id from applications where course_id=" . $arr['id'] . " && student_id=" . $student_id);
 
             if (!empty($applications[0])) {
+                $record[] = "Application already submitted";
                 $record[] = "<input type='button' class='btn btn-success' value='Already Applied' disabled>";
             } else {
+                // echo Date('Y-m-d');die;
+                $sql = "select course_intake.id as course_intake_id,
+                intakes.id as intake_id,intakes.name from course_intake left join intakes on
+                intakes.id=course_intake.intake_id where course_id=" . $arr['id'] . " && course_intake.deadline > '" . Date('Y-m-d')."'";
+
+                $intake_avail = $wpdb->get_results($sql);
+
+                $intake_html = "";
+                if (!empty($intake_avail)) {
+                    $intake_html = "<select name='intake' class='intake'><option value='0' selected disabled>Select Intake</option>";
+                    $current_month = Date('m');
+
+                    foreach ($intake_avail as $key => $obj) {
+
+                        if ($obj->intake_id > $current_month) {
+                            $year = Date('Y');
+                        } else {
+                            $year = Date('Y') + 1;
+                        }
+
+                        $intake_html .= "<option value=" . $obj->intake_id . ">" . $obj->name . "&nbsp;&nbsp;" . $year . "</option>";
+                    }
+                    $intake_html .= "</select>";
+                }
+                $record[] = $intake_html;
                 $record[] = "<input type='button' class='btn btn-success apply' value='Apply' c_id=" . base64_encode($arr['id']) . '>';
             }
             $output['aaData'][] = $record;
@@ -245,6 +276,7 @@ function getEligibleCourses($wpdb, $student_id)
             $record[] = $arr['code'];
             $record[] = $arr['type_name'];
             $record[] = $arr['category_name'];
+            $record[] = "Not Eligible";
             $record[] = "<input type='button' name='not_eligible' value='Not Eligible' class='not_eligible_btn btn btn-danger' c_id=" . base64_encode($arr['id']) . ">";
 
             $output['aaData'][] = $record;

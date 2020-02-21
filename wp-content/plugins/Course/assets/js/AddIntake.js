@@ -211,7 +211,7 @@ $(document).on('click', '.edit_intake', function () {
             if (verifyToken(response)) {
 
                 if (response.status == 200) {
-                    console.log(response.course_intake);
+                    // console.log(response.course_intake);
                     var month_id = response.course_intake.intake_id;
                     var month_name = response.course_intake.month_name;
 

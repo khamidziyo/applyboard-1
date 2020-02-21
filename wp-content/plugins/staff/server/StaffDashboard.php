@@ -23,7 +23,7 @@ if (!empty($_GET['val'])) {
                 case 'staffDashboard':
 
                     $id = $payload->userId;
-                    $applications = $wpdb->get_results("select count(id) as total_application from applications where is_reviewed='0'");
+                    $applications = $wpdb->get_results("select count(id) as total_application from applications");
                     $approve_application = $wpdb->get_results("select count(id) as approve_application from applications where review_by=" . $id . " && status='1'");
                     $pending_application = $wpdb->get_results("select count(id) as pending_application from applications where review_by=" . $id . " && status='0'");
                     $decline_application = $wpdb->get_results("select count(id) as decline_application from applications where review_by=" . $id . " && status='2'");

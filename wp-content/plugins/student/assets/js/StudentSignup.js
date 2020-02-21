@@ -1,5 +1,5 @@
 // when student regsiters...
-$("#student_reg_form").submit(function(e) {
+$("#student_reg_form").submit(function (e) {
     e.preventDefault();
 
     // to show the loading image...
@@ -22,41 +22,31 @@ $("#student_reg_form").submit(function(e) {
         processData: false,
 
         // on success response...
-        success: function(response) {
+        success: function (response) {
             $("#load_img").hide();
             $("#sign_up").show();
+            sweetalert(response);
 
             if (response.status == 200) {
-                swal({
-                    title: response.message,
-                    icon: 'success'
-                })
-                setTimeout(function() {
+
+                setTimeout(function () {
                     window.location.reload();
                 }, 1500)
-            } else {
-                swal({
-                    title: response.message,
-                    icon: 'error'
-                })
             }
         },
         // on error response...
-        error: function(error) {
+        error: function (error) {
             $("#load_img").hide();
             $("#sign_up").show();
-
-            swal({
-                title: "Student not created due to internal server error",
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 })
 
 
 // signing in with facebook..
-$('#facebook-button').on('click', function() {
+$('#facebook-button').on('click', function () {
     // Initialize with your OAuth.io app public key
     OAuth.initialize(Facebook_Oauth_Key);
     // Use popup for oauth
@@ -86,7 +76,7 @@ $('#facebook-button').on('click', function() {
 
 // /signing in with google
 
-$('#google-button').on('click', function() {
+$('#google-button').on('click', function () {
     // Initialize with your OAuth.io app public key
     OAuth.initialize(Google_Oauth_Key);
     // Use popup for oauth
@@ -125,31 +115,21 @@ function socialLogin(data) {
         type: "post",
         dataType: "json",
         data: data,
-        success: function(response) {
-            if (response.status == 200) {
-                swal({
-                    title: response.message,
-                    icon: 'success'
-                })
+        success: function (response) {
+            sweetalert(response);
 
+            if (response.status == 200) {
                 localStorage.setItem('data', JSON.stringify(response.data));
 
                 // displaying the student dashboard page...
-                setTimeout(function() {
-                    window.location.href = "http://localhost/wordpress/wordpress/index.php/student-home/";
+                setTimeout(function () {
+                    window.location.href = base_url + "student-home/";
                 }, 2000);
-            } else {
-                swal({
-                    title: response.message,
-                    icon: 'error'
-                })
             }
         },
-        error: function(err) {
-            swal({
-                title: "Internal Server error while login.",
-                icon: 'error'
-            })
+        error: function (err) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }

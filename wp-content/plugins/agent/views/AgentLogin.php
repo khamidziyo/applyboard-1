@@ -13,7 +13,10 @@ function agentLogin()
     </p>
     <input type="submit" name="sign_in" id="sign_in" class="btn btn-primary" value="Sign In" >
       <img src="<?=content_url('plugins/admin/assets/images/loading.gif')?>" id="load_img" width="200px" height="200px" style="display:none">
-    </form>
+    </form><br>
+
+    <a href="http://localhost/wordpress/wordpress/index.php/forgot-password/" class="btn btn-primary">Forgot Password</a>
+
     </div>
     <script src="<?=constant('agent_asset_url') . "/js/AgentLogin.js"?>"></script>
 

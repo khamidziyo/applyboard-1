@@ -128,14 +128,16 @@ function getUserProfile(url, user_data, asset_path) {
                     $("#user_email").html(response.data.email);
 
 
-                    if (response.data.image != null) {
-                        var img = "<img src='" + asset_path + "images/" + response.data.image + "' width='50px' height='50px' id='stu_image'>";
-                        $("#user_image").html(img);
-                    } else {
-                        // console.log(response.data.image);
-                        var img = "<img src='" + asset_path + "images/default_image.png' width='50px' height='50px' id='stu_image'>";
-                        $("#user_image").html(img);
+                    if (response.data.image.startsWith("https")) {
+                        var img = "<img src='" + response.data.image + "' width='50px' height='50px' id='stu_image'>";
                     }
+                    else if (response.data.image != null) {
+                        var img = "<img src='" + asset_path + "images/" + response.data.image + "' width='50px' height='50px' id='stu_image'>";
+                    } else {
+                        var img = "<img src='" + asset_path + "images/default_image.png' width='50px' height='50px' id='stu_image'>";
+                    }
+
+                    $("#user_image").html(img);
                 } else {
                     swal({
                         title: response.message,
@@ -215,7 +217,7 @@ $("#logout").click(function (e) {
                     }, 2000)
                     break;
 
-                      // if logged in user is sub agent...
+                // if logged in user is sub agent...
                 case "5":
                     setTimeout(function () {
                         window.location.href = base_url + "staff-login//";

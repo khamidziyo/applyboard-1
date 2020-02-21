@@ -9,16 +9,21 @@
 	<title</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 <?php
+include_once dirname(__DIR__, 2) . '/plugins/common/constants.php';?>
 
 	  <link rel="stylesheet" href="<?=get_template_directory_uri();?>/style.css">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/bootstrap.min.css')?>">
-		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/font-awesome.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.dataTables.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery-ui.css')?>">
-		<!-- <link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>"> -->
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/multi-select.css')?>">
-		
-		
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.fancybox.css')?>">
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/bootstrap-select.min.css')?>">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/bootstrap.min.js")?>"></script>
@@ -26,17 +31,24 @@
 
 		<script src="<?=content_url("themes/applyboard/js/datatable.min.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/server_url.js")?>"></script>
-		<!-- <script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multiselect.js")?>"></script> -->
+		<script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multiselect.js")?>"></script>
 		<script type="text/javascript" src="<?=content_url("themes/applyboard/js/jquery.multi-select.js")?>"></script>
-		
-		
+
+
     	<script type="text/javascript" src="<?=content_url("plugins/common/token.js")?>"></script>
 		<script type="text/javascript" src="<?=content_url("plugins/common/sweetalert.js")?>"></script>
+		<script type="text/javascript" src="<?=content_url("plugins/common/constant.js")?>"></script>
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.sticky.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/slick.js")?>"></script>
+		<script src="<?=content_url("themes/applyboard/js/jquery.fancybox.js")?>"></script>
+		<script src="<?=content_url("themes/applyboard/js/bootstrap-select.min.js")?>"></script>
+
+		
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+		<script type="text/javascript" src="https://cdn.rawgit.com/oauth-io/oauth-js/c5af4519/dist/oauth.js"></script>
+
 
 	 <?php wp_head();?>
 </head>

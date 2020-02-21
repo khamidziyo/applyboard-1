@@ -79,7 +79,7 @@ function agentProfile()
     </div>
     <div class = 'modal-body'>
     <p>Old Password:
-    <input type = 'password' name = 'password' id = 'password' required>
+    <input type = 'password' name = 'password' id = 'agent_password' required>
     </p>
     </div>
     <div class = 'modal-footer'>

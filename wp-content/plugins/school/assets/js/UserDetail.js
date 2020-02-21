@@ -3,6 +3,8 @@ var user_id;
 var app_id;
 
 $(document).ready(function () {
+    var doc_html = "";
+
     let searchParams = new URLSearchParams(window.location.search);
     if (searchParams.has('id')) {
         if (searchParams.has('app_id')) {
@@ -18,7 +20,7 @@ $(document).ready(function () {
                 // calling function that appends the token defined in token.js file 
                 // inside common directory of plugins.
                 if (!appendToken(req)) {
-                    redirectLogin();
+                    schoolRedirectLogin();
                 }
             },
             success: function (response) {
@@ -26,12 +28,13 @@ $(document).ready(function () {
                 // calling function that verifies the token defined in token .js file 
                 // inside common directory of plugins.
                 if (verifyToken(response)) {
+
                     if (response.status == 200) {
                         var data = response.user;
                         var sub_mark_html = "";
                         // console.log(response.application.status);
                         $('#status_dropdown').val(response.application.status).attr("selected", "selected");
-                        console.log(data);
+                        // console.log(data);
                         $("#f_name").html(data.f_name)
                         $("#l_name").html(data.l_name)
                         if (data.gender == '1') {
@@ -43,36 +46,52 @@ $(document).ready(function () {
                         $("#dob").html(data.dob)
                         $("#passport").html(data.passport_no);
                         $("#lang_prof").html(data.lang_name);
-                        var grade = JSON.parse(data.grade_scheme);
+                        var grade = JSON.parse(data.grade_name);
                         var qualification = Object.keys(grade);
+
                         $(".qualification").html(qualification[0])
+
                         $("#score").html(data.score + " marks");
-                        var exam = JSON.parse(data.exam, true);
+                        // $("#sub_marks").html(sub_mark_html);
+
+                        var exam = JSON.parse(data.exam);
+
+
                         $(".exam").html(response.exam.name)
 
-                        for (var key in exam) {
-                            for (subject in exam[key]) {
-                                sub_mark_html += "<p>" + subject + "&nbsp;&nbsp;" + exam[key][subject] + " marks</p>";
+                        for (var key in response.exam) {
+                            sub_mark_html += "<label>Marks scored In " + response.exam[key].name + "</label>"
+                            for (subject in exam[response.exam[key].id]) {
+                                sub_mark_html += "<p>" + subject + "&nbsp;&nbsp;" + exam[response.exam[key].id][subject] + " marks</p>";
                             }
                         }
+
+
                         $("#sub_marks").html(sub_mark_html);
 
                         $("#image").attr('src', student_assets_url + "images/" + data.image);
+
+                        if (response.documents.length > 0) {
+                            doc_html += "<ul>"
+                            $.each(response.documents, function (k, obj) {
+                                doc_html += "<li><a href='" + student_assets_url + "documents/" + obj.document + "' download='" + obj.document + "'>" + obj.document + "</a></li>";
+                            })
+                            doc_html += "</ul>"
+                            $("#documents").html(doc_html);
+                        } else {
+                            $("#documents").html("No document uploaded<br><br>");
+                        }
+
                     } else {
-                        swal({
-                            title: response.message,
-                            icon: 'error'
-                        })
+                        errorSwal(response);
                     }
                 } else {
-                    redirectLogin();
+                    schoolRedirectLogin();
                 }
             },
             error: function (error) {
-                swal({
-                    title: "Internal Server Error",
-                    icon: 'error'
-                })
+                var response = { status: 400, message: 'Internal Server Error' };
+                errorSwal(response);
                 console.error(error);
             }
         })
@@ -96,35 +115,25 @@ $("#update_status").click(function () {
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
             if (!appendToken(req)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         success: function (response) {
             if (verifyToken(response)) {
+                sweetalert(response);
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
-                    setTimeout(function(){
+
+                    setTimeout(function () {
                         location.reload();
-                    })
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    }, 1500)
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
-            console.error(error);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 })
@@ -170,42 +179,23 @@ function sendMessage(data) {
             // calling function that appends the token defined in token.js file 
             // inside common directory of plugins.
             if (!appendToken(req)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         success: function (response) {
             if (verifyToken(response)) {
+                sweetalert(response)
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
                     document.getElementById('message_form').reset();
                     $("#message_modal").modal("hide");
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
-            console.error(error);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
         }
     })
-}
-
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function () {
-        window.location.href = base_url+"school-login/";
-    }, 2000)
 }

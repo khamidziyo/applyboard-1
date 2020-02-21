@@ -30,7 +30,7 @@ function addStudent()
     <div class="form-group">
       <label for="language">Select Language Prior</label>
 
-      <select class="form-control" id="lang_prior" name="lang_prior" required>
+      <select class="selectpicker form-control" data-live-search="true" id="lang_prior" name="lang_prior" required>
         <option selected disabled>Select Language</option>
       </select>
     </div>
@@ -48,9 +48,9 @@ function addStudent()
     <div class="form-group">
       <label for="nationality">Select Nationality</label>
 
-      <select class="form-control" id="nationality" name="nationality" required>
-        <option selected disabled>Select Nationality</option>
+      <select class="selectpicker form-control" data-live-search="true" id="nationality" name="nationality" required>
       </select>
+
     </div>
 
 
@@ -68,10 +68,9 @@ function addStudent()
 
 
     <div class="form-group">
-      <label for="qualification">Select Highest Qualification</label>
+      <label for="qualification selectpicker">Select Highest Qualification</label>
 
-      <select class="form-control" id="qualification" name="qualification" required>
-        <option selected disabled>Select Highest Qualification</option>
+      <select class="selectpicker form-control" id="qualification" data-live-search="true" name="qualification" required>
       </select>
     </div>
 

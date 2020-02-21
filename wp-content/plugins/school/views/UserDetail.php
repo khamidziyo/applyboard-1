@@ -15,7 +15,7 @@ function userDetail()
     <div class = 'modal-body'>
 
     <form name="message_form" id="message_form" method="Post">
- 
+
     <p>Message<br>
     <textarea name="message" id="message" rows="10" cols="40" maxlength="500" required></textarea><br>
     <span style="color:red" id="char_left"></span>
@@ -57,13 +57,15 @@ function userDetail()
     <label>Proficient Language: &nbsp;&nbsp;<span id="lang_prof"></span></label><br>
     <label>Highest Qualification: &nbsp;&nbsp;<span class="qualification"></span></label><br>
     <label>Average score in <span class="qualification"></span>: &nbsp;&nbsp;<span id="score"></span></label><br>
-    <label>Exam Given:</label>
-    <label class="exam"></label><br>
-    <label>Marks Scored in <span class="exam"></span></label><br>
+    <label>Exam Given:</label><br>
+
     <span id="sub_marks"></span>
-    
+
     <label>Profile Image</label><br>
     <img src="" id="image" width="200px" height="200px"><br>
+
+    <h3>Documents Uploaded</h3>
+    <span id="documents"></span>
 
     <input type="button" value="Contact Here" id="contact" class="btn btn-primary">
     </div>

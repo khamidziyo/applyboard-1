@@ -3,28 +3,37 @@ var stu_id = '';
 
 const urlParams = new URLSearchParams(queryString);
 
-local_data = JSON.parse(localStorage.getItem('data'));
+if (localStorage.getItem('data') != null) {
+    local_data = JSON.parse(localStorage.getItem('data'));
 
 
+    stu_id = urlParams.get('stu_id');
 
-stu_id = urlParams.get('stu_id');
+    switch (local_data.role) {
 
-switch (local_data.role) {
+        // if role is agent...
+        case "5":
+            var data = { student: stu_id, 'val': 'getStudentByStaff' };
 
-    // if role is agent...
-    case "5":
-        var data = { student: stu_id, 'val': 'getStudentByStaff' };
+            break;
 
-        break;
+        // if role is sub agent...
+        default:
+            swal({
+                title: "No match found",
+                icon: "error"
+            })
+            break;
+    }
+} else {
+    var response = { 'status': 400, 'message': 'Session Expired.Please login again' };
+    errorSwal(response);
 
-    // if role is sub agent...
-    default:
-        swal({
-            title: "No match found",
-            icon: "error"
-        })
-        break;
+    setTimeout(function () {
+        studentRedirectLogin();
+    }, 1500);
 }
+
 
 // function that calls when student updates the profile
 getStudentProfile(data);
@@ -132,13 +141,37 @@ function getStudentProfile(data) {
 
                     $("#profile_image").attr('src', student_assets_url + "images/" + data.image)
 
-                    if (response.hasOwnProperty('document')) {
+                    if (response.document.length > 0) {
                         doc_html += "<ul>"
                         $.each(response.document, function (k, obj) {
-                            doc_html += "<li><a href='" + student_assets_url + "documents/" + obj.document + "' download='" + obj.document + "'>" + obj.document + "</a></li>";
+                            var type = obj.document.split('.').pop().toLowerCase();
+
+                            switch (type) {
+                                case 'pdf':
+                                    doc_html += "<li><a href='" + student_assets_url + "documents/" + obj.document + "' download='" + obj.document + "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/pdf48.png' width='48' height='48'>PDF</a></li><br>";
+                                    break;
+
+                                case 'docx':
+                                    doc_html += "<li><a href='" + student_assets_url + "documents/" + obj.document + "' target='_blank' download='" + obj.document + "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/xlsx48.png' width='48' height='48'>CSV</a></li><br>";
+                                    break;
+
+                                case 'png':
+                                    doc_html += "<li><div style='display: none;' id='hidden_image_" + k + "'><img src='" + student_assets_url + "documents/" + obj.document + "' width='80%' height='80%'></div><a href='" + student_assets_url + "documents/" + obj.document + "' data-fancybox data-src='#hidden_image_" + k + "' download='" + obj.document + "'>Image</a></li><br>";
+                                    break;
+
+                                case 'jpg':
+                                    doc_html += "<li><div style='display: none;' id='hidden_image_" + k + "'><img src='" + student_assets_url + "documents/" + obj.document + "' width='80%' height='80%'></div><a href='" + student_assets_url + "documents/" + obj.document + "' data-fancybox data-src='#hidden_image_" + k + "' download='" + obj.document + "'>Image</a></li><br>";
+                                    break;
+
+                                case 'jpeg':
+                                    doc_html += "<li><div style='display: none;' id='hidden_image_" + k + "'><img src='" + student_assets_url + "documents/" + obj.document + "' width='80%' height='80%'></div><a href='" + student_assets_url + "documents/" + obj.document + "' data-fancybox data-src='#hidden_image_" + k + "' download='" + obj.document + "'>Image</a></li>";
+                                    break;
+                            }
                         })
                         doc_html += "</ul>"
                         $("#documents").html(doc_html);
+                    } else {
+                        $("#documents").html("No document uploaded");
                     }
 
                     // console.log(response);

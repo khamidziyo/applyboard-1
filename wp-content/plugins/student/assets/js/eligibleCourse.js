@@ -1,7 +1,6 @@
 
 var queryString = window.location.search;
 var stu_id;
-var course_id;
 
 
 const urlParams = new URLSearchParams(queryString);
@@ -46,12 +45,12 @@ switch (local_data.role) {
 
 // function to view the courses to those i can apply...
 function viewCourseTable(data) {
-    // console.log(data);
 
     $("#eligible_course_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
         "pageLength": 5,
         "processing": true,
+        "order": [[0, "desc"]],
         "serverSide": true,
         "language": {
             "emptyTable": "No course available"
@@ -233,124 +232,39 @@ $("#countries").change(function () {
 
 // // when user clicks on not eligible button...
 $(document).on('click', '.not_eligible_btn', function () {
-    course_id = $(this).attr('c_id');
+    var course_id = $(this).attr('c_id');
 
     window.location.href = base_url + "view-course?c_id=" + course_id;
 });
 
-
-// when user clicks on apply button of a particular course...
-$(document).on('click', '.apply', function () {
-
-    course_id = $(this).attr('c_id');
-    var avail_html = "";
-    var nxt_avail_html = "";
-
-    var local_data = JSON.parse(localStorage.getItem('data'));
-    switch (local_data.role) {
-
-        case '1':
-            var data = { course: course_id, val: "courseIntakeByStudent" };
-
-            break;
-
-
-        case '3':
-            var data = { course: course_id, val: "courseIntakeByAgent" };
-            break;
-
-
-
-    }
-
-    $.ajax({
-        url: student_server_url + "ApplyCourse.php",
-        type: "post",
-        dataType: "json",
-        data: data,
-
-        // appending token in request...
-        beforeSend: function (request) {
-
-            // calling function that appends the token defined in token.js file 
-            // inside common directory of plugins.
-            if (!appendToken(request)) {
-
-                // if the token is not in the localStorage...
-                redirect();
-            }
-        },
-
-        // if the response is success
-        success: function (response) {
-
-            // calling function that verifies the token defined in token.js file 
-            // inside common directory of plugins.
-            if (verifyToken(response)) {
-
-                if (response.status == 200) {
-                    $("#intake_modal").modal('show');
-
-                    if (response.hasOwnProperty('intake_avail')) {
-                        if (response.intake_avail != null) {
-                            var d = new Date();
-                            var year = d.getFullYear();
-                            avail_html += "<h2>Intakes Available for year " + year + "</h2>";
-
-                            $.each(response.intake_avail, function (k, obj) {
-                                avail_html += "<input type='radio' name='intake' value='" + obj.id + '/' + year + "'>" + obj.name
-                            })
-                        }
-                    }
-                    if (response.hasOwnProperty('intake_avail_next')) {
-
-                        if (response.intake_avail_next != null) {
-                            var nxtyr = year + 1;
-
-                            avail_html += "<h2>Intakes Available for year " + nxtyr + "</h2>";
-
-                            $.each(response.intake_avail_next, function (k, obj) {
-                                avail_html += "<input type='radio' name='intake' value='" + obj.id + '/' + nxtyr + "'>" + obj.name
-                            })
-                        }
-                    }
-                    $("#intakes").html(avail_html);
-
-                }else{
-                    errorSwal(response);
-                }
-            } else {
-                redirect();
-            }
-        },
-
-        // if the response is error...
-        error: function (err) {
-            var response = { 'status': 400, 'message': 'Internal Server Error' };
-            errorSwal(response);
-        }
-    })
-})
-
-$("#applyCourse").submit(function (e) {
+$(document).on('click', '.apply', function (e) {
     e.preventDefault();
-    // alert(course_id);
-    // return false;
+    var course_id = $(this).attr('c_id');
+    var intake = $(e.target).closest("tr").find(".intake option:selected").val();
+
+    if(intake==0){
+        swal({
+            title:'Please select the intake',
+            icon:'error'
+        })
+        return false;
+    }
+    $(this).attr('disabled');
     switch (local_data.role) {
 
         // if logged in user is student...
         case '1':
-            var data = { course: course_id, val: 'applyCourseByStudent', intake: $("#applyCourse").serializeArray() };
+            var data = { course: course_id, val: 'applyCourseByStudent', intake: intake };
             break;
 
         // if logged in user is agent...
         case '3':
-            var data = { course: course_id, val: 'applyCourseByAgent', student_id: stu_id, intake: $("#applyCourse").serializeArray() };
+            var data = { course: course_id, val: 'applyCourseByAgent', student_id: stu_id, intake: intake };
             break;
 
         // if logged in user is subagent...
         case '4':
-            var data = { course: course_id, val: 'applyCourseBySubAgent', student_id: stu_id, intake: $("#applyCourse").serializeArray() };
+            var data = { course: course_id, val: 'applyCourseBySubAgent', student_id: stu_id, intake: intake };
             break;
 
         default:
@@ -387,7 +301,6 @@ $("#applyCourse").submit(function (e) {
         }
     })
 })
-
 
 
 // function to redirect on login page if any authentication requires...

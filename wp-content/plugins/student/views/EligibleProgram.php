@@ -46,30 +46,6 @@ function eligibleProgram()
 </form>
 
 
-<div class = 'modal fade' id = 'intake_modal'>
-    <div class = 'modal-dialog'>
-    <div class = 'modal-content'>
-    <div class = 'modal-header'>
-    <button type = 'button' class = 'close' data-dismiss = 'modal'>&times;
-    </button>
-    <h4 class = 'modal-title'>Available Intakes</h4>
-    </div>
-    <form name="applyCourse" id="applyCourse">
-
-    <div class = 'modal-body'>
-    <span id="intakes"></span>
-    </div>
-    <div class = 'modal-footer'>
-    <button type = 'submit' class = 'btn btn-success' id = 'apply_btn'>Apply Now</button>
-    </form>
-
-    <button type = 'button' class = 'btn btn-default' data-dismiss = 'modal'>Close</button>
-    </div>
-    </div>
-    </div>
-    </div>
-
-
 <table id="eligible_course_table" border="2px solidblack">
 <thead>
 <th>Id</th>
@@ -78,6 +54,7 @@ function eligibleProgram()
 <th>Code</th>
 <th>Type</th>
 <th>Category</th>
+<th>Select Intake</th>
 <th>Action</th>
 
 </thead>

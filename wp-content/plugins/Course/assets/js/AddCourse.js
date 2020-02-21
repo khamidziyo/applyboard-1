@@ -11,7 +11,7 @@ function ajaxToGetCourseData() {
         async: false,
         beforeSend: function (request) {
             if (!appendToken(request)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         data: { data: "getCourseTypeCategoryLanguage" },
@@ -48,7 +48,7 @@ function ajaxToGetCourseData() {
                     errorSwal(response);
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
 
         },
@@ -81,7 +81,7 @@ function getExams() {
         beforeSend: function (request) {
 
             if (!appendToken(request)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         success: function (response) {
@@ -97,20 +97,16 @@ function getExams() {
                     $("#exams").html(html);
                 } else {
                     $("#eng_prof_test").prop('checked', false);
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
+
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
-            swal({
-                title: "Internal server error",
-                icon: 'error'
-            })
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
         }
     });
 }
@@ -169,7 +165,7 @@ $("#course_form").submit(function (e) {
         data: form_data,
         beforeSend: function (request) {
             if (!appendToken(request)) {
-                redirectLogin();
+                schoolRedirectLogin();
             }
 
         },
@@ -180,42 +176,25 @@ $("#course_form").submit(function (e) {
             $(".submit_course").show();
 
             if (verifyToken(response)) {
-
+                sweetalert(response);
 
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+
                     setTimeout(function () {
                         window.location.href = base_url + "view-all-course/";
                     }, 1500);
 
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         },
         error: function (error) {
             $("#loading_gif").hide();
             $(".submit_course").show();
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
 
-            swal({
-                title: "Internal server error",
-                icon: 'error'
-            })
         }
     })
 });
-
-// function that redirects to login page...
-function redirectLogin() {
-    setTimeout(function () {
-        window.location.href = base_url + "school-login//";
-    }, 2000)
-}

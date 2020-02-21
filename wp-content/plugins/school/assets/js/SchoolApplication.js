@@ -32,7 +32,7 @@ function viewApplicationTable() {
                 // calling function that appends the token defined in token.js file 
                 // inside common directory of plugins.
                 if (!appendToken(request)) {
-                    redirectLogin();
+                    schoolRedirectLogin();
                 }
             }
         }),
@@ -43,7 +43,7 @@ function viewApplicationTable() {
             if (verifyToken(response)) {
                 console.log(response);
             } else {
-                redirectLogin();
+                schoolRedirectLogin();
             }
         }
     });

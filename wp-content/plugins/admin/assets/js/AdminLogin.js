@@ -1,4 +1,3 @@
-$(document).ready(function () {
 
 
     // when admin logins...
@@ -12,6 +11,7 @@ $(document).ready(function () {
             data: $("#admin_login_form").serializeArray(),
             dataType: "json",
             success: function (response) {
+                sweetalert(response);
 
                 if (response.status == 200) {
 
@@ -23,15 +23,11 @@ $(document).ready(function () {
                         window.location.href = base_url + "admin-dashboard/";
                     }, 2000);
                 }
-                sweetalert(response);
 
             },
             error: function (error) {
-                swal({
-                    title: "Internal Server Error",
-                    icon: 'error'
-                })
+                var response = { status: 400, 'message': 'Internal Server Error' };
+                errorSwal(response);
             }
         })
     })
-})

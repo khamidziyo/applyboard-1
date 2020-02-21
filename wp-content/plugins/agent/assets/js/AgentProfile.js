@@ -64,7 +64,8 @@ $("#change_password").click(function () {
 
 // when user enters the old password and click on check button...
 $("#check_password").click(function () {
-    var old_password = $("#password").val();
+    var old_password = $("#agent_password").val();
+    // alert(old_password);
     if (old_password != "") {
         $.ajax({
             url: agent_server_url + "UpdateProfile.php",

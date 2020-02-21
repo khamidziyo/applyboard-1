@@ -18,11 +18,11 @@ function getCourseDetailById($c_id)
     return $result;
 }
 
-function getIntakes($intake)
+function getCourseIntake($c_id)
 {
     global $wpdb;
 
-    $sql = "select id,name from intakes where id in (" .implode(",",$intake).")";
+    $sql = "select intakes.name from course_intake as c_intake left join intakes on intakes.id=c_intake.intake_id where c_intake.course_id=" . $c_id;
     $result = $wpdb->get_results($sql);
     return $result;
 }

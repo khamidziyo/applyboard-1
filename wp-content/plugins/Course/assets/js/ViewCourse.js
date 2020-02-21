@@ -1,12 +1,9 @@
 
 
 viewCourses();
-var course_id;
-
 
 
 function viewCourses() {
-
 
     $("#view_course_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
@@ -165,47 +162,47 @@ $(document).on('click', '.add_intake', function () {
 
 
 
-$("#courseIntake").submit(function (e) {
-    e.preventDefault();
-    var form = document.getElementById('courseIntake');
-    var form_data = new FormData(form);
-    form_data.append('course_id', course_id);
-    form_data.append('val', 'updateCourseIntake');
+// $("#courseIntake").submit(function (e) {
+//     e.preventDefault();
+//     var form = document.getElementById('courseIntake');
+//     var form_data = new FormData(form);
+//     form_data.append('course_id', course_id);
+//     form_data.append('val', 'updateCourseIntake');
 
-    $.ajax({
-        url: course_server_url + "CourseIntake.php",
-        type: "post",
-        dataType: "json",
-        data: form_data,
-        contentType: false,
-        processData: false,
-        beforeSend: function (request) {
+//     $.ajax({
+//         url: course_server_url + "CourseIntake.php",
+//         type: "post",
+//         dataType: "json",
+//         data: form_data,
+//         contentType: false,
+//         processData: false,
+//         beforeSend: function (request) {
 
-            if (!appendToken(request)) {
-                schoolRedirectLogin();
-            }
-        },
-        success: function (response) {
-            if (verifyToken(response)) {
-                sweetalert(response);
+//             if (!appendToken(request)) {
+//                 schoolRedirectLogin();
+//             }
+//         },
+//         success: function (response) {
+//             if (verifyToken(response)) {
+//                 sweetalert(response);
 
-                if (response.status == 200) {
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1500)
-                }
+//                 if (response.status == 200) {
+//                     setTimeout(function () {
+//                         location.reload();
+//                     }, 1500)
+//                 }
 
-            } else {
-                schoolRedirectLogin();
-            }
+//             } else {
+//                 schoolRedirectLogin();
+//             }
 
-        },
-        error: function (error) {
-            var response = { status: 400, 'message': 'Internal Server Error' };
-            errorSwal(response);
-        }
-    })
-})
+//         },
+//         error: function (error) {
+//             var response = { status: 400, 'message': 'Internal Server Error' };
+//             errorSwal(response);
+//         }
+//     })
+// })
 
 $(document).on('click', '.view', function () {
     var c_id = $(this).attr('c_id');

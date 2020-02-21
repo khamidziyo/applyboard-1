@@ -1,5 +1,5 @@
 // when user clicks on button to change password...
-$("#reset_password_form").submit(function(e) {
+$("#reset_password_form").submit(function (e) {
 
     e.preventDefault();
 
@@ -18,33 +18,23 @@ $("#reset_password_form").submit(function(e) {
         dataType: "json",
 
         // if success ajax response...
-        success: function(response) {
+        success: function (response) {
             $("#load_img").hide();
             $("#reset").show();
+            sweetalert(response);
 
             if (response.status == 200) {
-                swal({
-                    title: response.message,
-                    icon: "success"
-                })
-                $("#reset_password_form").get(0).reset();
-            } else {
-                swal({
-                    title: response.message,
-                    icon: "error"
-                })
+                myform.reset();
             }
         },
 
         // if error ajax response...
-        error: function(error) {
+        error: function (error) {
             $("#load_img").hide();
             $("#reset").show();
 
-            swal({
-                title: "Internal Server Error",
-                icon: "error"
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 

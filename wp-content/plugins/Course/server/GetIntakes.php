@@ -103,8 +103,8 @@ if (!empty($_GET['val'])) {
 
                     $course_id = base64_decode($_GET['course_id']);
 
-                    $sql = "select *,c_intake.id as course_intake_id from course_intake as c_intake join intakes
-                     on intakes.id=c_intake.intake_id where course_id=" . $course_id;
+                    $sql = "select *,c_intake.id as course_intake_id,c_intake.created_at as intake_created
+                     from course_intake as c_intake join intakes on intakes.id=c_intake.intake_id where course_id=" . $course_id;
 
                     $total_records = $wpdb->get_results($sql . $where);
 
@@ -120,7 +120,7 @@ if (!empty($_GET['val'])) {
                             $record[] = Date("d-m-Y", strtotime($obj->start_date));
                             $record[] = Date("d-m-Y", strtotime($obj->end_date));
                             $record[] = Date("d-m-Y", strtotime($obj->deadline));
-                            $record[] = Date("d-m-Y h:i:s", strtotime($obj->created_at));
+                            $record[] = Date("d-m-Y h:i:s", strtotime($obj->intake_created));
                             $record[] = "<button type='button' class='btn btn-danger remove_intake' intake_id=" . base64_encode($obj->course_intake_id) . ">Remove Intake</button>
                             <button type='button' class='btn btn-primary edit_intake' intake_id=" . base64_encode($obj->course_intake_id) . ">Edit Intake</button>";
 
@@ -148,7 +148,13 @@ if (!empty($_GET['val'])) {
                     $course_intakes = $wpdb->get_results("select *,intakes.name as month_name from
                      course_intake join intakes on intakes.id=course_intake.intake_id where course_intake.id=" . $course_intake_id);
 
-                    $response = ['status' => Success_Code, 'course_intake' => $course_intakes[0]];
+                     $intake_detail['start_date']=Date("Y-m-d",strtotime($course_intakes[0]->start_date));
+                     $intake_detail['end_date']=Date("Y-m-d",strtotime($course_intakes[0]->end_date));
+                     $intake_detail['deadline']=Date("Y-m-d",strtotime($course_intakes[0]->deadline));
+                     $intake_detail['month_name']=$course_intakes[0]->month_name;
+                     $intake_detail['intake_id']=$course_intakes[0]->intake_id;
+
+                    $response = ['status' => Success_Code, 'course_intake' => $intake_detail];
 
                     break;
             }

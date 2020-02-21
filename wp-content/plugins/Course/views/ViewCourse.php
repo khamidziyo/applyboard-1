@@ -10,11 +10,7 @@ function viewCourse()
         // function to get the course detail by course id defined in server/functions.php file...
         $course_data = getCourseDetailById($course_id);
 
-        if (!empty($course_data[0]->intake)) {
-            $intakes = json_decode($course_data[0]->intake, true);
-
-            $course_intake = getIntakes($intakes);
-        }
+        $course_intakes = getCourseIntake($course_id);
 
         ?>
   <div class="container-fluid">
@@ -43,11 +39,16 @@ if (!empty($course_data)) {
 
     <p>Course Intake : <b>
     <?php
-            echo "<ul>";
-            foreach ($course_intake as $key => $obj) {
-                echo "<li>" . $obj->name . "</li>";
+if (!empty($course_intakes)) {
+
+                echo "<ul>";
+                foreach ($course_intakes as $key => $obj) {
+                    echo "<li>" . $obj->name . "</li>";
+                }
+                echo "</ul>";
+            } else {
+                echo "No intake created";
             }
-            echo "</ul>";
             ?>
     </b></p>
 

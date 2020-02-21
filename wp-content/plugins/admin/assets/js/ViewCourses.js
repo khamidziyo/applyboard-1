@@ -50,10 +50,8 @@ function getCountryAndSchool(data) {
             }
         },
         error: function(error) {
-            swal({
-                title: "Internal Server Error",
-                icon: "error"
-            })
+            var response = { status: 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }

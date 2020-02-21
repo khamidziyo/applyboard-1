@@ -142,7 +142,9 @@ function getUserProfile() {
                         $("#visa").val(data.has_visa);
                     }
 
-                    if (data.image != null || data.image == '') {
+                    if (data.image.startsWith("https")) {
+                        $("#image").attr('src', data.image);
+                    } else if (data.image != null || data.image == '') {
                         $("#image").attr('src', student_assets_url + "images/" + data.image);
                         $("#cur_image").val(data.image);
                     } else {
@@ -161,10 +163,7 @@ function getUserProfile() {
                         $("#documents").html(doc_html);
                     }
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
                 }
             }
 
@@ -177,6 +176,8 @@ function getUserProfile() {
         // if error response from server...
         error: function (error) {
             console.error(error);
+            var response = { status: 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }
@@ -285,12 +286,13 @@ function removeDoc(doc_id) {
             }
         }, success: function (response) {
             if (verifyToken(response)) {
+                sweetalert(response);
+
                 if (response.status == 200) {
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
                 }
-                sweetalert(response);
             } else {
                 studentRedirectLogin();
             }
@@ -342,11 +344,8 @@ function getStudentData(data) {
                         // each loop to dynamically display all classes in drop down...
                         $.each(response.grade, function (k, obj) {
 
-                            // decoding the json...
-                            grades.push(JSON.parse(obj.grade_scheme));
-
                             // loop to get all the classess extracted from json...
-                            $.each(JSON.parse(obj.grade_scheme), function (grade) {
+                            $.each(JSON.parse(obj.name), function (grade) {
                                 grade_html += "<option value=" + obj.id + ">" + grade + "</option>";
                             })
 
@@ -459,21 +458,15 @@ $("#student_update_profile").submit(function (e) {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
+                sweetalert(response);
+
                 // if status is 200...
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
 
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             }
 
@@ -485,10 +478,8 @@ $("#student_update_profile").submit(function (e) {
 
         // if error response from server...
         error: function (error) {
-            swal({
-                title: 'Internal server while updating profile.',
-                icon: 'error'
-            })
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
             console.error(error);
         }
     })
@@ -535,10 +526,7 @@ $("#check_password").click(function () {
                         // change password file in admin plugin...
                         window.location.href = base_url + "change-password/?tok=" + response.data.token;
                     } else {
-                        swal({
-                            title: response.message,
-                            icon: 'error'
-                        })
+                        errorSwal(response);
                     }
                 }
 
@@ -551,6 +539,8 @@ $("#check_password").click(function () {
             // if error response from server...
             error: function (error) {
                 console.error(error);
+                var response = { 'status': 400, 'message': 'Internal Server Error' };
+                errorSwal(response);
             }
         })
     }

@@ -33,7 +33,7 @@ if (!empty($_GET)) {
                     $country_data = $wpdb->get_results($country_sql);
 
                     // sql to get all the grades...
-                    $grade_scheme_sql = "select id,grade_scheme from grade where status='1'";
+                    $grade_scheme_sql = "select id,name from grade where status='1'";
                     $grade_data = $wpdb->get_results($grade_scheme_sql);
 
                     // sql to get all the exams...

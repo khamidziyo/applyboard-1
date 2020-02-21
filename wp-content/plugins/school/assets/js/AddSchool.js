@@ -1,12 +1,6 @@
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    setTimeout(function() {
-        window.location.href = "http://localhost/wordpress/wordpress/index.php/admin-login/";
-    }, 2000)
-}
 
-$(document).ready(function() {
+
+$(document).ready(function () {
     var i = 0;
 
     // $('input:checkbox:checked').prop('checked', false);
@@ -17,7 +11,7 @@ $(document).ready(function() {
 
 
     // function to get states according to that country...
-    $("#country").change(function() {
+    $("#country").change(function () {
         var cntry_id = btoa($(this).val());
 
         //calling function to get states...
@@ -25,7 +19,7 @@ $(document).ready(function() {
     })
 
     // function to get cities according to that state...
-    $("#state").change(function() {
+    $("#state").change(function () {
         var state_id = btoa($(this).val());
 
         //calling function to get cities...
@@ -33,7 +27,7 @@ $(document).ready(function() {
     })
 
     // function to set the pincode of particular city...
-    $("#city").change(function() {
+    $("#city").change(function () {
         var pin_code = $(this).children("option:selected").attr('data_code');
 
         // set pincode according to city...
@@ -43,7 +37,7 @@ $(document).ready(function() {
 
 
     // function to check whether accodomation facility available or not...
-    $("#accomodation").click(function() {
+    $("#accomodation").click(function () {
         var accomodation_bool = $(this).prop('checked');
 
         // if facility available then ask living cost...
@@ -55,14 +49,14 @@ $(document).ready(function() {
     })
 
     // function to preview pofile image when user selects profile image...
-    $("#profile_image_input").change(function() {
+    $("#profile_image_input").change(function () {
         $("#profile_image").show();
         if (this.files && this.files[0]) {
 
             // creating file reader object...
             var reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
 
                 // setting the profile image...
                 $('#profile_image').attr('src', e.target.result);
@@ -73,14 +67,14 @@ $(document).ready(function() {
     })
 
     // function to preview cover image when user selects cover image...
-    $("#cover_image_input").change(function() {
+    $("#cover_image_input").change(function () {
         $("#cover_image").show();
         if (this.files && this.files[0]) {
 
             // creating file reader object...
             var reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
 
                 // setting the cover image...
                 $('#cover_image').attr('src', e.target.result);
@@ -91,7 +85,7 @@ $(document).ready(function() {
     })
 
     // function to check if user wants to upload any school document...
-    $("#chk_box").click(function() {
+    $("#chk_box").click(function () {
         var chk_bool = $(this).prop('checked');
 
         // if a checkbox is true...
@@ -109,14 +103,14 @@ $(document).ready(function() {
     });
 
     // function to preview the document image to user... 
-    $(document).on('change', '.document_input', function() {
+    $(document).on('change', '.document_input', function () {
 
         if (this.files && this.files[0]) {
 
             // creating file reader object...
             var reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
 
                 // setting the source of document file
                 $('#document_' + i).attr('src', e.target.result);
@@ -129,7 +123,7 @@ $(document).ready(function() {
     })
 
     // function to show document file button when user click on add more button
-    $(document).on('click', '#add_more', function() {
+    $(document).on('click', '#add_more', function () {
         i++;
         var file_html = "<span><input type='file' name='document[]' class='document_input'><input type='button' value='Remove' id='delete'><img src='' id='document_" + i + "' width='200px' height='200px'></span>";
 
@@ -138,12 +132,12 @@ $(document).ready(function() {
     })
 
     // when user click on remove button to remove any certificate...
-    $(document).on('click', '#delete', function() {
+    $(document).on('click', '#delete', function () {
         $(this).parent().remove();
     })
 
     // when user submits the form to add school...
-    $("#add_school_form").submit(function(e) {
+    $("#add_school_form").submit(function (e) {
         e.preventDefault();
 
         // displaying the loading icon to user...
@@ -168,52 +162,43 @@ $(document).ready(function() {
             processData: false,
             contentType: false,
 
-            beforeSend: function(request) {
+            beforeSend: function (request) {
                 if (!appendToken(request)) {
 
                     // if the token is not in the localStorage...
-                    redirectLogin();
+                    adminRedirectLogin();
                 }
             },
 
             // if the data submitted successfully then show success response...
-            success: function(response) {
+            success: function (response) {
                 // hiding the loading gif...
                 $("#loading_gif").hide();
 
                 // displaying add school button after response...
                 $("#add_school").show();
                 if (verifyToken(response)) {
+                    sweetalert(response);
 
                     // if response return success code 200...
                     if (response.status == 200) {
 
                         // reset all the form fields...
-                        location.reload();
-                        // $("#add_school_form")[0].reset();
+                        myform.reset();
 
-                        // displaying sweet alert with success message...
-                        swal({
-                            title: response.message,
-                            icon: 'success'
-                        })
-                    }
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1500)
 
-                    // displaying error message...
-                    else {
-                        swal({
-                            title: response.message,
-                            icon: 'error'
-                        })
                     }
                 } else {
                     // if the token is not in the localStorage...
-                    redirectLogin();
+                    adminRedirectLogin();
                 }
             },
 
             // if response return with error...
-            error: function(error) {
+            error: function (error) {
 
                 // hiding loading icon...
                 $("#loading_gif").hide();
@@ -221,11 +206,8 @@ $(document).ready(function() {
                 // displaying school button again...
                 $("#add_school").show();
 
-                // displaying error message in sweet alert...
-                swal({
-                    title: error,
-                    icon: 'error'
-                })
+                var response = { 'status': 400, 'message': 'Internal Server Error' };
+                errorSwal(response);
             }
         })
         console.log(form_data);
@@ -242,11 +224,11 @@ function getDataBYAjax(data = null, val) {
         url: school_server_url + 'GetData.php',
         type: 'get',
         dataType: 'json',
-        beforeSend: function(request) {
+        beforeSend: function (request) {
             if (!appendToken(request)) {
 
                 // if the token is not in the localStorage...
-                redirectLogin();
+                adminRedirectLogin();
             }
         },
         data: {
@@ -255,7 +237,7 @@ function getDataBYAjax(data = null, val) {
         },
 
         // if there is a success response...
-        success: function(response) {
+        success: function (response) {
             if (verifyToken(response)) {
                 html += '<option name="" value="">Select ' + val + '</option>';
 
@@ -264,14 +246,14 @@ function getDataBYAjax(data = null, val) {
 
                     // if value is city then set the dropdown...
                     if (val == "city") {
-                        $.each(response.data, function(k, obj) {
+                        $.each(response.data, function (k, obj) {
                             html += '<option name="' + obj.name + '" value="' + obj.id + '" data_code="' + obj.postal_code + '">' + obj.name + '</option>';
                         })
                     }
 
                     // if value is country or state then set dropdown ...
                     else {
-                        $.each(response.data, function(k, obj) {
+                        $.each(response.data, function (k, obj) {
                             html += '<option name="' + obj.name + '" value="' + obj.id + '">' + obj.name + '</option>';
                         })
                     }
@@ -281,24 +263,17 @@ function getDataBYAjax(data = null, val) {
                 // if any error response code 400...
                 else {
                     $("#" + val).html(html);
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
-                    redirectLogin();
+                    errorSwal(response);
                 }
             } else {
-                redirectLogin();
+                adminRedirectLogin();
             }
         },
 
         // if not a success response...
-        error: function(err) {
-            console.log(err);
-            swal({
-                title: err,
-                icon: 'error'
-            })
+        error: function (err) {
+            var response = { 'status': 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
         }
     })
 }
