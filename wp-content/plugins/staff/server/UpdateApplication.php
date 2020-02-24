@@ -52,7 +52,7 @@ if (!empty($_POST['val'])) {
                         throw new Exception("Please select the application status");
                     }
 
-                    $app_id = $_POST['app_id'];
+                    $app_id = base64_decode($_POST['app_id']);
                     $status = $_POST['status'];
 
                     // update query to update the application...

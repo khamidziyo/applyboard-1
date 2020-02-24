@@ -141,8 +141,8 @@ function getApplications($wpdb, $sql, $id)
                         break;
                 }
                 // echo  $pending;
-                $record[] = "<select class='update_status' app_id=$obj->id>
-                 <option value='0'" . $pending . ">Pending</option>
+                $record[] = "<select class='update_status' app_id=" . base64_encode($obj->id) . ">
+                 <option value='0'" . $pending . " disabled>Pending</option>
                  <option value='1'" . $approve . ">Approve</option>
                  <option value='2'" . $decline . ">Decline</option>
                  </select>";

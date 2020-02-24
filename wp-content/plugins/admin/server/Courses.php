@@ -67,7 +67,7 @@ if ( !empty( $_GET ) ) {
                 $order_by = 'order by '.$sort_arr[$_GET['order'][0][column]].' '.$_GET['order'][0][dir];
 
                 // search array to search by column name...
-                $srch_arr = ['c.id', 'c.name', 'c.code', 'c.start_date', 'c.end_date', 'type.name', 'category.name'];
+                $srch_arr = ['c.id', 'c.name', 'c.code', 'type.name', 'category.name'];
 
                 // if search value is not empty....
                 if ( !empty( $_GET['search'][value] ) ) {
@@ -82,8 +82,8 @@ if ( !empty( $_GET ) ) {
                     $where = substr_replace( $where, '', -3 );
                 }
 
-                $sql = "select c.id,c.name,c.code,type.name as type_name,category.name as category_name,
-                c.start_date,c.end_date from courses as c join type on type.id=c.type_id join category 
+                $sql = "select c.id,c.name,c.code,type.name as type_name,category.name as category_name
+                 from courses as c join type on type.id=c.type_id join category 
                 on category.id=c.category_id where c.school_id=".$id." && c.status='1'";
 
                 // query to get the total results...
@@ -105,8 +105,6 @@ if ( !empty( $_GET ) ) {
                         $record[] = $obj->code;
                         $record[] = $obj->type_name;
                         $record[] = $obj->category_name;
-                        $record[] = $obj->start_date;
-                        $record[] = $obj->end_date;
                         $record[] = "<input type='button' value='View' c_id=".base64_encode( $obj->id )." class='btn btn-primary view'>&nbsp;&nbsp;
                     <input type='button' value='Edit' c_id=".base64_encode( $obj->id )." class='btn btn-primary edit'>&nbsp;&nbsp;
                     <input type='button' value='Delete' c_id=".base64_encode( $obj->id )." class='btn btn-danger delete'>";

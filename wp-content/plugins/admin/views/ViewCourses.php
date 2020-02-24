@@ -23,8 +23,6 @@ function viewCourses(){
 <th>Code</th>
 <th>Type</th>
 <th>Category</th>
-<th>Start date</th>
-<th>End Date</th>
 <th>Action</th>
 </thead>
 </table>

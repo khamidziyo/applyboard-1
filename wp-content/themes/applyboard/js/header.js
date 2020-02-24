@@ -33,7 +33,7 @@ function getData() {
 
             case "2":
                 var user = { val: 'adminProfile' };
-                getUserProfile(admin_server_url + "AdminDashboard.php", user, admin_assets_url);
+                getUserProfile(admin_server_url + "AdminProfile.php", user, admin_assets_url);
                 break;
 
             // if the logged in user is agent...

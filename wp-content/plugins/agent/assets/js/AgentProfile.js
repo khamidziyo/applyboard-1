@@ -1,15 +1,28 @@
 
 
+var agent_id;
+
 $(document).ready(function () {
-    getAgentProfile();
+
+    var search_params = new URLSearchParams(window.location.search);
+    if (search_params.has('agent_id')) {
+        agent_id = search_params.get('agent_id');
+
+        var data = { agent_id: agent_id, 'val': 'getAgentProfileByAdmin' };
+        getAgentProfile(data);
+
+    } else {
+        var data = { 'val': 'getAgentProfile' };
+        getAgentProfile(data);
+    }
 })
 
 
-function getAgentProfile() {
+function getAgentProfile(data) {
     $.ajax({
         url: agent_server_url + "AgentProfile.php",
         dataType: "json",
-        data: { 'val': 'getAgentProfile' },
+        data: data,
         // appending token in request...
         beforeSend: function (request) {
 
@@ -145,7 +158,40 @@ $("#update_agent").submit(function (e) {
 
     var form = document.getElementById('update_agent');
     var form_data = new FormData(form);
-    form_data.append('val', 'updateProfile');
+
+    // if data is not present in the local storage...
+    if (localStorage.getItem('data') != null) {
+
+        var local_data = JSON.parse(localStorage.getItem('data'));
+        switch (local_data.role) {
+
+            // if the looged in user is admin...
+            case '2':
+                form_data.append('agent_id', agent_id);
+
+                form_data.append('val', 'updateProfileByAdmin');
+
+                break;
+
+            // if the looged in user is agent...
+            case '3':
+                form_data.append('val', 'updateProfileByAgent');
+                break;
+
+            default:
+                swal({
+                    title: "No match Found",
+                    icon: 'error'
+                })
+                break;
+        }
+    } else {
+        swal({
+            title: "Session Expired.Please Login again",
+            icon: 'error'
+        })
+        redirect();
+    }
 
     $.ajax({
         url: agent_server_url + "UpdateProfile.php",
@@ -190,3 +236,19 @@ $("#update_agent").submit(function (e) {
         }
     })
 })
+
+
+function redirect() {
+    var local_data = JSON.parse(localStorage.getItem('data'));
+
+    switch (local_data.role) {
+
+        case '2':
+            adminRedirectLogin();
+            break;
+
+        case '3':
+            agentRedirectLogin();
+            break;
+    }
+}

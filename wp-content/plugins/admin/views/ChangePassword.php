@@ -16,7 +16,7 @@ function changePassword()
         </p>
 
         <input type = 'hidden' name = 'token' value = <?=$_GET['tok']?>>
-        <input type="hidden" name="sub_agent_id" value="<?=!empty($_GET['sub_id']) ? $_GET['sub_id'] : ''?>">
+        <!-- <input type="hidden" name="sub_agent_id" value="<?=!empty($_GET['sub_id']) ? $_GET['sub_id'] : ''?>"> -->
         <input type = 'hidden' name = 'val' value ="changePassword">
 
         <input type = 'submit' class = 'btn btn-primary' name = 'reset' value = 'Change Password' id = 'reset'>

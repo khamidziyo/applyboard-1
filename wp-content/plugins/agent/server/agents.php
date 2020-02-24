@@ -52,8 +52,8 @@ if (!empty($_GET['val'])) {
                     }
 
                     $sql = "select a.id,u.email as u_email,a.name,a.email as a_email,a.contact_number,
-                    a.address,a.image from agents as a join users as u on u.id=a.created_by  where a.role='3'";
-               
+                    a.address,a.image,a.status as a_status from agents as a join users as u on u.id=a.created_by  where a.role='3'";
+
                     // query to get the total results...
                     $total_agents = $wpdb->get_results($sql);
 
@@ -73,7 +73,24 @@ if (!empty($_GET['val'])) {
                             $record[] = $obj->contact_number;
                             $record[] = $obj->address;
                             $record[] = "<img src='" . agent_asset_url . 'images/' . $obj->image . "' width='50px' height='50px'>";
-                            $record[] = "<input type='button' value='View' class='btn btn-primary view'>&nbsp;&nbsp;";
+
+                            switch ($obj->a_status) {
+                                case '1':
+                                    $active = 'selected="selected"';
+                                    break;
+
+                                case '2':
+                                    $inactive = 'selected="selected"';
+                                    break;
+                            }
+                            // echo  $pending;
+                            $record[] = "<select class='update_status' agent_id=" . base64_encode($obj->id) . ">
+                             <option value='1'" . $active . ">Active</option>
+                             <option value='2'" . $inactive . ">Inactive</option>
+                             </select>";
+
+                            $record[] = "<input type='button' value='View Profile' data_id=" . base64_encode($obj->id) . " class='btn btn-success view_profile'>&nbsp;&nbsp;
+                            <a href='" . base_url . "view-sub-agents?agent_id=" . base64_encode($obj->id) . "' class='btn btn-primary'>View Sub Agents</a><br><a class='change_password' data_id=" . base64_encode($obj->id) . ">Change Password</a>";
                             $output['aaData'][] = $record;
                         }
                         $output['iTotalDisplayRecords'] = count($total_agents);

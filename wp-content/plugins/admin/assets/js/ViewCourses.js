@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     var data = { val: "getCountries" };
 
@@ -13,12 +13,12 @@ function getCountryAndSchool(data) {
         type: "get",
         data: data,
         dataType: "json",
-        beforeSend: function(request) {
+        beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
             }
         },
-        success: function(response) {
+        success: function (response) {
             if (verifyToken(response)) {
                 var html = "";
                 if (response.status == 200) {
@@ -28,7 +28,7 @@ function getCountryAndSchool(data) {
                         case 'countries':
                             html += "<option selected='true' disabled>Select Country</option>"
                             html += "<option value='all'>All Country</option>";
-                            $.each(response.data, function(k, v) {
+                            $.each(response.data, function (k, v) {
                                 html += "<option value='" + v.id + "'>" + v.name + "</option>";
                             })
                             $("#countries").html(html);
@@ -37,7 +37,7 @@ function getCountryAndSchool(data) {
 
                         case 'schools':
                             html += "<option selected='true' disabled>Select School</option>"
-                            $.each(response.data, function(k, v) {
+                            $.each(response.data, function (k, v) {
                                 html += "<option value='" + v.id + "'>" + v.name + "</option>";
                             })
                             $("#schools").html(html);
@@ -49,14 +49,14 @@ function getCountryAndSchool(data) {
                 adminRedirectLogin();
             }
         },
-        error: function(error) {
+        error: function (error) {
             var response = { status: 400, 'message': 'Internal Server Error' };
             errorSwal(response);
         }
     })
 }
 
-$("#countries").change(function() {
+$("#countries").change(function () {
     $("#course_table").hide();
     var cntry_id = $(this).val();
     var data = { cntry_id: cntry_id, val: "getSchools" };
@@ -65,7 +65,7 @@ $("#countries").change(function() {
 })
 
 // function that invokes when user selects the school...
-$("#schools").change(function() {
+$("#schools").change(function () {
     $("#course_table").show();
     var s_id = $(this).val();
     var data = { val: "getCourses", school: btoa(s_id) };
@@ -76,8 +76,8 @@ $("#schools").change(function() {
 
 function getCourseBySchool(data) {
     $("#course_table").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [5, 10, 20, 30, 40],
+        "pageLength": 5,
         "processing": true,
         "serverSide": true,
         "language": {
@@ -86,20 +86,20 @@ function getCourseBySchool(data) {
         "destroy": true,
         "columnDefs": [
             // { targets: '_all', visible: true },
-            { "orderable": false, "targets": [2, 3, 4, 5, 6, 7] }
+            { "orderable": false, "targets": [2, 3, 4, 5] }
 
         ],
         "ajax": ({
             url: admin_server_url + "Courses.php",
             data: data,
             dataType: "json",
-            beforeSend: function(request) {
+            beforeSend: function (request) {
                 if (!appendToken(request)) {
                     adminRedirectLogin();
                 }
             }
         }),
-        "initComplete": function(seting, response) {
+        "initComplete": function (seting, response) {
             //Make your callback here.
             if (verifyToken(response)) {
                 console.log(response);

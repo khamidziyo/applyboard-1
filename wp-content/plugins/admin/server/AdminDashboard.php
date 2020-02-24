@@ -17,28 +17,33 @@ function verifyUser()
     return Admin::verifyUser($payload);
 }
 
-if (!empty($_POST)) {
-    $response = [];
-    try {
-        if (verifyUser()) {
+if (!empty($_GET['val'])) {
+    if (verifyUser()) {
+        try {
+            switch ($_GET['val']) {
 
-            $id = $payload->userId;
+                case 'adminDashboard':
+                    $schools = $wpdb->get_results("select count(id) as total_school from school");
+                    $agents = $wpdb->get_results("select count(id) as total_agent from agents where role='3'");
+                    $sub_agents = $wpdb->get_results("select count(id) as total_sub_agent from agents where role='4'");
+                    $courses = $wpdb->get_results("select count(id) as total_courses from courses");
+                    $staff = $wpdb->get_results("select count(id) as total_staff from staff");
 
-            $sql = "select id,email,image from users where id=" . $id . " && role='2'";
+                    $response = ['status' => Success_Code, 'schools' => $schools[0], 'agents' => $agents[0],
+                        'sub_agents' => $sub_agents[0], 'courses' => $courses[0], 'staff' => $staff[0]];
 
-            $user = $wpdb->get_results($sql);
+                    break;
 
-            if (!empty($user)) {
-                $response = ['status' => Success_Code, 'message' => "Profile fetched Successfully", 'data' => $user[0]];
-            } else {
-                throw new Exception("No user found");
+                default:
+                    throw new Exception("No match found.Unauthorized Access");
+                    break;
             }
+        } catch (Exception $e) {
+            $response = ['status' => Error_Code, 'message' => $e->getMessage()];
+
         }
-
-    } catch (Exception $e) {
-        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
-
     }
+
 } else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
 }

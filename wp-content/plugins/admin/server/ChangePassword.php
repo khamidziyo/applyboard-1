@@ -24,6 +24,13 @@ function agentVerifyUser()
     return Agent::verifyUser($payload);
 }
 
+function studentVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Student::verifyUser($payload);
+}
+
 function subAgentVerifyUser()
 {
     global $payload;
@@ -56,9 +63,12 @@ if (!empty($_POST['val'])) {
 
         switch ($_POST['val']) {
             case 'changePassword':
+                echo "<pre>";
+                print_r($_POST);
+                die;
                 switch ($_POST['role']) {
                     case '1':
-                        if (adminVerifyUser()) {
+                        if (studentVerifyUser()) {
                             $id = $payload->userId;
 
                             // query to update the new password...
@@ -67,7 +77,18 @@ if (!empty($_POST['val'])) {
                         }
                         break;
 
+                    // if logged in user is admin...
                     case '2':
+                        if (adminVerifyUser()) {
+                            switch ($_POST['type']) {
+                                case 'updateAgentPassword':
+                                    echo "<pre>";
+                                    print_r($_POST);
+                                    die;
+                                    break;
+                            }
+                        }
+
                         break;
 
                     // if the logged in user is agent...
@@ -81,7 +102,7 @@ if (!empty($_POST['val'])) {
 
                                 // get the sub agent id...
                                 $sub_agent_id = base64_decode($_POST['sub_agent_id']);
-             
+
                                 // query to update the new password...
                                 $update = $wpdb->update('agents', [
                                     'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),

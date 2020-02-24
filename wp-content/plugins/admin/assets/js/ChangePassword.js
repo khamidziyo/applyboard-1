@@ -1,3 +1,17 @@
+
+var search_params = new URLSearchParams(window.location.search);
+
+console.log(search_params);
+
+var type;
+var agent_id;
+
+if (search_params.has('type')) {
+    type = search_params.get('type');
+    agent_id = search_params.get('agent_id');
+    console.log(type);
+}
+
 // when user clicks on button to change password...
 $("#change_password_form").submit(function (e) {
 
@@ -14,7 +28,24 @@ $("#change_password_form").submit(function (e) {
 
     var myform = document.getElementById('change_password_form');
     var form_data = new FormData(myform);
+
+    switch (role) {
+
+        // if looged in user is admin...
+        case '2':
+            switch (type) {
+
+                // if admin updates the password of agent...
+                case 'agentPassword':
+                    form_data.append('type', 'updateAgentPassword');
+                    form_data.append('agent_id', agent_id);
+                    break;
+
+            }
+
+    }
     form_data.append('role', role);
+
     // call to ajax to reset the password...
     $.ajax({
         url: admin_server_url + "ChangePassword.php",

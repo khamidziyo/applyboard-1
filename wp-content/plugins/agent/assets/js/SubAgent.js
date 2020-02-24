@@ -1,12 +1,22 @@
+
+var sub_agent_id;
+
 $(document).ready(function () {
 
-    // function that invoked when agent view the sub agents...
-    viewSubAgents();
-    var sub_agent_id;
+    var search_params = new URLSearchParams(window.location.search);
+    if (search_params.has('agent_id')) {
+        var agent_id = search_params.get('agent_id');
+        var data = { agent_id: agent_id, val: "getSubAgentsByAdmin" };
 
+        viewSubAgents(data)
+    } else {
+        var data = { val: "getSubAgentsByAgent" };
+        // function that invoked when agent view the sub agents...
+        viewSubAgents(data);
+    }
 })
 
-function viewSubAgents() {
+function viewSubAgents(data) {
     $("#view_sub_agent").DataTable({
         "lengthMenu": [1, 2, 3, 4],
         "pageLength": 1,
@@ -23,7 +33,7 @@ function viewSubAgents() {
         ],
         "ajax": ({
             url: agent_server_url + "subAgents.php",
-            data: { val: "getAgents" },
+            data: data,
             dataType: "json",
             beforeSend: function (request) {
                 if (!appendToken(request)) {
@@ -48,52 +58,66 @@ $(document).on('click', '.change_password', function () {
     $("#sub_agent_id").val(sub_agent_id);
 })
 
+var previous_status;
+var this_status;
+
+// function to get the previous status...
+$(document).on('focus', '.sub_agent_status', function () {
+    previous_status = $(this).val();
+})
+
 // when agent changes the status of subagent...
 $(document).on('change', '.sub_agent_status', function () {
+    this_status = $(this);
+
     var id = $(this).attr('data_id');
     var status = $(this).children("option:selected").val();
-    var data = { 'id': id, 'status': status, 'val': 'updateStatus' };
 
-    switch (status) {
+    // if data is not present in the local storage...
+    if (localStorage.getItem('data') != null) {
+        var local_data = JSON.parse(localStorage.getItem('data'));
 
-        case '1':
-            swal({
-                title: "Are you sure you want to active this user",
-                icon: "warning",
-                buttons: ['Cancel', 'Yes,Activate.']
-            }).then(function (val) {
-                if (val) {
-                    updateSubaAgentStatus(data);
-                } else {
-                    $(this).val('2');
-                }
-            })
-            break;
+        switch (local_data.role) {
 
-        case '2':
-            swal({
-                title: "Are you sure you want to deactivate the user",
-                icon: "warning",
-                buttons: ['Cancel', 'Yes,Deactivate.']
-            }).then(function (val) {
-                if (val) {
-                    updateSubaAgentStatus(data);
-                } else {
-                    $(this).val('1');
-                }
-            })
-            break;
+            case '2':
+                var data = { 'id': id, 'status': status, 'val': 'updateStatusByAdmin' };
 
+                break;
 
+            case '3':
+                var data = { 'id': id, 'status': status, 'val': 'updateStatusByAgent' };
+                break;
 
-        default:
-            swal({
-                title: "No match Found",
-                icon: 'error'
-            })
-            break;
+            default:
+                swal({
+                    title: "No match Found",
+                    icon: 'error'
+                })
+                break;
+        }
+    } else {
+        swal({
+            title: "Session Expired.Please Login again",
+            icon: 'error'
+        })
+        redirect();
     }
+
+    var status_txt = $(this).children("option:selected").text();
+
+    swal({
+        title: "Are you sure you want to " + status_txt + " this user",
+        icon: "warning",
+        buttons: ['Cancel', "Yes, " + status_txt + " ."]
+    }).then(function (val) {
+        if (val) {
+            updateSubaAgentStatus(data);
+        } else {
+            this_status.val(previous_status);
+        }
+    })
 });
+
 
 function updateSubaAgentStatus(data) {
     $.ajax({
@@ -123,7 +147,7 @@ function updateSubaAgentStatus(data) {
             errorSwal(response);
         }
     })
-    console.log(data);
+    // console.log(data);
 
 }
 
@@ -182,3 +206,18 @@ $("#validate_old_password").submit(function (e) {
 })
 
 
+
+function redirect() {
+    var local_data = JSON.parse(localStorage.getItem('data'));
+
+    switch (local_data.role) {
+
+        case '2':
+            adminRedirectLogin();
+            break;
+
+        case '3':
+            agentRedirectLogin();
+            break;
+    }
+}
