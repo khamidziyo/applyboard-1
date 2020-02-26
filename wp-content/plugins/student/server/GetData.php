@@ -75,17 +75,17 @@ if (!empty($_GET)) {
 
                 case 'getGradeScheme':
                     if (empty($_GET['id'])) {
-                        throw new Exception("Please select the language first");
+                        throw new Exception("Please select the grade first");
                     }
                     $id = $_GET['id'];
 
                     // sql to get all the exams of specific language...
-                    $grade_sql = "select id,grade_scheme from grade where id=" . $id;
+                    $grade_sql = "select id,name from grade where id=" . $id;
                     $grade_data = $wpdb->get_results($grade_sql);
-
+   
                     // storing all data in an array...
                     $response = ['status' => Success_Code, 'message' => 'Grade scheme fetched successfully',
-                        'grade_data' => json_decode($grade_data[0]->grade_scheme)];
+                        'grade_data' => json_decode($grade_data[0]->name)];
                     break;
                 // if no case matches...
                 default:

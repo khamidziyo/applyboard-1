@@ -27,9 +27,9 @@ function studentLogin()
         </a>
 
       <p>
-      <a href="http://localhost/wordpress/wordpress/index.php/student-sign-up/">Create Account</a>
+      <a href="<?=base_url?>student-sign-up/">Create Account</a>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="http://localhost/wordpress/wordpress/index.php/forgot-password/" class="btn btn-primary">Forgot Password</a>
+      <a href="<?=base_url?>forgot-password/" class="btn btn-primary">Forgot Password</a>
 
       </p>
 
@@ -41,6 +41,4 @@ function studentLogin()
     <?php
 }
 add_shortcode('student_login', 'studentLogin');
-
-?>
 

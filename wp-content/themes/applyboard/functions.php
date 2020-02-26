@@ -112,3 +112,4 @@ function wpa3396_page_template( $page_template )
     }
     return $page_template;
 }
+?>

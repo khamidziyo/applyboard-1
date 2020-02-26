@@ -26,7 +26,7 @@ function adminProfile(){
 			</div> 
 			<div class="modal-body">
 			<p>Old Password: 
-            <input type="password" name="password" id="password" required>
+            <input type="password" name="password" id="admin_password" required>
             </p>
 			</div>   
 			<div class="modal-footer">

@@ -37,7 +37,7 @@ function getUserProfile() {
             // calling function that verifies the token defined in token.js file 
             // inside common directory of plugins.
             if (verifyToken(response)) {
-                // console.log(response);
+                console.log(response);
 
                 // if status is 200...
                 if (response.status == 200) {
@@ -151,7 +151,6 @@ function getUserProfile() {
                         $("#image").attr('src', student_assets_url + "images/default_image.png");
                     }
 
-                    console.log(response.documents);
 
                     if (response.documents.length > 0) {
                         // console.log(response.documents);
@@ -381,7 +380,7 @@ function getStudentData(data) {
                     }
 
                     if (response.hasOwnProperty('grade_data')) {
-
+                        console.log(response.grade_data);
                         // each loop to display grade schemes in drop down...
                         grade_scheme_html += "<option selected disabled>Select Grade Scheme</option>";
                         $.each(response.grade_data, function (grade, scheme_arr) {

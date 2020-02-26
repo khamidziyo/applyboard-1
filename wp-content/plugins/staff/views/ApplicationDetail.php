@@ -12,6 +12,9 @@ function applicationDetail()
 
         //function to get the student and the course detail...
         $data = getApplicationDetail($app_id);
+        // echo "<pre>";
+        // print_r($data);
+
         ?>
 
         <span>
@@ -34,7 +37,7 @@ function applicationDetail()
 
 
 
-        <div style="width: 550px; height: 1100px;border: solid 1px #ccc; display: inline-block;">
+        <div style="width: 550px; height: 1300px;border: solid 1px #ccc; display: inline-block;">
         <h3>Student Detail</h3>
 
         <label>Name:</label>&nbsp;&nbsp;<?=$data[0]->f_name . " " . $data[0]->l_name?><br>
@@ -110,7 +113,6 @@ if (!empty($data[0]->intake)) {
         } else {
             echo "No intake selected. <br>";
         }
-
         ?>
 
 <label>Application Submitted On&nbsp;&nbsp;</label><?=date("Y-m-d", strtotime($data[0]->created_on))?><br>
@@ -118,11 +120,51 @@ if (!empty($data[0]->intake)) {
         <label>Profile Image:</label><br>;<img src="<?=student_asset_url . "/images/" . $data[0]->u_image?>" width="200px" heigth="200px"><br>
 
 
+        <?php
+
+        $documents = getStudentDocuments($data[0]->student_id);
+        echo "<label>Documents Uploaded</label>";
+
+        echo "<ul>";
+
+        if (count($documents) > 0) {
+
+            foreach ($documents as $key => $object) {
+                $type = pathinfo($object->document, PATHINFO_EXTENSION);
+
+                switch ($type) {
+                    case 'pdf':
+                        echo "<li><a href='" . student_asset_url . "/documents/" . $object->document . "' download='" . $object->document . "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/pdf48.png' width='48' height='48'>PDF</a></li><br>";
+                        break;
+
+                    case 'docx':
+                        echo "<li><a href='" . student_asset_url . "/documents/" . $object->document . "' download='" . $object->document . "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/xlsx48.png' width='48' height='48'>PDF</a></li><br>";
+                        break;
+
+                    case 'png':
+                        echo "<li><div style='display: none;' id='hidden_image_" . $key . "'><img src='" . student_asset_url . "/documents/" . $object->document . "' width='80%' height='80%'></div><a href='" . student_asset_url . "/documents/" . $object->document . "' data-fancybox data-src='#hidden_image_" . $key . "' download='" . $object->document . "'>Image</a></li><br>";
+                        break;
+
+                    case 'jpg':
+                        echo "<li><div style='display: none;' id='hidden_image_" . $key . "'><img src='" . student_asset_url . "/documents/" . $object->document . "' width='80%' height='80%'></div><a href='" . student_asset_url . "/documents/" . $object->document . "' data-fancybox data-src='#hidden_image_" . $key . "' download='" . $object->document . "'>Image</a></li><br>";
+                        break;
+
+                    case 'jpeg':
+                        echo "<li><div style='display: none;' id='hidden_image_" . $key . "'><img src='" . student_asset_url . "/documents/" . $object->document . "' width='80%' height='80%'></div><a href='" . student_asset_url . "/documents/" . $object->document . "' data-fancybox data-src='#hidden_image_" . $key . "' download='" . $object->document . "'>Image</a></li><br>";
+                        break;
+                }
+            }
+            echo "</ul>";
+
+        } else {
+            echo "<b>No document Uploaded</b>";
+        }
+        ?>
     </div>
 
 
 
-<div style="width: 550px; height: 1100px;border: solid 1px #ccc; display: inline-block; float:right">
+<div style="width: 550px; height: 1300px;border: solid 1px #ccc; display: inline-block; float:right">
 <h3>Course Detail</h3>
 <label>Name:</label>&nbsp;&nbsp;<?=$data[0]->name?><br>
 <label>Code:</label>&nbsp;&nbsp;<?=$data[0]->code?><br>

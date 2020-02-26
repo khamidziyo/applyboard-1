@@ -29,9 +29,12 @@ if (!empty($_POST['val'])) {
                     $id = $payload->userId;
 
                     $require_arr = ['name', 'email', 'password', 'confirm_password'];
+
                     foreach ($require_arr as $form_input) {
                         if (!array_key_exists($form_input, $_POST)) {
-                            throw new Exception("Please enter your " . $form_input);
+                            throw new Exception($form_input . " is missing in the request");
+                        } elseif (empty($_POST[$form_input])) {
+                            throw new Exception("Please enter the " . $form_input);
                         }
                     }
                     $email = $_POST['email'];

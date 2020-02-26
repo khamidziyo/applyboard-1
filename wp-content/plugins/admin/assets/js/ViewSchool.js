@@ -7,10 +7,11 @@ $(document).ready(function () {
 function viewSchools() {
 
     $("#school_table").DataTable({
-        "lengthMenu": [1, 2, 3, 4],
-        "pageLength": 1,
+        "lengthMenu": [5,10, 20, 30, 40],
+        "pageLength": 5,
         "processing": true,
         "serverSide": true,
+        "order":[0,'desc'],
         "language": {
             "emptyTable": "No school available"
         },

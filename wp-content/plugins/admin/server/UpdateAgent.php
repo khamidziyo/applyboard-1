@@ -51,7 +51,7 @@ if (!empty($_POST['val'])) {
         }
     }
 } else {
-    $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
+    $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
 }
 
 echo json_encode($response);

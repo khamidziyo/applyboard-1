@@ -41,6 +41,37 @@ function verifyToken(response) {
     }
 }
 
+function redirect(role) {
+
+    switch (role) {
+
+        // if a logged in user is student...
+        case '1':
+            studentRedirectLogin();
+            break;
+
+        // if a logged in user is admin...
+        case '2':
+            adminRedirectLogin();
+            break;
+
+        // if a logged in user is agent...
+        case '3':
+            agentRedirectLogin();
+            break;
+
+        // if a logged in user is sub agent...
+        case '4':
+            subAgentRedirectLogin();
+            break;
+
+        // if a logged in user is staff...
+        case '5':
+            staffRedirectLogin();
+            break;
+    }
+}
+
 function adminRedirectLogin() {
     localStorage.removeItem('data');
     setTimeout(function () {

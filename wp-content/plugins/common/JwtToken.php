@@ -1,10 +1,6 @@
 <?php
 
-if(file_exists(dirname( __FILE__ ).'/Jwt.php')){
-    include_once  dirname( __FILE__ ).'/Jwt.php';
-}
-
-require dirname(__DIR__,1) . '/vendor/autoload.php';
+// require dirname(__DIR__, 1) . '/common/autoload.php';
 
 
 /**
@@ -39,6 +35,7 @@ class JwtToken {
     public static function getAuthorizationHeader() {
         try {
             $headers = null;
+
             if ( isset( $_SERVER['Authorization'] ) ) {
                 $headers = trim( $_SERVER['Authorization'] );
             } else if ( isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
@@ -50,10 +47,12 @@ class JwtToken {
 
                 // Server-side fix for bug in old Android versions ( a nice side-effect of this fix means we don't care about capitalization for Authorization)
         $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-        //print_r($requestHeaders);
+        // echo "<pre>";
+        // print_r($requestHeaders);
+        // die;
         if (isset($requestHeaders['Authorization'])) {
             $headers = trim($requestHeaders['Authorization']);
-        }else{
+        } else{
                 throw new Exception('Authorization missing in the request');
         }
     }

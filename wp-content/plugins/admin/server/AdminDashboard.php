@@ -6,12 +6,13 @@ if (!isset($wpdb)) {
     include_once '../../../../wp-config.php';
 }
 
-if (file_exists(dirname(__FILE__, 3) . '/common/autoload.php')) {
-    include_once dirname(__FILE__, 3) . '/common/autoload.php';
+// echo get_home_url();
+// die;
+if (file_exists(dirname(__DIR__, 2) . '/common/autoload.php')) {
+    include_once dirname(__DIR__, 2) . '/common/autoload.php';
 }
 
-function verifyUser()
-{
+function verifyUser(){
     global $payload;
     $payload = JwtToken::getBearerToken();
     return Admin::verifyUser($payload);

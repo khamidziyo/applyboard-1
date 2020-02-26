@@ -1,18 +1,14 @@
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 
 <head>
-
-
-	<title</title>
+	<title></title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		 <?php
-include_once dirname(__DIR__, 2) . '/plugins/common/constants.php';?>
 
-	  <link rel="stylesheet" href="<?=get_template_directory_uri();?>/style.css">
+	  	<link rel="stylesheet" href="<?=get_template_directory_uri();?>/style.css">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/bootstrap.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.dataTables.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery-ui.css')?>">
@@ -44,7 +40,7 @@ include_once dirname(__DIR__, 2) . '/plugins/common/constants.php';?>
 		<script src="<?=content_url("themes/applyboard/js/jquery.fancybox.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/bootstrap-select.min.js")?>"></script>
 
-		
+
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 		<script type="text/javascript" src="https://cdn.rawgit.com/oauth-io/oauth-js/c5af4519/dist/oauth.js"></script>
@@ -166,7 +162,6 @@ include_once dirname(__DIR__, 2) . '/plugins/common/constants.php';?>
 		  <?php endif;?>
 	</header> -->
 
-	<body>
 		<div class="wrapper">
 
 
@@ -189,9 +184,10 @@ if(localStorage.getItem('data')!=null){
 		case '2':
 			html+="<a href='<?=base_url?>admin-dashboard/'>Home</a>";
 			html+="<a href='<?=base_url?>admin-profile/'><h4>Profile</h4></a><a href='<?=base_url?>add-agent/'><h4>Add Agent</h4></a>";
-			html+="<a href='<?=base_url?>view-agents/'><h4>View Agents</h4></a><a href='<?=base_url?>add-school/'><h4>Add School</h4></a>";
-			html+="<a href='<?=base_url?>add-staff/'><h4>Add Staff Member</h4></a>";
-			html+="<a href='<?=base_url?>view-all-schools/'><h4>View Schools</h4></a><a href='<?=base_url?>view-courses-by-admin/'><h4>View Courses</h4></a>";
+			html+="<a href='<?=base_url?>view-agents/'><h4>View Agents</h4></a><a href='<?=base_url?>add-school/'><h4>Add School</h4></a>"
+			html+="<a href='<?=base_url?>view-all-schools/'><h4>View Schools</h4></a><a href='<?=base_url?>add-staff/'><h4>Add Staff Member</h4></a>"
+			html+="<a href='<?=base_url?>view-staff-members/'><h4>View Staff Members</h4></a>";
+			html+="<a href='<?=base_url?>view-courses-by-admin/'><h4>View Courses</h4></a>";
 
 		break;
 
@@ -222,10 +218,9 @@ if(localStorage.getItem('data')!=null){
 }
 
 function includeJs(){
-
 	var myscript = document.createElement('script');
 	myscript.setAttribute('src',"<?=content_url("themes/applyboard/js/header.js")?>")
 	document.head.appendChild(myscript);
-
 }
+
 </script>

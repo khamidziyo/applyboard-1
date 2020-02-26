@@ -1,7 +1,7 @@
-viewAgents();
+viewAllAgents();
 
-
-function viewAgents() {
+function viewAllAgents() {
+    alert();
     $("#view_agent_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
         "pageLength": 5,
@@ -128,7 +128,7 @@ $("#password_form").submit(function (e) {
     var form = document.getElementById('password_form');
     var form_data = new FormData(form);
     form_data.append('agent_id', agent_id);
-    form_data.append('val', 'validateOldPasswordByAdmin');
+    form_data.append('val', 'validateAgentOldPasswordByAdmin');
 
     $.ajax({
         url: agent_server_url + "UpdateProfile.php",
@@ -159,7 +159,7 @@ $("#password_form").submit(function (e) {
 
                 // if status is 200...
                 if (response.status == 200) {
-                    var url = base_url + "change-password/?tok=" + response.data.token + " &&type='agentPassword' && agent_id=" + agent_id;
+                    var url = base_url + "change-password/?tok=" + response.data.token + " &&agent_id=" + agent_id;
                     window.location.href = url;
 
                 } else {

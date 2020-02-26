@@ -2,6 +2,7 @@
 function subAgentProfile()
 {
     ?>
+
     <div class="container">
 
     <form name="sub_agent_profile" id="sub_agent_profile">
@@ -70,5 +71,4 @@ function subAgentProfile()
 }
 
 add_shortcode('sub_agent_profile', 'subAgentProfile');
-?>
 

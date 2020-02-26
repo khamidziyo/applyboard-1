@@ -1,221 +1,139 @@
 <?php
-include_once dirname(__FILE__,2)."/server/functions.php";
 
-function addSchool(){
-
-    if(!empty($_GET['sch'])){
-        $s_id=base64_decode($_GET['sch']);
-        
-        $data=getSchoolDetailById($s_id);
-        // echo "<pre>";
-        // print_r($data);
-        // die;
-        }
+function addSchool()
+{
     ?>
-        <script src="<?=asset_url?>js/AddSchool.js"></script>
 
     <div class="container-fluid">
     <form name="add_school_form" id="add_school_form">
-    <p>Name <input type="text" name="name" id="name" value="<?=!empty($data[0])?$data[0]->sch_name:''?>"  required></p>
-    
-    <p>Email <input type="email" name="email" id="email" value="<?=!empty($data[0])?$data[0]->email:''?>" required email></p>
-    
-    <p>Address <input type="text" name="address" id="address" value="<?=!empty($data[0])?$data[0]->address:''?>" required></p>
-    
-    <p>Phone Number <input type="number" name="number" id="number" value="<?=!empty($data[0])?$data[0]->number:''?>" required></p>
-    
-    <p>Description<br>
-    <textarea name="description" id="description" placeholder="Give a short description about your school." required>
-    <?=!empty($data[0])?$data[0]->description:''?>
-    </textarea></p><br>
-    
-    <p>Country&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    
-    <select name="country" id="country" required>
-    <option selected="selected" disabled>Select Country</option>
-    </select></p>
 
+    <div class="form-group">
+      <label for="school_name">Name:</label>
+      <input type="text" class="form-control" id="school_name" placeholder="Enter school name" name="name" required>
+    </div>
 
-    <label>State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <select name="state" id="state" required>
-    <option selected="selected" disabled>Select state</option>
-    </select></label><br>
+    <div class="form-group">
+      <label for="school_email">Email:</label>
+      <input type="email" class="form-control" id="school_email" placeholder="Enter school email" name="email" required>
+    </div>
 
-        <?php
-        if(!empty($data[0])){
-            ?>
-    <script>
-        var data=getDataBYAjax('<?=base64_encode($data[0]->countries_id)?>','state');
-    </script>
-            <?php
-        }
-        ?>
+    <div class="form-group">
+      <label for="address">Address:</label>
+      <input type="text" class="form-control" id="address" placeholder="Enter school address" name="address" required>
+    </div>
 
+    <div class="form-group">
+      <label for="number">Phone Number:</label>
+      <input type="number" class="form-control" id="number" name="number"  required>
+    </div>
 
-    <p>City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <select name="city" id="city" required>
-    <option selected="selected" disabled>Select City</option>
-    </select></p>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea class="form-control" id="description" name="description" placeholder="Give a short description about your school." required></textarea>
+    </div>
 
-    <?php
-        if(!empty($data[0])){
-            ?>
-    <script>
-        var data=getDataBYAjax('<?=base64_encode($data[0]->state_id)?>','city');
-    </script>
-            <?php
-        }
-        ?>
+    <div class="form-group">
+      <label for="country">Country</label>
 
-    <?php
-        if(!empty($data)){
-   ?>
-    <script>
-   setTimeout(function(){
-      $('#country').children("option[value="+<?=$data[0]->countries_id?>+"]").attr('selected',true)
-      $('#school_type').children("option[value="+<?=$data[0]->type?>+"]").attr('selected',true)
-      $('#state').children("option[value="+<?=$data[0]->state_id?>+"]").attr('selected',true)
-      $('#city').children("option[value="+<?=$data[0]->city_id?>+"]").attr('selected',true)
-    },3000);
-   </script>
-   <?php
-    }
-   ?>
-    <p>School Type &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <select  name="school_type" id="school_type" required>
-    <option value=''>Select School Type</option>
-    <option value="1" name='School'>School</option>
-    <option value="2" name='College'>College</option>
-    <option value="3" name='University'>University</option>
-    <option value="4" name='Institute'>Institute</option>
-    </select></p>
+      <select class="selectpicker form-control" id="country" data-live-search="true" name="country" required>
+      </select>
+    </div>
 
-    <p>Postal Code <input type="text" value="<?=!empty($data[0])?$data[0]->postal_code:''?>" name="postal_code" class="postal_code" disabled required></p>
-    <input type="hidden" name="pin_code" class="postal_code" value="<?=!empty($data[0])?$data[0]->postal_code:''?>"/>
+    <div class="form-group">
+      <label for="state">State</label>
+
+      <select class="selectpicker form-control" id="state" data-live-search="true" name="state" required>
+        <option selected="selected" disabled>Select state</option>
+
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="city selectpicker">City</label>
+
+      <select class="selectpicker form-control" id="city" data-live-search="true" name="city" required>
+        <option selected="selected" disabled>Select City</option>
+
+      </select>
+    </div>
 
 
 
-    <p>Accomodation <input type="checkbox" name="accomodation" id="accomodation" value=1>
+    <div class="form-group">
+      <label for="school_type selectpicker">School Type</label>
 
+      <select class="selectpicker form-control" id="school_type" data-live-search="true" name="school_type" required>
+            <option selected="selected" disabled>Select School Type</option>
+            <option value="1" name='School'>School</option>
+            <option value="2" name='College'>College</option>
+            <option value="3" name='University'>University</option>
+            <option value="4" name='Institute'>Institute</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="postal_code">Postal Code:</label>
+      <input type="text" class="form-control postal_code" name="postal_code" disabled required>
+      <input type="hidden" name="pin_code" class="postal_code"/>
+    </div>
+
+    <div class="form-group">
+      <label for="accomodation">Accomodation:</label>
+      <input type="checkbox" class="form-control" name="accomodation" id="accomodation" value="1">
+    </div>
+
+    <div class="form-group">
     <span id="living_cost"></span>
 
-    </p>
-
-    <?php
-if(!empty($data[0]) && $data[0]->accomodation==1){
-    ?>
-   <script>
-   $('#accomodation').prop('checked',true)
-    $("#living_cost").html('<label>Living Cost <input type="text" name="living_cost" value=<?=$data[0]->living_cost?>><br></label>');
-   </script>
-   <?php
-}
-?>
+    </div>
 
 
-    <p>Work while studying <input type="checkbox" style="vertical-align:middle" name="work_studying" id="work_studying" value=1 ></p>
-    
-    <?php
-    if(!empty($data[0]) && $data[0]->work_studying==1){
-    echo "<script>$('#work_studying').prop('checked',true)</script>";
-    }else{
-        echo "<script>$('#work_studying').prop('checked',false)</script>"; 
-    }
-?>
+    <div class="form-group">
+      <label for="work_studying">Work while studying:</label>
+      <input type="checkbox" class="form-control" name="work_studying" id="work_studying" value="1" >
+    </div>
 
-    <p>Conditional Offer letter <input type="checkbox" name="offer_letter" id="offer_letter" value=1></p>
+    <div class="form-group">
+      <label for="offer_letter">Conditional Offer letter:</label>
+      <input type="checkbox" class="form-control" name="offer_letter" id="offer_letter" value="1">
+    </div>
 
-    <?php
-    if(!empty($data) && $data[0]->offer_letter==1){
-    echo "<script>$('#offer_letter').prop('checked',true)</script>";
-    }else{
-        echo "<script>$('#offer_letter').prop('checked',false)</script>"; 
-    }
-?>
-    
-    <?php
-    if(!empty($data[0])){
-        ?>
-        <p>Profile Image <input type="file" name="profile_image" id="profile_image_input">
-         <input type="hidden" name="pro_image" value="<?=$data[0]->profile_image?>">
-        <img src="<?=school_asset_url?>images/<?=$data[0]->profile_image?>" id="profile_image" name="profile_image" width="200px" height="200px"></p>
-<?php
-       
-    }else{
-?>
-    <p>Profile Image <input type="file" name="profile_image" id="profile_image_input" required>
-    <img src="" id="profile_image" name="profile_image" width="200px" height="200px" style="display:none"></p>
 
-<?php
-    }
-    ?>
 
-    
-    
-    <?php
-    if(!empty($data[0])){
-        ?>
-    <input type="hidden" name="school_id" id="school_id" value="<?=$_GET['sch']?>">
-     <p>Cover Image<input type="file" name="cover_image" id="cover_image_input">
-        <input type="hidden" name="co_image" value="<?=$data[0]->cover_image?>">
-        <img src="<?=school_asset_url?>images/<?=$data[0]->cover_image?>" id="cover_image" name="cover_image" width="200px" height="200px"></p>
-<?php
-       
-    }else{
-?>
-    <p>Cover Image<input type="file" name="cover_image" id="cover_image_input" required>
-    <img src="" id="cover_image" name="cover_image" width="200px" height="200px" style="display:none"></p>
 
-<?php
-    }
-    ?>    
-    <p><input type="checkbox" id="chk_box">Certificate<short>(if any)</short></p>
-    
+    <label>Profile Image</label><br>
+    <img src="" id="profile_image" name="profile_image" width="200px" height="200px" style="display:none"><br>
+    <input type="hidden" name='previous_profile_image' id="previous_profile_image">
+    <input type="file" name="profile_image" id="profile_image_input" required>
+
+
+    <label>Cover Image</label><br>
+    <img src="" id="cover_image" name="cover_image" width="200px" height="200px" style="display:none">
+    <input type="hidden" name='previous_cover_image' id="previous_cover_image">
+    <input type="file" name="cover_image" id="cover_image_input" required>
+
+
+    <div class="form-group">
+      <label for="chk_box" id="certificate_label">Certificate<short>(if any)</short></label>
+      <input type="checkbox" class="form-control" name="certificate" id="chk_box" value="1" required>
+    </div>
+
     <div id="certificate_div">
     </div>
 
-    <?php
-    if(!empty($data) && !empty($data[0]->document)){
-        echo "<script>$('#chk_box').prop('checked',true)</script>";
-        echo  "<label>Certificates</label>";
 
-        foreach($data as $key=>$obj){
-        ?>
-        <span>
-        <input type="file" name="document[]" class="document_input">
-        <input type="button" value="Remove" id="delete">
-        <input type="hidden" name="certificates[]" value="<?=$obj->document?>">
-        <img src="<?=school_asset_url.'certificates/'.$obj->document?>" id="document_0" name="document" width="200px" height="200px">
-        <br>
-        </span>
-        <?php
-        }
-    }
-    ?>
+        <input type="button" value="Add More" id="add_more"><br>'
 
-    <span id="add_more_button">
-    <?php
-    if(!empty($data[0])){
-        ?>
-        <input type="button" value="Add More" id="add_more">
-        <?php
-    }
-    ?>
-    </span>
-    
-    <img src="<?=constant('asset_url')?>images/loading.gif" id="loading_gif" width="200px" height="200px" style="display:none">
-    <?php
-    if(!empty($data[0])){
-        echo "<input type='submit' value='Update School' name='submit' id='add_school'>";
-    }else{
-        echo "<input type='submit' value='Add School' name='submit' id='add_school'>";
-    }
-        ?>
+    <img src="<?=school_asset_url?>images/loading.gif" id="loading_gif" width="200px" height="200px" style="display:none">
+        <input type='submit' value='Add School' class='btn btn-primary' name='submit' id='add_school_btn'>
+
     </form>
-    
+
+    <script src="<?=school_asset_url?>js/AddSchool.js"></script>
     </div>
+
     <?php
 }
-add_shortcode('add_school','addSchool');
+add_shortcode('add_school', 'addSchool');
 
 ?>

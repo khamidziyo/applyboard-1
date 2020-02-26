@@ -38,7 +38,7 @@ if (!empty($_POST['val'])) {
                 }
                 break;
 
-            case 'validateOldPasswordByAdmin':
+            case 'validateAgentOldPasswordByAdmin':
                 if (adminVerifyUser()) {
 
                     if (empty($_POST['agent_id'])) {
@@ -46,7 +46,7 @@ if (!empty($_POST['val'])) {
                     }
 
                     $id = base64_decode($_POST['agent_id']);
-  
+
                     validateOldPassword($wpdb, $id);
 
                 }

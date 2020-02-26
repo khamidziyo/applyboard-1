@@ -13,7 +13,7 @@
 /* Text Domain:       Staff
  * Domain Path:        languages
  **/
-$view_arr = ['StaffLogin', 'StaffDashboard', 'StaffProfile', 'ViewStudentApplications',
+$view_arr = ['StaffLogin', 'StaffDashboard', 'StaffProfile','StaffMembers','ViewStudentApplications',
  'ReviewApplication', 'ApplicationDetail'];
 
 foreach ($view_arr as $view_name) {

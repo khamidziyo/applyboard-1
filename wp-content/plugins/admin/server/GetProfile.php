@@ -49,7 +49,7 @@ if ( !empty( $_GET['val'] ) ) {
 
                             // update token in users table...
                             $wpdb->update('users',['forgot_password_token'=>$token],['id'=>$id]);
-                            $data=['token'=>$token,'id'=>$id];
+                            $data=['token'=>$token];
 
                             // returning the response...
                             $response=['status'=>Success_Code,'message'=>'Password is correct','data'=>$data];

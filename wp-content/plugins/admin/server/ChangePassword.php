@@ -63,9 +63,7 @@ if (!empty($_POST['val'])) {
 
         switch ($_POST['val']) {
             case 'changePassword':
-                echo "<pre>";
-                print_r($_POST);
-                die;
+
                 switch ($_POST['role']) {
                     case '1':
                         if (studentVerifyUser()) {
@@ -81,11 +79,25 @@ if (!empty($_POST['val'])) {
                     case '2':
                         if (adminVerifyUser()) {
                             switch ($_POST['type']) {
-                                case 'updateAgentPassword':
-                                    echo "<pre>";
-                                    print_r($_POST);
-                                    die;
+
+                                case 'updateAgentPasswordByAdmin':
+
+                                    $agent_id = base64_decode($_POST['agent_id']);
+
+                                    // query to update the new password...
+                                    $update = $wpdb->update('agents', ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT)],
+                                        ['forgot_password_token' => $token, 'id' => $agent_id]);
+
                                     break;
+
+                                case 'updateAdminPassword':
+                                    $id = $payload->userId;
+
+                                    // query to update the new password...
+                                    $update = $wpdb->update('users', ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT)],
+                                        ['forgot_password_token' => $token, 'id' => $id]);
+                                    break;
+
                             }
                         }
 

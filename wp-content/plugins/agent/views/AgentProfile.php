@@ -4,6 +4,7 @@ function agentProfile()
 {
     ?>
 <div class="container">
+
   <a href="<?=base_url?>/view-sub-agents/" class="btn btn-primary" style="float:right">View sub agents</a>
   <br><br>
   <a id="change_password" style="float:right">Change Password</a>
@@ -90,7 +91,7 @@ function agentProfile()
     </div>
     </div>
     </div>
-    
+
      <script src="<?=agent_asset_url?>js/AgentProfile.js"></script>
 </div>
     <?php

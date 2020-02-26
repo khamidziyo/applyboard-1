@@ -9,23 +9,24 @@ if (file_exists(dirname(__FILE__, 3) . '/common/autoload.php')) {
     include_once dirname(__FILE__, 3) . '/common/autoload.php';
 }
 
-function verifyUser()
+function adminVerifyUser()
 {
     global $payload;
     $payload = JwtToken::getBearerToken();
-    return School::verifyUser($payload);
+    return Admin::verifyUser($payload);
 }
 
 if (!empty($_POST['val'])) {
     try {
-        if (verifyUser()) {
 
-            switch ($_POST['val']) {
-                case 'deleteCertificate':
+        switch ($_POST['val']) {
+            case 'removeCertificateByAdmin':
+
+                if (adminVerifyUser()) {
 
                     // if application id is empty...
                     if (empty($_POST['id'])) {
-                        throw new Exception("Application id is required");
+                        throw new Exception("Document id is required");
                     }
 
                     $id = $_POST['id'];
@@ -36,7 +37,7 @@ if (!empty($_POST['val'])) {
 
                     // get the directory path from where image is to be deleted...
                     $path = dirname(__DIR__);
-
+     
                     // delete the image from the directory...
                     if (!unlink($path . "/assets/certificates/" . $doc)) {
                         throw new Exception('Unable to delete school certificate from server.');
@@ -53,13 +54,13 @@ if (!empty($_POST['val'])) {
                     else {
                         throw new Exception("Internal server error while deleting school certificate");
                     }
-                    break;
+                }
+                break;
 
-                // if no case matches...
-                default:
-                    throw new Exception("No match Found");
-                    break;
-            }
+            // if no case matches...
+            default:
+                throw new Exception("Unauthorized Access.No match Found.");
+                break;
         }
     }
     // if any exception occurs...
@@ -70,7 +71,7 @@ if (!empty($_POST['val'])) {
 
 // if user directly access this page...
 else {
-    $response = ['status' => Error_Code, 'message' => "Unauthorized Access"];
+    $response = ['status' => Error_Code, 'message' => "Unauthorized Access.Value is required"];
 }
 
 // returning the json response...

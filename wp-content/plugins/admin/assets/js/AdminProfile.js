@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     getAdminProfile();
 })
@@ -8,12 +8,12 @@ function getAdminProfile() {
         url: admin_server_url + "GetProfile.php",
         data: { val: "profile" },
         dataType: "json",
-        beforeSend: function(request) {
+        beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
             }
         },
-        success: function(response) {
+        success: function (response) {
 
             if (verifyToken(response)) {
 
@@ -34,7 +34,7 @@ function getAdminProfile() {
                 adminRedirectLogin();
             }
         },
-        error: function(error) {
+        error: function (error) {
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response)
         }
@@ -42,16 +42,19 @@ function getAdminProfile() {
 }
 
 // when user clicks on change password link...
-$("#change_password").click(function() {
+$("#change_password").click(function () {
 
     // to show the modal to enter old password...
     $("#password_modal").modal('show');
 })
 
 // when user clicks on password button after entering the password...
-$("#check_password").click(function() {
-    var password_val = $("#password").val();
-    verifyOldPassword(password_val);
+$("#check_password").click(function () {
+    var password_val = $("#admin_password").val();
+        // console.log(password_val);
+    if(password_val!=""){
+        verifyOldPassword(password_val);
+    }
 })
 
 function verifyOldPassword(password_val) {
@@ -61,17 +64,17 @@ function verifyOldPassword(password_val) {
         type: "get",
         dataType: "json",
         data: { val: "oldPassword", password: password_val },
-        beforeSend: function(request) {
+        beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
             }
         },
-        success: function(response) {
+        success: function (response) {
 
             if (verifyToken(response)) {
                 if (response.status == 200) {
                     // console.log(response.data);
-                    window.location.href = base_url+"change-password/?tok=" + response.data.token + "&& student=" + btoa(response.data.id);
+                    window.location.href = base_url + "change-password/?tok=" + response.data.token;
 
                 } else {
                     errorSwal(response)
@@ -80,20 +83,20 @@ function verifyOldPassword(password_val) {
                 adminRedirectLogin();
             }
         },
-        error: function(response) {
+        error: function (response) {
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response)
         }
     })
 }
 
-$("#image_input").change(function() {
+$("#image_input").change(function () {
     if (this.files && this.files[0]) {
 
         // creating file reader object...
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
 
             // setting the profile image...
             $('#image').attr('src', e.target.result);
@@ -103,7 +106,7 @@ $("#image_input").change(function() {
     }
 })
 
-$("#update_profile_form").submit(function(e) {
+$("#update_profile_form").submit(function (e) {
     e.preventDefault();
 
     var form = document.getElementById('update_profile_form');
@@ -115,25 +118,25 @@ $("#update_profile_form").submit(function(e) {
         dataType: "json",
         contentType: false,
         processData: false,
-        beforeSend: function(request) {
+        beforeSend: function (request) {
             if (!appendToken(request)) {
                 adminRedirectLogin();
             }
         },
-        success: function(response) {
+        success: function (response) {
             if (verifyToken(response)) {
                 sweetalert(response);
 
-                if (response.status == 200) {              
-                    setTimeout(function() {
+                if (response.status == 200) {
+                    setTimeout(function () {
                         location.reload();
                     }, 1000);
-                } 
+                }
             } else {
                 adminRedirectLogin();
             }
         },
-        error: function(error) {
+        error: function (error) {
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response)
         }
