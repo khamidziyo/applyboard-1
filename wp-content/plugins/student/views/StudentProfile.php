@@ -139,7 +139,7 @@ function studentProfile()
     </div>
     <div class = 'modal-body'>
     <p>Old Password:
-    <input type = 'password' name = 'password' id = 'password' required>
+    <input type = 'password' name = 'password' id = 'previous_password' required>
     </p>
     </div>
     <div class = 'modal-footer'>

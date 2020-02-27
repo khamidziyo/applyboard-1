@@ -21,6 +21,37 @@ if (!empty($_POST['val'])) {
         try {
             switch ($_POST['val']) {
 
+                case 'validateOldPassword':
+                    $id = $payload->userId;
+
+                    // to get the old password...
+                    $old_password = $_POST['password'];
+
+                    //query to get the current password...
+                    $sql = 'select password from staff where id=' . $id;
+                    $data = $wpdb->get_results($sql);
+
+                    $current_password = $data[0]->password;
+
+                    // if password does not matches with the current password...
+                    if (!password_verify($old_password, $current_password)) {
+                        throw new Exception('Password is incorrect');
+                    }
+                    // if password is correct...
+                    else {
+                        // creating  a token...
+                        $token = md5(rand(10000, 100000000000));
+
+                        // update token in users table...
+                        $wpdb->update('staff', ['forgot_password_token' => $token], ['id' => $id]);
+                        $data = ['token' => $token];
+
+                        // returning the response...
+                        $response = ['status' => Success_Code, 'message' => 'Password is correct', 'data' => $data];
+                    }
+
+                    break;
+
                 // update the profile...
                 case 'updateProfile':
                     $id = $payload->userId;
@@ -94,8 +125,8 @@ if (!empty($_POST['val'])) {
                     // if update success...
                     if ($update_profile_res) {
                         $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
-                    } 
-                    
+                    }
+
                     // if update is not success...
                     else {
                         throw new Exception("Profile not updated due to internal server error");
@@ -103,7 +134,7 @@ if (!empty($_POST['val'])) {
 
                     break;
 
-                    // if no case matches...
+                // if no case matches...
                 default:
                     throw new Exception("No case found");
                     break;

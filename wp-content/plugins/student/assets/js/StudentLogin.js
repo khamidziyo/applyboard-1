@@ -1,4 +1,15 @@
 $(document).ready(function () {
+
+    if (localStorage.getItem('data') != null) {
+        swal({
+            title: "You are already logged in.",
+            icon: 'warning'
+        })
+        setTimeout(function () {
+            window.location.href = base_url + "student-dashboard";
+        }, 1000);
+    }
+
     // signing in with facebook..
     $('#facebook-button').on('click', function () {
         // Initialize with your OAuth.io app public key

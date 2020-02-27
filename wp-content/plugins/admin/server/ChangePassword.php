@@ -38,6 +38,13 @@ function subAgentVerifyUser()
     return SubAgent::verifyUser($payload);
 }
 
+function staffVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Staff::verifyUser($payload);
+}
+
 if (!empty($_POST['val'])) {
 
     try {
@@ -45,7 +52,14 @@ if (!empty($_POST['val'])) {
         $require_arr = ['password', 'confirm_password', 'token', 'role'];
 
         foreach ($require_arr as $form_input) {
-            if (empty($form_input)) {
+
+            // if any form key does not exist in the request...
+            if (!array_key_exists($form_input, $_POST)) {
+                throw new Exception($form_input . " is missing in the request");
+            }
+
+            // if any form input value is empty...
+            if (empty($_POST[$form_input])) {
                 throw new Exception("Please enter the " . $form_input);
             }
         }
@@ -123,7 +137,7 @@ if (!empty($_POST['val'])) {
                                     ['forgot_password_token' => $token, 'id' => $sub_agent_id, 'role' => '4',
                                     ]);
                             } else {
-                                // query to update the new password...
+                                // query to update the new password for agent...
 
                                 $update = $wpdb->update('agents', [
                                     'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
@@ -144,6 +158,20 @@ if (!empty($_POST['val'])) {
                             $id = $payload->userId;
                             // query to update the new password...
                             $update = $wpdb->update('agents',
+                                ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+                                    'updated_at' => Date('Y-m-d h:i:s')],
+                                ['forgot_password_token' => $token, 'id' => $id, 'role' => $role]);
+                        }
+                        break;
+
+                    // if the logged in user is staff...
+                    case '5':
+                        if (staffVerifyUser()) {
+                            $id = $payload->userId;
+                            $role = $_POST['role'];
+
+                            // query to update the new password...
+                            $update = $wpdb->update('staff',
                                 ['password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
                                     'updated_at' => Date('Y-m-d h:i:s')],
                                 ['forgot_password_token' => $token, 'id' => $id, 'role' => $role]);

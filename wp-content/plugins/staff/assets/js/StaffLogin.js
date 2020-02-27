@@ -1,3 +1,12 @@
+if (localStorage.getItem('data') != null) {
+    swal({
+        title: "You are already logged in.",
+        icon: 'warning'
+    })
+    setTimeout(function () {
+        window.location.href = base_url + "staff-dashboard";
+    }, 1000);
+}
 
 
 $("#login_form").submit(function (e) {

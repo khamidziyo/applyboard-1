@@ -492,7 +492,7 @@ $("#change_password").click(function () {
 
 // when user enters the old password and click on check button...
 $("#check_password").click(function () {
-    var old_password = $("#password").val();
+    var old_password = $("#previous_password").val();
     if (old_password != "") {
         $.ajax({
             url: student_server_url + "UpdateProfile.php",

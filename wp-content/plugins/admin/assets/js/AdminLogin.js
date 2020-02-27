@@ -1,3 +1,12 @@
+if (localStorage.getItem('data') != null) {
+    swal({
+        title: "You are already logged in.",
+        icon: 'warning'
+    })
+    setTimeout(function () {
+        window.location.href = base_url + "admin-dashboard";
+    }, 1000);
+}
 
 
     // when admin logins...

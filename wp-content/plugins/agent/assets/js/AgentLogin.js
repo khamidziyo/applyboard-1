@@ -1,4 +1,15 @@
 $(document).ready(function () {
+
+    if (localStorage.getItem('data') != null) {
+        swal({
+            title: "You are already logged in.",
+            icon: 'warning'
+        })
+        setTimeout(function () {
+            window.location.href = base_url + "agent-dashboard";
+        }, 1000);
+    }
+
 })
 
 $("#agent_login_form").submit(function (e) {
@@ -19,7 +30,7 @@ $("#agent_login_form").submit(function (e) {
                     window.location.href = base_url + "agent-dashboard/";
                 }, 1500);
             }
-            
+
             sweetalert(response);
 
         }, error: function (error) {

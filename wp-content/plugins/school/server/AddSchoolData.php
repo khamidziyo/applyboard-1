@@ -258,7 +258,7 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
                 // calling Function to upload school certificates...
                 if (uploadSchoolCertificates($school_id, $wpdb, $path)) {
 
-                    if (sendMail($token, $school_id, $password)) {
+                    if (sendMail($token, $school_id, $rand_password)) {
 
                         // commiting the transaction...
                         $wpdb->query('COMMIT');

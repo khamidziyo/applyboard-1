@@ -1,3 +1,13 @@
+if (localStorage.getItem('data') != null) {
+    swal({
+        title: "You are already logged in.",
+        icon: 'warning'
+    })
+    setTimeout(function () {
+        window.location.href = base_url + "school-dashboard";
+    }, 1000);
+}
+
 // function when script is loaded...
 $(document).ready(function () {
     // when school admin logins with email and password...

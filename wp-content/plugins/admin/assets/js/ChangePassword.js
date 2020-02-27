@@ -1,7 +1,7 @@
 
 var search_params = new URLSearchParams(window.location.search);
 
-console.log(search_params);
+// console.log(search_params);
 
 var type;
 
@@ -16,7 +16,6 @@ if (localStorage.getItem('data') != null) {
 } else {
     redirect(role);
 }
-
 
 // when user clicks on button to change password...
 $("#change_password_form").submit(function (e) {
@@ -67,30 +66,49 @@ $("#change_password_form").submit(function (e) {
         success: function (response) {
             if (verifyToken(response)) {
                 sweetalert(response);
-
-                setTimeout(function () {
-
-                    switch (role) {
-                        case '1':
-                            break;
-
-                        case '2':
-                            window.location.href = base_url + "admin-dashboard/";
-                            break;
-
-                        case '3':
-                            window.location.href = base_url + "agent-dashboard/";
-                            break;
-
-                        case '4':
-                            window.location.href = base_url + "sub-agent-dashboard/";
-                            break;
-                    }
-                }, 1500);
                 $("#reset").attr('disabled', false);
 
+                if (response.status == 200) {
+
+                    setTimeout(function () {
+
+                        switch (role) {
+
+                            // if the logged in user is student...
+                            case '1':
+                                window.location.href = base_url + "student-dashboard/";
+                                break;
+
+                            // if the logged in user is admin...
+                            case '2':
+                                window.location.href = base_url + "admin-dashboard/";
+                                break;
+
+                            // if the logged in user is agent...
+                            case '3':
+                                window.location.href = base_url + "agent-dashboard/";
+                                break;
+
+                            // if the logged in user is sub agent...
+                            case '4':
+                                window.location.href = base_url + "sub-agent-dashboard/";
+                                break;
+
+                            // if the logged in user is staff...
+                            case '5':
+                                window.location.href = base_url + "staff-dashboard/";
+                                break;
+
+                            default:
+                                var response = { status: 400, message: 'No role matches.' };
+                                errorSwal(response);
+                                break;
+                        }
+                    }, 1500);
+                }
+
             } else {
-                // redirect(role);
+                redirect(role);
             }
         },
 
