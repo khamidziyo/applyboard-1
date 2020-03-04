@@ -77,6 +77,14 @@ function addSchool()
       <input type="hidden" name="pin_code" class="postal_code"/>
     </div>
 
+
+    <div class="form-group">
+      <label for="application_manage">Application Manage By:</label><br>
+      <input type="radio" name="application_manage" class="application_manage" value='0' required>School
+      <input type="radio" name="application_manage" class="application_manage" value='1' required>Staff
+    </div>
+
+
     <div class="form-group">
       <label for="accomodation">Accomodation:</label>
       <input type="checkbox" class="form-control" name="accomodation" id="accomodation" value="1">

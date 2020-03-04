@@ -21,6 +21,8 @@ function previewImage(file_input) {
 
 $("#add_staff").submit(function (e) {
     e.preventDefault();
+    $("#add_staff_btn").attr('disabled', true);
+
     var form = document.getElementById('add_staff');
     var form_data = new FormData(form);
     form_data.append('val', 'addStaff');
@@ -38,6 +40,7 @@ $("#add_staff").submit(function (e) {
             }
         },
         success: function (response) {
+            $("#add_staff_btn").attr('disabled', false);
 
             if (verifyToken(response)) {
                 sweetalert(response);
@@ -47,12 +50,13 @@ $("#add_staff").submit(function (e) {
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
-
                 }
             } else {
                 adminRedirectLogin();
             }
         }, error: function (error) {
+            $("#add_staff_btn").attr('disabled', false);
+
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response)
         }

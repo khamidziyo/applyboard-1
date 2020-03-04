@@ -1,27 +1,30 @@
-$("#forgot_pwd_btn").click(function (e) {
+$("#forgot_password_form").submit(function (e) {
 
     e.preventDefault();
+    $("#forgot_pwd_btn").attr('disabled', true);
 
-    $("#load_img").show();
-    $("#forgot_pwd_btn").hide();
 
-    $response = [];
+    var form = document.getElementById('forgot_password_form');
+    var form_data = new FormData(form);
 
-    var email = $("#email").val();
     $.ajax({
         url: student_server_url + "ForgotPassword.php",
+        type: "post",
         dataType: "json",
-        data: { email: email },
+        data: form_data,
+        contentType: false,
+        processData: false,
+
         success: function (response) {
-            $("#load_img").hide();
-            $("#forgot_pwd_btn").show();
+            $("#forgot_pwd_btn").attr('disabled', false);
             sweetalert(response);
         },
         error: function (error) {
-            $("#load_img").hide();
-            $("#forgot_pwd_btn").show();
+            $("#forgot_pwd_btn").attr('disabled', false);
+
             var response = { status: 400, message: 'Internal Server Error' };
             errorSwal(response)
         }
     })
+
 })

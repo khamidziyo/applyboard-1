@@ -83,6 +83,8 @@ $(document).ready(function () {
             dataType: "json",
             data: data,
             success: function (response) {
+                // console.log(response.data);
+
                 sweetalert(response);
                 if (response.status == 200) {
 
@@ -104,8 +106,9 @@ $(document).ready(function () {
 
     $("#student_login_form").submit(function (e) {
         e.preventDefault();
-        $("#load_img").show();
-        $("#sign_in").hide();
+        var verify_btn;
+
+        $("#sign_in_btn").attr('disabled', true);
 
         // get the instance of form
         var form = document.getElementById('student_login_form');
@@ -123,8 +126,8 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function (response) {
-                $("#load_img").hide();
-                $("#sign_in").show();
+
+                $("#sign_in_btn").attr('disabled', false);
 
                 switch (response.status) {
 
@@ -152,8 +155,9 @@ $(document).ready(function () {
                             ]
                         }).then(function (val) {
                             if (val) {
-                                $("#load_img").show();
-                                $("#sign_in").hide();
+                                verify_btn = $(this);
+                                verify_btn.attr('disabled', true);
+
                                 response.data.val = "Student_Verification";
 
                                 $.ajax({
@@ -162,13 +166,11 @@ $(document).ready(function () {
                                     data: response.data,
                                     dataType: "json",
                                     success: function (response) {
-                                        $("#load_img").hide();
-                                        $("#sign_in").show();
+                                        verify_btn.attr('disabled', false);
                                         sweetalert(response)
                                     },
                                     error: function (error) {
-                                        $("#load_img").hide();
-                                        $("#sign_in").show();
+                                        verify_btn.attr('disabled', false);
                                         var response = { status: 400, 'message': 'Internal Server Error' };
                                         errorSwal(response);
                                     }
@@ -184,8 +186,7 @@ $(document).ready(function () {
                 }
             },
             error: function (error) {
-                $("#load_img").hide();
-                $("#sign_in").show();
+                $("#sign_in_btn").attr('disabled', false);
                 var response = { status: 400, 'message': 'Internal Server Error' };
                 errorSwal(response);
             }

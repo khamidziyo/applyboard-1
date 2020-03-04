@@ -13,13 +13,19 @@ $(document).ready(function () {
 })
 
 $("#agent_login_form").submit(function (e) {
+
     e.preventDefault();
+    
+    $("#sign_in_btn").attr('disabled', true);
+
     $.ajax({
         url: agent_server_url + "AgentLogin.php",
         type: "post",
         dataType: "json",
         data: $("#agent_login_form").serializeArray(),
         success: function (response) {
+            $("#sign_in_btn").attr('disabled', false);
+
             if (response.status == 200) {
 
                 // storing user data in local storage...
@@ -34,6 +40,8 @@ $("#agent_login_form").submit(function (e) {
             sweetalert(response);
 
         }, error: function (error) {
+            $("#sign_in_btn").attr('disabled', false);
+
             var response = { 'status': 400, 'message': 'Internal server error' };
             errorSwal(response);
         }

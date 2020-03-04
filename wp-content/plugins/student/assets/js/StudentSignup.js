@@ -2,9 +2,7 @@
 $("#student_reg_form").submit(function (e) {
     e.preventDefault();
 
-    // to show the loading image...
-    $("#load_img").show();
-    $("#sign_up").hide();
+    $("#sign_up_btn").attr('disabled', true);
 
     // get the instance of form
     var form = document.getElementById('student_reg_form');
@@ -23,8 +21,8 @@ $("#student_reg_form").submit(function (e) {
 
         // on success response...
         success: function (response) {
-            $("#load_img").hide();
-            $("#sign_up").show();
+            $("#sign_up_btn").attr('disabled', false);
+
             sweetalert(response);
 
             if (response.status == 200) {
@@ -36,8 +34,8 @@ $("#student_reg_form").submit(function (e) {
         },
         // on error response...
         error: function (error) {
-            $("#load_img").hide();
-            $("#sign_up").show();
+            $("#sign_up_btn").attr('disabled', false);
+
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response);
         }

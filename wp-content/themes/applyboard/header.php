@@ -20,7 +20,7 @@
 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-
+		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/placeholder-loading.min.css')?>">
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/bootstrap.min.js")?>"></script>

@@ -9,34 +9,39 @@ if (localStorage.getItem('data') != null) {
 }
 
 
-    // when admin logins...
-    $("#admin_login_form").submit(function (e) {
-        e.preventDefault();
+// when admin logins...
+$("#admin_login_form").submit(function (e) {
+    e.preventDefault();
 
-        // sending admin login data on server...
-        $.ajax({
-            url: admin_server_url + "AdminLogin.php",
-            type: "post",
-            data: $("#admin_login_form").serializeArray(),
-            dataType: "json",
-            success: function (response) {
-                sweetalert(response);
+    $("#sign_in_btn").attr('disabled', true);
 
-                if (response.status == 200) {
+    // sending admin login data on server...
+    $.ajax({
+        url: admin_server_url + "AdminLogin.php",
+        type: "post",
+        data: $("#admin_login_form").serializeArray(),
+        dataType: "json",
+        success: function (response) {
+            sweetalert(response);
+            $("#sign_in_btn").attr('disabled', false);
 
-                    // storing user data in local storage...
-                    localStorage.setItem('data', JSON.stringify(response.data));
+            if (response.status == 200) {
 
-                    // loading the admin dashboard page...
-                    setTimeout(function () {
-                        window.location.href = base_url + "admin-dashboard/";
-                    }, 2000);
-                }
+                // storing user data in local storage...
+                localStorage.setItem('data', JSON.stringify(response.data));
 
-            },
-            error: function (error) {
-                var response = { status: 400, 'message': 'Internal Server Error' };
-                errorSwal(response);
+                // loading the admin dashboard page...
+                setTimeout(function () {
+                    window.location.href = base_url + "admin-dashboard/";
+                }, 2000);
             }
-        })
+
+        },
+        error: function (error) {
+            $("#sign_in_btn").attr('disabled', false);
+
+            var response = { status: 400, 'message': 'Internal Server Error' };
+            errorSwal(response);
+        }
     })
+})

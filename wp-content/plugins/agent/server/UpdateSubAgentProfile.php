@@ -122,13 +122,13 @@ if (!empty($_POST['val'])) {
                     }
 
                     $update_arr = ['name' => $name, 'email' => $email, 'contact_number' => $number,
-                        'image' => $img_name];
+                        'image' => $img_name, 'updated_at' => Date('Y-m-d h:i:s')];
 
-                        // echo "<pre>";
-                        // print_r($update_arr);
-                        // die;
+                    // echo "<pre>";
+                    // print_r($update_arr);
+                    // die;
                     $update_profile = $wpdb->update('agents', $update_arr, ['id' => $id]);
-                    
+
                     // if profile updated successfully...
                     if ($update_profile) {
                         $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];

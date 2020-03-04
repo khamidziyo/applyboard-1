@@ -55,9 +55,9 @@ if (!empty($_POST)) {
 
                         $access_token = Jwt::encode($payload, Secret_Key);
 
-                        $data = ['email' => $_POST['email'], 'token' => $access_token];
+                        $user_data = ['email' => $_POST['email'], 'token' => $access_token];
 
-                        $response = ['status' => 200, 'message' => "Login Success", 'data' => $data];
+                        $response = ['status' => 200, 'message' => "Login Success", 'data' => $user_data];
 
                         // returning error response if found any error...
                     } else {

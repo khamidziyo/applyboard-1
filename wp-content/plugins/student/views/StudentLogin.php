@@ -13,8 +13,7 @@ function studentLogin()
     <p>Password
     <input type="password" name="password" id="password" required>
     </p>
-    <input type="submit" name="sign_in" id="sign_in" class="btn btn-primary" value="Sign In" >
-      <img src="<?=content_url('plugins/student/assets/images/loading.gif')?>" id="load_img" width="200px" height="200px" style="display:none">
+    <input type="submit" name="sign_in" id="sign_in_btn" class="btn btn-primary" value="Sign In" >
     </form>
 
 
@@ -29,7 +28,7 @@ function studentLogin()
       <p>
       <a href="<?=base_url?>student-sign-up/">Create Account</a>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="<?=base_url?>forgot-password/" class="btn btn-primary">Forgot Password</a>
+      <a href="<?=base_url?>forgot-password?type=student" class="btn btn-primary">Forgot Password</a>
 
       </p>
 

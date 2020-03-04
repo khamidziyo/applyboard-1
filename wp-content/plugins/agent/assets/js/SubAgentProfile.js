@@ -45,8 +45,7 @@ function getAgentProfile() {
                     if (data.name != null) {
                         $("#name").val(data.name);
                     }
-                    console.log(data.email);
-                    $("#email").val(data.email);
+                    $("#u_mail").val(data.email);
 
                     if (data.image != null) {
                         $("#cur_image").val(data.image);
@@ -77,7 +76,7 @@ $("#change_password").click(function () {
 // when user enters the old password and click on check button...
 $("#validate_old_password").submit(function (e) {
     e.preventDefault();
-    var old_password=$("#password").val();
+    var old_password = $("#password").val();
 
     $.ajax({
         url: agent_server_url + "UpdateSubAgentProfile.php",
@@ -127,6 +126,8 @@ $("#validate_old_password").submit(function (e) {
 
 $("#sub_agent_profile").submit(function (e) {
     e.preventDefault();
+    $("#update_btn").attr('disabled', true);
+
     var form = document.getElementById('sub_agent_profile');
     var form_data = new FormData(form);
     form_data.append('val', 'updateSubAgentProfile');
@@ -142,19 +143,23 @@ $("#sub_agent_profile").submit(function (e) {
                 subAgentRedirectLogin();
             }
         }, success: function (response) {
+            $("#update_btn").attr('disabled', false);
+
             if (verifyToken(response)) {
+                sweetalert(response);
+
                 if (response.status == 200) {
 
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
-                }else{
-                    sweetalert(response);
                 }
             } else {
                 subAgentRedirectLogin();
             }
         }, error: function (error) {
+            $("#update_btn").attr('disabled', false);
+
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response);
         }

@@ -11,11 +11,11 @@ function agentLogin()
     <p>Password
     <input type="password" name="password" id="password" required>
     </p>
-    <input type="submit" name="sign_in" id="sign_in" class="btn btn-primary" value="Sign In" >
+    <input type="submit" name="sign_in" id="sign_in_btn" class="btn btn-primary" value="Sign In" >
       <img src="<?=content_url('plugins/admin/assets/images/loading.gif')?>" id="load_img" width="200px" height="200px" style="display:none">
     </form><br>
 
-    <a href="http://localhost/wordpress/wordpress/index.php/forgot-password/" class="btn btn-primary">Forgot Password</a>
+    <a href="<?=base_url?>forgot-password?type=agent" class="btn btn-primary">Forgot Password</a>
 
     </div>
     <script src="<?=constant('agent_asset_url') . "/js/AgentLogin.js"?>"></script>

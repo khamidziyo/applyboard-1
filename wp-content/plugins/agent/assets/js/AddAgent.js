@@ -1,5 +1,3 @@
-$(document).ready(function () {
-})
 
 // when user selects the image...
 $("#business_img").change(function () {
@@ -26,6 +24,7 @@ function previewImage(file_input) {
 
 $("#add_agent").submit(function (e) {
     e.preventDefault();
+    $("#add_agent_btn").attr('disabled', true)
 
     var form = document.getElementById('add_agent');
     var form_data = new FormData(form);
@@ -45,31 +44,27 @@ $("#add_agent").submit(function (e) {
         },
         success: function (response) {
             if (verifyToken(response)) {
+                $("#add_agent_btn").attr('disabled', false)
+
+                sweetalert(response);
+
                 if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+
                     form.reset();
 
                     setTimeout(function () {
                         window.location.href = base_url + "view-agents/";
                     }, 1500);
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
                 }
             } else {
                 adminRedirectLogin();
             }
         },
         error: function (error) {
-            swal({
-                title: "Internal Server Error",
-                icon: "error"
-            })
+            $("#add_agent_btn").attr('disabled', false)
+
+            var response = { status: 400, message: "Internal Server Error" };
+            errorSwal(response);
         }
     })
 })

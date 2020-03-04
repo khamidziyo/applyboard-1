@@ -13,6 +13,8 @@ getDataBYAjax('', 'country');
 if (search_params.has('sch')) {
     $("#profile_image_input").attr('required', false)
     $("#cover_image_input").attr('required', false)
+    $("#chk_box").attr('required', false)
+
 
     var sch_id = search_params.get('sch');
     var data = { school_id: sch_id, val: 'getSchoolProfileByAdmin' };
@@ -172,6 +174,10 @@ function getSchoolData(data) {
                         $("#school_type").val(response_data.type);
                         $(".postal_code").val(response_data.postal_code);
 
+                        $(".application_manage[value=" + response_data.staff + "]").attr('checked', 'checked');
+
+                        // $('.application_manage:checked').val(response_data.staff);
+
                         if (response_data.accomodation == true) {
                             $("#accomodation").prop('checked', true);
 
@@ -297,7 +303,7 @@ function removeSchoolCertificate(data) {
                         location.reload();
                     }, 1500);
                 }
-                console.log(response);
+                // console.log(response);
             } else {
                 adminRedirectLogin();
             }
@@ -475,7 +481,7 @@ $("#add_school_form").submit(function (e) {
                 sweetalert(response);
 
                 // reset all the form fields...
-                myform.reset();
+                // myform.reset();
 
                 // if response return success code 200...
                 if (response.status == 200) {

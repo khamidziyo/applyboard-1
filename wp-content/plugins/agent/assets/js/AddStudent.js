@@ -235,7 +235,7 @@ function getStudentData(data) {
                     }
 
                     if (response.hasOwnProperty('grade')) {
-                        grade_html+="<option selected disabled>Select Highest Qualification</option>";
+                        grade_html += "<option selected disabled>Select Highest Qualification</option>";
 
                         // each loop to dynamically display all classes in drop down...
                         $.each(response.grade, function (k, obj) {
@@ -450,6 +450,7 @@ function previewImage(file_input) {
 
 $("#add_student").submit(function (e) {
     e.preventDefault();
+    $("#create_student_btn").attr('disabled', true);
 
     var form = document.getElementById('add_student');
     var form_data = new FormData(form);
@@ -484,7 +485,10 @@ $("#add_student").submit(function (e) {
                 agentRedirectLogin();
             }
         }, success: function (response) {
+            $("#create_student_btn").attr('disabled', false);
+
             if (verifyToken(response)) {
+
                 sweetalert(response);
 
                 if (response.status == 200) {
@@ -500,6 +504,7 @@ $("#add_student").submit(function (e) {
                 agentRedirectLogin();
             }
         }, error: function (error) {
+            $("#create_student_btn").attr('disabled', false);
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response);
         }

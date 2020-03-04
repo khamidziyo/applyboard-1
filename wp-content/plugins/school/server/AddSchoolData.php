@@ -76,15 +76,15 @@ else {
 // function to add and update the school...
 function addUpdateSchool($wpdb, $id, $school_id = null)
 {
+
     $path = dirname(__DIR__, 1);
     $accomodation = 0;
     $work_studying = 0;
     $offer_letter = 0;
     $living_cost;
 
-
     $require_arr = ['name', 'email', 'address', 'number', 'description', 'pin_code'];
-    $require_select_arr = ['country', 'state', 'city', 'school_type', 'description', 'pin_code'];
+    $require_select_arr = ['country', 'state', 'city', 'school_type', 'description', 'pin_code', 'application_manage'];
 
     // validation for form inputs...
     foreach ($require_arr as $form_input) {
@@ -94,7 +94,7 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
             throw new Exception($form_input . " is missing in the request");
         }
         // if any post data value is empty...
-        elseif (empty($_POST[$form_input])) {
+        if (empty($_POST[$form_input])) {
             throw new Exception("Please enter the " . $form_input);
         }
     }
@@ -107,7 +107,7 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
             throw new Exception($form_input . " is missing in the request");
         }
         // if any post data value is empty...
-        elseif (empty($_POST[$form_input])) {
+        if (!isset($_POST[$form_input])) {
             throw new Exception("Please select the " . $form_input);
         }
     }
@@ -185,9 +185,9 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
         $update_arr = ['user_id' => $id, 'name' => $_POST['name'], 'email' => $_POST['email'],
             'address' => $_POST['address'], 'number' => $_POST['number'], 'description' => $_POST['description'],
             'countries_id' => $_POST['country'], 'state_id' => $_POST['state'], 'city_id' => $_POST['city'],
-            'type' => $_POST['school_type'], 'postal_code' => $_POST['pin_code'], 'accomodation' => $accomodation,
-            'living_cost' => $living_cost, 'work_studying' => $work_studying, 'offer_letter' => $offer_letter,
-            'profile_image' => $profile_image, 'cover_image' => $cover_image, 'updated_at' => date('Y-m-d h:i:s')];
+            'type' => $_POST['school_type'], 'postal_code' => $_POST['pin_code'], 'staff' => $_POST['application_manage'],
+            'accomodation' => $accomodation, 'living_cost' => $living_cost, 'work_studying' => $work_studying,
+            'offer_letter' => $offer_letter, 'profile_image' => $profile_image, 'cover_image' => $cover_image, 'updated_at' => date('Y-m-d h:i:s')];
 
         // updating school data to school table...
         $update_school_res = $wpdb->update('school', $update_arr, ['id' => $school_id]);
@@ -203,6 +203,9 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
                     $response = ['status' => Success_Code, 'message' => 'School updated Successfully'];
                 }
             } else {
+
+                // commiting the transaction...
+                $wpdb->query('COMMIT');
                 $response = ['status' => Success_Code, 'message' => 'School updated Successfully'];
             }
         } else {
@@ -240,10 +243,9 @@ function addUpdateSchool($wpdb, $id, $school_id = null)
 
         $insert_arr = ['user_id' => $id, 'name' => $_POST['name'], 'email' => $_POST['email'], 'password' => $password, 'address' => $_POST['address'],
             'number' => $_POST['number'], 'description' => $_POST['description'], 'countries_id' => $_POST['country'], 'state_id' => $_POST['state'],
-            'city_id' => $_POST['city'], 'type' => $_POST['school_type'], 'postal_code' => $_POST['pin_code'],
-            'accomodation' => $accomodation, 'living_cost' => $living_cost,
-            'work_studying' => $work_studying, 'offer_letter' => $offer_letter, 'profile_image' => $profile_image,
-            'cover_image' => $cover_image,
+            'city_id' => $_POST['city'], 'type' => $_POST['school_type'], 'postal_code' => $_POST['pin_code'], 'staff' => $_POST['application_manage'],
+            'accomodation' => $accomodation, 'living_cost' => $living_cost, 'work_studying' => $work_studying,
+            'offer_letter' => $offer_letter, 'profile_image' => $profile_image, 'cover_image' => $cover_image,
             'verify_token' => $token, 'created_at' => date('Y-m-d h:i:s')];
         // echo "<pre>";
         // print_r($insert_arr);

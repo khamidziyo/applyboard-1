@@ -69,7 +69,7 @@ function addAgent()
       <input type="text" class="form-control" id="person_address" placeholder="Enter address" name="person_address" required >
     </div>
 
-    <input type="submit" class="btn btn-success" value="Submit">
+    <input type="submit" class="btn btn-success" id="add_agent_btn" value="Add Agent">
      </form>
      <script src="<?=agent_asset_url?>js/AddAgent.js"></script>
 </div>

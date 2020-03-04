@@ -19,6 +19,7 @@ function staffLogin()
     <input type="submit" value="Login" class="btn btn-success" id="login_btn" name="login_btn">
 
     </form>
+    <a href="<?=base_url?>forgot-password?type=staff" class="btn btn-primary">Forgot Password</a>
 
     <script src="<?=staff_asset_url?>js/StaffLogin.js"></script>
 

@@ -122,7 +122,7 @@ function addStudent()
     </div>
 
 
-    <input type="submit" class="btn btn-success" id="submit_btn" value="Create Student">
+    <input type="submit" class="btn btn-success" id="create_student_btn" value="Create Student">
 
     </form>
        <script src="<?=agent_asset_url?>js/AddStudent.js"></script>

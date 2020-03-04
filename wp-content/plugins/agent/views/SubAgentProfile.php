@@ -20,8 +20,8 @@ function subAgentProfile()
   </div>
 
   <div class="form-group">
-    <label for="email">Email:</label>
-    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required >
+    <label for="u_mail">Email:</label>
+    <input type="email" class="form-control" id="u_mail" placeholder="Enter email" name="email" required >
   </div>
 
   <div class="form-group">

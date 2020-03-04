@@ -16,8 +16,7 @@ function studentSignUp()
     <p>Confirm Password
     <input type="password" name="con_password" id="con_password" required>
     </p>
-      <input type="submit" name="sign_up" id="sign_up" value="Sign Up" >
-      <img src="<?=content_url('plugins/student/assets/images/loading.gif')?>" id="load_img" width="200px" height="200px" style="display:none">
+      <input type="submit" name="sign_up" id="sign_up_btn" value="Sign Up" >
     </center>
 
       </form>
@@ -29,7 +28,7 @@ function studentSignUp()
       <a id="google-button" class="btn btn-social btn-google">
       <i class="fa fa-google"></i> Sign up with Google
         </a>
-        
+
 
     </div>
 
