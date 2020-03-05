@@ -1,3 +1,6 @@
+
+$(".loader").hide();
+
 if (localStorage.getItem('data') != null) {
     swal({
         title: "You are already logged in.",

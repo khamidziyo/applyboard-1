@@ -1,3 +1,5 @@
+$(".loader").hide();
+
 $(document).ready(function () {
 
     if (localStorage.getItem('data') != null) {

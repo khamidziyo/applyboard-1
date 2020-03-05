@@ -1,7 +1,6 @@
 viewAllAgents();
 
 function viewAllAgents() {
-    alert();
     $("#view_agent_table").DataTable({
         "lengthMenu": [5, 10, 20, 30, 40],
         "pageLength": 5,

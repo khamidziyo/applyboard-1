@@ -14,6 +14,8 @@ function sweetalert(response) {
 }
 
 function errorSwal(response) {
+    $(".loader").hide();
+
     if (response.status == 400) {
         swal({
             title: response.message,

@@ -1,6 +1,8 @@
-$(document).ready(function () {
-    agentDashboard();
-})
+
+
+// setTimeout(function () {
+agentDashboard();
+// }, 1500);
 
 function agentDashboard() {
 
@@ -15,6 +17,7 @@ function agentDashboard() {
             }
         },
         success: function (response) {
+
             if (verifyToken(response)) {
                 if (response.status == 200) {
                     $("#students").html(response.total_students);
@@ -23,15 +26,15 @@ function agentDashboard() {
                     $("#application_approve").html(response.application_approved);
                     $("#application_decline").html(response.application_decline);
                     $("#application_pending").html(response.application_pending);
-
-
+                } else {
+                    errorSwal(response);
                 }
-                errorSwal(response);
             } else {
                 agentRedirectLogin();
             }
         },
         error: function (error) {
+
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response);
         }

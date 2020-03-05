@@ -30,7 +30,7 @@ class Admin{
             if(!empty($user)){
                 return true;
 
-                // if useris not authenticated...
+                // if user is not authenticated...
             }else{
                 throw new Exception("Unauthorized Access to admin page");
             }

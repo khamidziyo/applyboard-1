@@ -12,7 +12,8 @@ if (file_exists(dirname(__DIR__, 2) . '/common/autoload.php')) {
     include_once dirname(__DIR__, 2) . '/common/autoload.php';
 }
 
-function verifyUser(){
+function verifyUser()
+{
     global $payload;
     $payload = JwtToken::getBearerToken();
     return Admin::verifyUser($payload);
@@ -46,7 +47,7 @@ if (!empty($_GET['val'])) {
     }
 
 } else {
-    $response = ['status' => Error_Code, 'message' => 'Unauthorized Access'];
+    $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
 }
 
 echo json_encode($response);

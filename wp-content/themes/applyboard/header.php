@@ -5,6 +5,24 @@
 <html lang="en">
 
 <head>
+
+
+<div class="ph-item loader">
+    <div class="ph-col-12">
+    <div class="ph-row">
+            <div class="ph-col-6 big"></div>
+            <div class="ph-col-4 empty big"></div>
+            <div class="ph-col-2 big"></div>
+            <div class="ph-col-4"></div>
+            <div class="ph-col-8 empty"></div>
+            <div class="ph-col-6"></div>
+            <div class="ph-col-6 empty"></div>
+            <div class="ph-col-12"></div>
+        </div>
+    </div>
+</div>
+
+
 	<title></title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,6 +72,9 @@
 <body>
 
 	<div container="headerAfterLogin" id="after_login" style="display:none"><br><br>
+
+
+
 
 	<div   id="user_notification" border="5px solid black" width="100px"></div>
 
@@ -225,3 +246,5 @@ function includeJs(){
 }
 
 </script>
+
+

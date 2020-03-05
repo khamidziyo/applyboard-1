@@ -1,4 +1,8 @@
 
+// $(document).ready(function () {
+//     $('.container').hide();
+// })
+
 
 $("#create_sublogin").click(function () {
     $("#sub_login_modal").modal('show');

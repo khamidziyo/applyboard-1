@@ -1,3 +1,5 @@
+$(".loader").hide();
+
 $("#forgot_password_form").submit(function (e) {
 
     e.preventDefault();

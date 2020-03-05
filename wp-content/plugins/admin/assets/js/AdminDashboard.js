@@ -14,6 +14,7 @@ function adminDashboard() {
             }
         },
         success: function (response) {
+            // $(".loader").hide();
 
             if (verifyToken(response)) {
                 if (response.status == 200) {
@@ -31,6 +32,8 @@ function adminDashboard() {
             }
         },
         error: function (response) {
+            // $(".loader").hide();
+
             var response = { 'status': 400, 'message': 'Internal Server Error' };
             errorSwal(response)
         }

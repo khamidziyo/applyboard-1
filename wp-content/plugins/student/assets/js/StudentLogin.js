@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $(".loader").hide();
 
     if (localStorage.getItem('data') != null) {
         swal({
