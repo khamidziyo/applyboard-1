@@ -1,6 +1,12 @@
 <?php
 
-// require dirname(__DIR__, 1) . '/common/autoload.php';
+if(!defined('Secret_Key')){
+    define('Secret_Key','pjXTrQU0fARSqBXe_Q7p9RP1ZZ0');
+}
+
+if(!defined('algo')){
+    define('algo',['HS256']);
+}
 
 /**
  * Get header Authorization
@@ -18,6 +24,7 @@ class JwtToken
             if (!empty($headers)) {
                 if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                     $token = $matches[1];
+             
                     return Jwt::decode($token, Secret_Key, algo);
 
                 }
@@ -36,13 +43,6 @@ class JwtToken
 
     public static function getAuthorizationHeader()
     {
-        $requestHeaders = apache_request_headers();
-
-        // echo "<pre>";
-        // print_r($_SERVER);
-        // print_r($requestHeaders);
-        // die;
-
         try {
             $headers = null;
 

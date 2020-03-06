@@ -35,4 +35,8 @@ var staff_assets_url = "http://localhost/wordpress/wordpress/wp-content/plugins/
 // assets path of staff plugin...
 var staff_server_url = "http://localhost/wordpress/wordpress/wp-content/plugins/staff/server/";
 
+// server path of common folder that are commonly used...
+var common_server_url = "http://localhost/wordpress/wordpress/wp-content/plugins/common/";
+
+
 var base_url = "http://localhost/wordpress/wordpress/index.php/";

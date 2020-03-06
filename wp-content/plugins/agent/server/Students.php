@@ -139,6 +139,7 @@ function getStudentByAgents($wpdb, $sql)
                                      <input type='button' value='Create Application' data_id=" . base64_encode($obj->id) . "
                                      class='btn btn-success create_application'><input type='button' value='Edit User'
                                      data_id=" . base64_encode($obj->id) . " class='btn btn-primary edit_user'>";
+            $record[] = "<button type='button' class='chatUser btn btn-primary' data_id=$obj->id>Chat</button>";
 
             $output['aaData'][] = $record;
         }

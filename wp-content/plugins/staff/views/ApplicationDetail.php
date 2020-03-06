@@ -1,3 +1,4 @@
+
 <?php
 // echo dirname(__DIR__,1).'/server/functions.php';
 if (file_exists(dirname(__DIR__, 1) . '/server/functions.php')) {
@@ -35,12 +36,130 @@ function applicationDetail()
         </select><br>
         </span>
 
+        <style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
 
+/* Button used to open the chat form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+/* The popup chat - hidden by default */
+.chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width textarea */
+.form-container textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+  min-height: 30px;
+}
+
+/* When the textarea gets focus, do something */
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/send button */
+.form-container .btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+#chatContainer{
+    height: 80%;
+    overflow: auto;
+}
+
+.image-upload > input
+{
+    display: none;
+}
+
+.image-upload img
+{
+    width: 80px;
+    cursor: pointer;
+}
+</style>
 
         <div style="width: 550px; height: 1300px;border: solid 1px #ccc; display: inline-block;">
         <h3>Student Detail</h3>
 
-        <label>Name:</label>&nbsp;&nbsp;<?=$data[0]->f_name . " " . $data[0]->l_name?><br>
+        <button class="open-button" onclick="openForm()">Chat</button>
+
+        <div class="chat-popup" id="chatContainer">
+
+    <form class="form-container" id="chatForm">
+
+        <h3 id="user_name"></h3>
+
+        <span id='previous_messages'>
+        </span><br>
+
+        <input type="hidden" id="chat_user" name="receiver_id" value=<?=$data[0]->student_id?>>
+
+    <label for="msg"><b>Message</b></label>
+    <textarea placeholder="Type message.." name="message" required></textarea>
+
+    <div class="image-upload">
+    <label for="file_input">
+        <img src="https://goo.gl/pB9rpQ"/>
+    </label>
+
+    <input id="file_input" name="file_input[]" type="file" multiple/>Attach File
+    </div>
+
+    <button type="submit" class="btn">Send</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+    </div>
+
+
+        <label>Name:</label>&nbsp;&nbsp;<span id="stu_name"><?=$data[0]->f_name . " " . $data[0]->l_name?></span><br>
         <label>Email:</label>&nbsp;&nbsp;<?=$data[0]->email?><br>
         <label>Date Of Birth:</label>&nbsp;&nbsp;<?=$data[0]->dob?><br>
         <label>Passport Number:</label>&nbsp;&nbsp;<?=$data[0]->passport_no?><br>
@@ -138,7 +257,7 @@ if (!empty($data[0]->intake)) {
                         break;
 
                     case 'docx':
-                        echo "<li><a href='" . student_asset_url . "/documents/" . $object->document . "' download='" . $object->document . "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/xlsx48.png' width='48' height='48'>PDF</a></li><br>";
+                        echo "<li><a href='" . student_asset_url . "/documents/" . $object->document . "' download='" . $object->document . "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/xlsx48.png' width='48' height='48'>XLSX</a></li><br>";
                         break;
 
                     case 'png':
@@ -254,3 +373,4 @@ $intakes = getCourseIntakes($data[0]->course_id);
 
 add_shortcode('application_detail', 'applicationDetail')
 ?>
+

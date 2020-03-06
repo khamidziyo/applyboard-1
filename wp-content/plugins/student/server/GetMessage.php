@@ -32,13 +32,14 @@ if (!empty($_GET['val'])) {
                 // to get all the messages...
                 case 'getMessages':
 
-                    $sql = "SELECT m.*,s.id as u_id,s.name FROM messages as m INNER JOIN school
-                     AS s ON s.id=m.from_user   WHERE m.id IN(SELECT MAX(m.id) FROM messages as m
-                      WHERE to_user=$id GROUP BY from_user)";
+                    $sql = "SELECT m.*,s.id as u_id,s.name FROM messages as m INNER JOIN staff
+                     AS s ON s.id=m.sender_id   WHERE m.id IN(SELECT MAX(m.id) FROM messages as m
+                      WHERE receiver_id=$id GROUP BY sender_id)";
 
                     $messages = $wpdb->get_results($sql);
+
                     $response = ['status' => Success_Code, 'message' => "Messages Fetched Successfully",
-                        'sent_messages' => $messages];
+                        'messages' => $messages];
 
                     break;
 

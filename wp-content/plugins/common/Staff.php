@@ -13,7 +13,7 @@ class Staff
     {
 
         global $wpdb;
-
+        
         try {
 
             // get the user id from payload...

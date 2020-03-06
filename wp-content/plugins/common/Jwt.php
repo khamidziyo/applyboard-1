@@ -20,6 +20,7 @@ class Jwt{
 
     public static function decode($jwt, $key, array $allowed_algs = array())
     {
+
         $response=[];
 
         $timestamp = is_null(static::$timestamp) ? time() : static::$timestamp;
@@ -96,7 +97,7 @@ class Jwt{
             echo json_encode($response);
             exit();
         }
-
+  
         return $payload;
 
     }

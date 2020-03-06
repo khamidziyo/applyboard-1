@@ -4,29 +4,6 @@ function myMessages()
 {
     ?>
     <style>
-    .sent_messages {
-   max-width:50%;
-   min-width:150px;
-   background: lightblue;
-   padding:2px;
-   margin:3px;
-   border-radius: 2px;
-   border:1px solid black;
-   float:  left;
-   clear: left;
-}
-
-.receive_messages {
-   max-width:50%;
-   min-width:150px;
-   background: #ffeec0;
-   padding:2px;
-   margin:3px;
-   border-radius: 2px;
-   border:1px solid black;
-   float:  left;
-   clear: left;
-}
 
 /* Important part */
 .modal-dialog{

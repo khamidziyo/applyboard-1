@@ -3,35 +3,32 @@ $(document).ready(function () {
     var local_data;
     var user_id;
 
-    if (localStorage.getItem('data') != null) {
-        local_data = JSON.parse(localStorage.getItem('data'));
+    local_data = JSON.parse(localStorage.getItem('data'));
 
-        switch (local_data.role) {
+    switch (local_data.role) {
 
-            // if logged in user is school...
-            case 0:
-                getMessages(school_server_url + "GetMessage.php");
+        // if logged in user is school...
+        case 0:
+            getMessages(school_server_url + "GetMessage.php");
 
-                break;
+            break;
 
-            // if logged in user is student...
-            case '1':
-                getMessages(student_server_url + "GetMessage.php");
-                break;
+        // if logged in user is student...
+        case '1':
+            getMessages(student_server_url + "GetMessage.php");
+            break;
 
-            // if logged in user is admin...
-            case '2':
-                break;
+        // if logged in user is admin...
+        case '2':
+            break;
 
-            default:
-                swal({
-                    title: "User role not defined",
-                    icon: 'error'
-                })
-                break;
-        }
+        default:
+            swal({
+                title: "User role not defined",
+                icon: 'error'
+            })
+            break;
     }
-
 })
 
 function getMessages(url) {
@@ -63,21 +60,30 @@ function getMessages(url) {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
+                console.log(response);
+
                 // if status is 200...
                 if (response.status == 200) {
-                    // console.log(response);
 
-                    $.each(response.sent_messages, function (k, obj) {
-                        msg_html += "<label>User:&nbsp;&nbsp;" + obj.name + "</label>";
-                        if (obj.status == "0") {
-                            msg_html += "<p>Message:&nbsp;&nbsp;<b>" + obj.message + "</b></p>";
-                        } else {
-                            msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
-                        }
-                        msg_html += "<small>" + obj.created_at + "</small><br>";
-                        msg_html += "<button sender='" + obj.name + "' user_id=" + btoa(obj.u_id) + " class='btn btn-primary view_message'>View All Messages</button><br><br>"
-                    })
+                    if (response.messages.length > 0) {
+
+                        $.each(response.messages, function (k, obj) {
+                            msg_html += "<label>User:&nbsp;&nbsp;" + obj.name + "</label>";
+                            if (obj.status == "0") {
+                                msg_html += "<p>Message:&nbsp;&nbsp;<b>" + obj.message + "</b></p>";
+                            } else {
+                                msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
+                            }
+                            msg_html += "<small>" + obj.created_at + "</small><br>";
+                            msg_html += "<button sender='" + obj.name + "' user_id=" + btoa(obj.u_id) + " class='btn btn-primary view_message'>View All Messages</button><br><br>"
+                        })
+
+                    } else {
+                        msg_html += "<p>No message Found.</p>";
+                    }
+
                     $("#messages").html(msg_html);
+
                 } else {
                     swal({
                         title: response.message,
@@ -236,7 +242,7 @@ function sendMessage(data, url) {
 
     var channel = pusher.subscribe('my-channel');
     channel.bind('my-event', function (data) {
-        console("<p style='color:green'>"+data+"</p>");
+        console("<p style='color:green'>" + data + "</p>");
     });
 
     $.ajax({
