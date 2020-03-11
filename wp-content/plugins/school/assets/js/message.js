@@ -1,45 +1,49 @@
-$(document).ready(function () {
+var sender_id;
+var receiver_id;
+var local_data;
 
-    var local_data;
-    var user_id;
 
-    local_data = JSON.parse(localStorage.getItem('data'));
+local_data = JSON.parse(localStorage.getItem('data'));
+
+getMessages();
+
+function getMessages() {
+
+    var msg_html = "";
 
     switch (local_data.role) {
 
         // if logged in user is school...
         case 0:
-            getMessages(school_server_url + "GetMessage.php");
-
+            url = school_server_url + "GetMessages.php";
             break;
 
         // if logged in user is student...
         case '1':
-            getMessages(student_server_url + "GetMessage.php");
+            url = student_server_url + "GetMessages.php";
             break;
 
         // if logged in user is admin...
         case '2':
             break;
 
+        // if logged in user is agent...
+        case '3':
+            url = common_server_url + "GetMessages.php";
+            var data = { role: local_data.role, val: "getMessages" };
+            break;
+
         default:
-            swal({
-                title: "User role not defined",
-                icon: 'error'
-            })
+            let response = { status: 400, message: "User role not defined" };
+            errorSwal(response);
             break;
     }
-})
-
-function getMessages(url) {
-
-    var msg_html = "";
 
     $.ajax({
         url: url,
         type: "get",
         dataType: "json",
-        data: { val: "getMessages" },
+        data: data,
 
         // appending token in request...
         beforeSend: function (request) {
@@ -60,7 +64,7 @@ function getMessages(url) {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
-                console.log(response);
+                // console.log(response);
 
                 // if status is 200...
                 if (response.status == 200) {
@@ -75,7 +79,8 @@ function getMessages(url) {
                                 msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
                             }
                             msg_html += "<small>" + obj.created_at + "</small><br>";
-                            msg_html += "<button sender='" + obj.name + "' user_id=" + btoa(obj.u_id) + " class='btn btn-primary view_message'>View All Messages</button><br><br>"
+                            msg_html += "<button sender=" + obj.receiver_id + " receiver=" + obj.sender_id
+                            msg_html += " class='btn btn-primary view_message' data-toggle='collapse' data-target='#messageDiv'>View All Messages</button><br><br>"
                         })
 
                     } else {
@@ -100,39 +105,43 @@ function getMessages(url) {
 
         // if error response from server...
         error: function (error) {
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+
+            var response = { status: 400, message: "Internal Server Error" };
+            errorSwal(response);
             console.error(error);
         }
     })
 }
 
 $(document).on('click', '.view_message', function () {
-    sender_name = $(this).attr('sender');
 
-    user_id = $(this).attr('user_id');
+    sender_id = $(this).attr('sender');
+    receiver_id = $(this).attr('receiver');
 
-    var data = { val: "getAllMessages", user: user_id };
+    var data = { val: "getAllMessages", sender_id: sender_id, receiver_id: receiver_id, role: local_data.role };
 
     switch (local_data.role) {
 
         // if logged in user is school...
         case 0:
-            getMessagesBySenderId(data, school_server_url + "GetMessage.php", sender_name);
+            getAllMessagesById(school_server_url + "GetMessage.php", data);
             break;
 
         // if logged in user is student...
         case '1':
-            getMessagesBySenderId(data, student_server_url + "GetMessage.php", sender_name);
+            getAllMessagesById(student_server_url + "GetMessage.php", data);
+            break;
+
+        // if logged in user is agent...
+        case '3':
+            getAllMessagesById(common_server_url + "GetMessages.php", data);
             break;
 
     }
 })
 
 // function to get all the messages...
-function getMessagesBySenderId(data, url, sender) {
+function getAllMessagesById(url, data) {
 
     var msg_html = "";
 
@@ -150,7 +159,7 @@ function getMessagesBySenderId(data, url, sender) {
             if (!appendToken(request)) {
 
                 // if the token is not in the localStorage...
-                redirectLogin();
+                redirect(local_data.role);
             }
         },
 
@@ -161,41 +170,35 @@ function getMessagesBySenderId(data, url, sender) {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
+                // console.log(response);
+
                 // if status is 200...
                 if (response.status == 200) {
-                    $("#message_modal").modal("show");
-                    $("#sender_name").html(sender);
 
-                    // return false;
-                    $.each(response.messages, function (k, obj) {
-                        if (response.id == obj.from_user) {
-                            msg_html += "<div class='sent_messages'>"
+                    if (response.messages.length > 0) {
+                        $.each(response.messages, function (k, obj) {
+                            msg_html += "<div><p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
 
-                            msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
+                            msg_html += viewDocuments(obj.document, staff_assets_url);
+
                             msg_html += "<small>" + obj.created_at + "</small><br><br>";
                             msg_html += "</div></br>";
-                        } else {
-                            msg_html += "<div class='receive_messages'>"
+                        });
 
-                            msg_html += "<p>Message:&nbsp;&nbsp;" + obj.message + "</p>";
-                            msg_html += "<small>" + obj.created_at + "</small><br><br>";
-                            msg_html += "</div>";
-                        }
-                    });
+                    } else {
+                        msg_html += "<h2>No message found.</h2>";
+                    }
 
                     $("#all_messages").html(msg_html);
 
                 } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+                    errorSwal(response);
                 }
             }
 
             //if token not verified...
             else {
-                redirectLogin();
+                redirect(local_data.role);
             }
         },
 
@@ -210,109 +213,103 @@ function getMessagesBySenderId(data, url, sender) {
     })
 }
 
-$("#message_form").submit(function (e) {
+function viewDocuments(document_obj, url) {
+    let documents = JSON.parse(document_obj);
+    var html = "";
+
+    $.each(documents, function (key, doc_name) {
+
+        var doc_arr = doc_name.split('.');
+
+        var type = doc_arr[doc_arr.length - 1];
+
+        switch (type) {
+            case 'pdf':
+                html += "<li><a href='" + url + "documents/" + doc_name + "' download='" + doc_name + "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/pdf48.png' width='48' height='48'>PDF</a></li><br>";
+                break;
+
+            case 'xlsx':
+                html += "<li><a href='" + url + "documents/" + doc_name + "' download='" + doc_name + "'><img src='https://www.downloadexcelfiles.com/sites/all/themes/anu_bartik/icon/xlsx48.png' width='48' height='48'>XLSX</a></li><br>";
+                break;
+
+            case 'png':
+                html += "<li><div style='display: none;' id='hidden_image_" + key + "'><img src='" + url + "documents/" + doc_name + "' width='80%' height='80%'></div><a href='".url + "documents/" + doc_name + "' data-fancybox data-src='#hidden_image_" + key + "' download='" + doc_name + "'>Image</a></li><br>";
+                break;
+
+            case 'jpg':
+                html += "<li><div style='display: none;' id='hidden_image_" + key + "'><img src='".url + "documents/" + doc_name + "' width='80%' height='80%'></div><a href='".url + "documents/" + doc_name + "' data-fancybox data-src='#hidden_image_" + key + "' download='" + doc_name + "'>Image</a></li><br>";
+                break;
+
+            case 'jpeg':
+                html += "<li><div style='display: none;' id='hidden_image_" + key + "'><img src='".url + "documents/" + doc_name + "' width='80%' height='80%'></div><a href='".url + "documents/" + doc_name + "' data-fancybox data-src='#hidden_image_" + key + "' download='" + doc_name + "'>Image</a></li><br>";
+                break;
+        }
+    });
+    return html;
+}
+
+$("#chatForm").submit(function (e) {
     e.preventDefault();
-    var form = document.getElementById('message_form');
+
+    // // Enable pusher logging - don't include this in production
+    // Pusher.logToConsole = true;
+
+    // var pusher = new Pusher('9d27859f518c27645ae1', {
+    //     cluster: 'ap2',
+    //     forceTLS: true
+    // });
+
+    // var channel = pusher.subscribe('my-channel');
+    // channel.bind('my-event', function (data) {
+    //     console("<p style='color:green'>" + data + "</p>");
+    // });
+
+    var form = document.getElementById('chatForm');
     var form_data = new FormData(form);
-    form_data.append('user', user_id);
 
-    switch (local_data.role) {
+    form_data.append('val', 'sendMessage');
+    form_data.append('role', local_data.role);
+    form_data.append('sender_id', sender_id);
+    form_data.append('receiver_id', receiver_id);
 
-        case 0:
-
-            sendMessage(form_data, school_server_url);
-            break;
-
-        case '1':
-            sendMessage(form_data, student_server_url);
-            break;
-    }
-})
-
-// function to send the message...
-function sendMessage(data, url) {
-
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-
-    var pusher = new Pusher('9d27859f518c27645ae1', {
-        cluster: 'ap2',
-        forceTLS: true
-    });
-
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function (data) {
-        console("<p style='color:green'>" + data + "</p>");
-    });
 
     $.ajax({
-        url: url + "SendMessage.php",
+        url: common_server_url + "SendMessage.php",
         type: "post",
+        data: form_data,
         dataType: "json",
-        data: data,
         contentType: false,
         processData: false,
+        beforeSend: function (request) {
 
-        // function to append the token in the request...
-        beforeSend: function (req) {
-
-            // calling function that appends the token defined in token.js file 
-            // inside common directory of plugins.
-            if (!appendToken(req)) {
-                redirectLogin();
+            // if token not found in the local Storage...
+            if (!appendToken(request)) {
+                staffRedirectLogin();
             }
-        },
-        success: function (response) {
-            if (verifyToken(response)) {
-                if (response.status == 200) {
-                    swal({
-                        title: response.message,
-                        icon: 'success'
-                    })
+        }, success: function (response) {
 
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    swal({
-                        title: response.message,
-                        icon: 'error'
-                    })
+            // if token verified successfully...
+            if (verifyToken(response)) {
+                sweetalert(response);
+
+                if (response.status == 200) {
+                    getMessages();
+                    form.reset();
                 }
             } else {
-                redirectLogin();
+                staffRedirectLogin();
             }
-        },
-        error: function (error) {
+        }, error: function (error) {
+
+            // if any error occurs on internal server error...
             console.error(error);
-            swal({
-                title: "Internal Server Error",
-                icon: 'error'
-            })
+            var response = { status: 400, message: 'Internal Server Error' };
+            errorSwal(response);
         }
     })
-}
+})
 
 
-// function that redirects to login page...
-function redirectLogin() {
-    localStorage.removeItem('data');
-    switch (local_data.role) {
 
-        // if logged in user is school...
-        case 0:
-            setTimeout(function () {
-                window.location.href = base_url + "school-login/";
-            }, 2000);
-            break;
 
-        // if logged in user is student...
-        case '1':
-            setTimeout(function () {
-                window.location.href = base_url + "student-login/";
-            }, 2000);
 
-            break;
-    }
-
-}

@@ -218,6 +218,7 @@ if(localStorage.getItem('data')!=null){
 			html+="<a href='<?=base_url?>agent-dashboard/'>Home</a><br><a href='<?=base_url?>agent-profile/'>Profile</a><br>";
 			html+="<a href='<?=base_url?>add-student/'>Add Student</a><br>"
 			html+="<a href='<?=base_url?>view-students/'>View Students</a><br><a href='<?=base_url?>view-sub-agents/'>View Sub Agents</a><br>";
+			html+="<a href='<?=base_url?>messages/'>Messages</a><br>";
 			html+="<a class='btn btn-primary' id='create_sublogin'>Create Sub agents</a><br><br>";
 		break;
 

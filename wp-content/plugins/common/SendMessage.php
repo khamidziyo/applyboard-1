@@ -24,6 +24,13 @@ function studentVerifyUser()
     return Student::verifyUser($payload);
 }
 
+function agentVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Agent::verifyUser($payload);
+}
+
 if (!empty($_POST['val'])) {
     try {
         switch ($_POST['val']) {
@@ -51,6 +58,17 @@ if (!empty($_POST['val'])) {
                         $path = dirname(__DIR__) . '/student/assets/documents/';
 
                         if (studentVerifyUser($path)) {
+
+                        }
+                        break;
+
+                    // if logged in user is agent...
+                    case '3':
+                        if (agentVerifyUser()) {
+                            $id = $payload->userId;
+                            $sender_id = $_POST['sender_id'];
+
+                            sendMessage($wpdb, $sender_id, $path);
 
                         }
                         break;

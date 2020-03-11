@@ -130,39 +130,40 @@ function getApplications($wpdb, $sql, $id)
                 switch ($obj->status) {
                     case '0':
                         $pending = 'selected="selected"';
-                        $status="Pending";
+                        $status = "Pending";
                         break;
 
                     case '1':
                         $approve = 'selected="selected"';
-                        $status="Approved";
+                        $status = "Approved";
                         break;
 
                     case '2':
                         $decline = 'selected="selected"';
-                        $status="Declined";
+                        $status = "Declined";
                         break;
                 }
-            }
-            if ($obj->review_by == $id) {
-                // echo  $pending;
-                $record[] = "<select class='update_status' app_id=" . base64_encode($obj->id) . ">
-                   <option value='0'" . $pending . " disabled>Pending</option>
-                   <option value='1'" . $approve . ">Approve</option>
-                   <option value='2'" . $decline . ">Decline</option>
-                   </select>";
-                $record[] = "Reviewing by me. <br><a href='" . base_url . "application-detail?a_id=" . base64_encode($obj->id) . "'>View Application</a>";
 
-            }
-            // if application is not reviewed by me...
-            else {
-                $staff_id = $obj->review_by;
-                $staff = $wpdb->get_results("select id,name from staff where id=" . $staff_id);
+                if ($obj->review_by == $id) {
+                    // echo  $pending;
+                    $record[] = "<select class='update_status' app_id=" . base64_encode($obj->id) . ">
+                       <option value='0'" . $pending . " disabled>Pending</option>
+                       <option value='1'" . $approve . ">Approve</option>
+                       <option value='2'" . $decline . ">Decline</option>
+                       </select>";
+                    $record[] = "Reviewing by me. <br><a href='" . base_url . "application-detail?a_id=" . base64_encode($obj->id) . "'>View Application</a>";
 
-                $staff_name = $staff[0]->name;
-                $record[] = $status;
+                }
+                // if application is not reviewed by me...
+                else {
+                    $staff_id = $obj->review_by;
+                    $staff = $wpdb->get_results("select id,name from staff where id=" . $staff_id);
 
-                $record[] = "Reviewing By " . $staff_name;
+                    $staff_name = $staff[0]->name;
+                    $record[] = $status;
+
+                    $record[] = "Reviewing By " . $staff_name;
+                }
             }
 
             if (!$obj->is_reviewed) {
