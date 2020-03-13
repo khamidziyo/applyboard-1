@@ -11,10 +11,9 @@ $("#create_sublogin").click(function () {
 // calling function to get user id from local storage...
 getData();
 
-// var local_data = {};
 var notification_html = "<ul>";
 if (localStorage.getItem('data') != null) {
-    local_data = JSON.parse(localStorage.getItem('data'));
+    var local_data = JSON.parse(localStorage.getItem('data'));
 }
 
 
@@ -122,12 +121,12 @@ function getUserProfile(url, user_data, asset_path) {
                 if (response.status == 200) {
                     $("#after_login").show();
 
-                    $.each(response.notification, function (key, obj) {
-                        notification_html += "<li class='notifications' id=" + obj.id + ">" + obj.message + " ";
-                        notification_html += obj.u_email + " for " + obj.c_name + "</li>";
-                    })
-                    notification_html += "</ul>";
-                    $("#notif_count").html(response.notification_count);
+                    // $.each(response.notification, function (key, obj) {
+                    //     notification_html += "<li class='notifications' id=" + obj.id + ">" + obj.message + " ";
+                    //     notification_html += obj.u_email + " for " + obj.c_name + "</li>";
+                    // })
+                    // notification_html += "</ul>";
+                    // $("#notif_count").html(response.notification_count);
 
                     $("#user_email").html(response.data.email);
 
@@ -232,11 +231,89 @@ $("#logout").click(function (e) {
     })
 
 })
-$("#notification").hover(function () {
-    //  console.log(notification_html);
-    $("#user_notification").html(notification_html);
+$("#notification").click(function () {
+
+
+    var data = { role: local_data.role, val: 'getNotification' };
+    getNotifications(data);
+    // $("#user_notification").html();
 })
 
-$("#notification").click(function () {
-    window.location.href = base_url + "notification-detail/";
+// $("#notification").mouseout(function () {
+//     $(".notBtn:hover>.box").css('height', '');
+// });
+
+
+function getNotifications(data) {
+    var notify_html = "";
+    $.ajax({
+        url: common_server_url + "GetNotification.php",
+        data: data,
+        dataType: "json",
+        beforeSend: function (request) {
+            if (!appendToken(request)) {
+                redirect(local_data.role);
+            }
+        }, success: function (response) {
+            if (verifyToken(response)) {
+
+                // console.log(response);
+
+                if (response.status == 200) {
+
+                    if (response.notification.length > 0) {
+                        $(".notBtn:hover>.box").css('height', '60vh');
+                        $.each(response.notification, function (k, obj) {
+
+                            switch (obj.app_status) {
+                                case '0':
+                                    status = " pending";
+                                    break;
+
+                                case '1':
+                                    status = " approved";
+                                    break;
+
+                                case '2':
+                                    status = " declined";
+                                    break;
+                            }
+
+                            switch (obj.role) {
+
+                                // if notification received from agent for student application...
+                                case '3':
+                                    img_src = agent_assets_url + "images/" + obj.agent_image;
+                                    break;
+
+                            }
+                            notify_html += '<div class="sec new"><a class="notification" notification_id=' + obj.id + ' href="' + base_url + 'view-applications-by-staff"><div class="profCont">';
+                            notify_html += '<img class="profile"src="' + img_src + '"></div>';
+                            notify_html += '<div class="txt">' + obj.message + ' ' + obj.agent_name + ' for ' + obj.course_name + ' is' + status + '</div>'
+                            notify_html += '<div class="txt sub">' + obj.created_at + '</div></a></div>'
+                        })
+                    } else {
+                        $(".notBtn:hover>.box").css('height', '20vh');
+                        notify_html += '<div class="sec"><p>No new notification.</p></div>';
+                    }
+                    $("#view_notification").html(notify_html);
+
+                }
+            }
+        }, error: function (error) {
+            console.error(error);
+            var response = { status: 400, message: "Internal Server Error" };
+            errorSwal(response);
+        }
+    })
+}
+
+$(document).on('click','.notification',function(){
+var id=$(this).attr('notification_id');
+console.log(id);
+// alert(id);
 })
+
+// $("#notification").click(function () {
+//     window.location.href = base_url + "notification-detail/";
+// })

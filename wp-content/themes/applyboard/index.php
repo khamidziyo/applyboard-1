@@ -1,7 +1,7 @@
 <?php get_header();?>
 
 <div class="container">
-<div class="col-md-12 col-sm-12 col-lg-12 main-div ">
+<div>
 
 
 <div class="blog-list">

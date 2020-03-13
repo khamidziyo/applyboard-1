@@ -176,7 +176,7 @@ function createStudent($wpdb, $id)
             $image_name = microtime() . '_' . $id . '.' . $img_type;
 
             // storage path of image...
-            $path = dirname(__DIR__) . "/assets/images/";
+            $path = dirname(__DIR__,1) . "/student/assets/images/";
 
             // if the student uploads a new image on edit time then delete the previous image
             //  from folder...
@@ -319,7 +319,7 @@ function uploadStudentDocuments($id, $wpdb)
 
         // creating a new name for the document...
         $doc_name = microtime() . '.' . $doc_type;
-        $path = dirname(__DIR__) . "/assets/documents/" . $doc_name;
+        $path = dirname(__DIR__,1) . "/student/assets/documents/" . $doc_name;
 
         // to move document inside the folder...
         if (!move_uploaded_file($_FILES['documents']['tmp_name'][$key], $path)) {

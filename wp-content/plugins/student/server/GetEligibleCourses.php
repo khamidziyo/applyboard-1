@@ -238,7 +238,7 @@ function getEligibleCourses($wpdb, $student_id)
                 // echo Date('Y-m-d');die;
                 $sql = "select course_intake.id as course_intake_id,
                 intakes.id as intake_id,intakes.name from course_intake left join intakes on
-                intakes.id=course_intake.intake_id where course_id=" . $arr['id'] . " && course_intake.deadline > '" . Date('Y-m-d')."'";
+                intakes.id=course_intake.intake_id where course_id=" . $arr['id'] . " && course_intake.deadline > '" . Date('Y-m-d') . "'";
 
                 $intake_avail = $wpdb->get_results($sql);
 

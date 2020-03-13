@@ -473,7 +473,7 @@ $("#add_student").submit(function (e) {
     }
 
     $.ajax({
-        url: student_server_url + "AddStudent.php",
+        url: agent_server_url + "AddStudent.php",
         type: "post",
         dataType: "json",
         data: form_data,

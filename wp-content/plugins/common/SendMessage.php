@@ -134,7 +134,7 @@ function sendMessage($wpdb, $sender_id, $path)
 
             $doc_arr[] = $doc_name;
 
-            $insert_arr = ['user_id' => $sender_id, 'document' => $doc_name, 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s')];
+            $insert_arr = ['user_id' => $sender_id, 'document' => $doc_name, 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s a')];
             $insert_doc_res = $wpdb->insert('user_documents', $insert_arr);
 
             if (!$insert_doc_res) {
@@ -144,7 +144,7 @@ function sendMessage($wpdb, $sender_id, $path)
     }
 
     $insert_msg_arr = ['sender_id' => $sender_id, 'receiver_id' => $receiver_id, 'message' => $message,
-        'document' => json_encode($doc_arr), 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s')];
+        'document' => json_encode($doc_arr), 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s a')];
 
     $msg_insert_res = $wpdb->insert('messages', $insert_msg_arr);
 
@@ -153,10 +153,53 @@ function sendMessage($wpdb, $sender_id, $path)
     }
 
     $wpdb->query('COMMIT');
-
     $response = ['status' => Success_Code, 'message' => 'Message sent successfully'];
 
+//     switch ($_POST['role']) {
+    //         case '1':
+    //             break;
+
+//         case '3':
+    //             break;
+
+//         case '5':
+
+//             $receiver_data = $wpdb->get_results("select concat(f_name,l_name) as name,email,agent_id from users where id=" . $receiver_id);
+
+//             if (!empty($receiver_data[0]->agent_id)) {
+    //                 $agent_id = $receiver_data[0]->agent_id;
+    //                 echo "<pre>";
+    //                 print_r($receiver_data);
+    //                 die;
+    //                 $agent_data = $wpdb->get_results("select id,name,email from agents where id=" . $agent_id);
+    //                 $user_name = $agent_data[0]->name;
+    //                 $email = $agent_data[0]->email;
+    //             } else {
+    //                 $user_name = $receiver_data[0]->name;
+    //                 $email = $receiver_data[0]->email;
+    //             }
+
+//             break;
+
+//     }
+    //     // $sender_name
+    //     // $user_name
+
+//     $url = base_url;
+    //     // html to render when mail will be sent to user...
+    //     $msg = '<h1>Hello ' . $user_name . ' </h1><p>' . " You received a new message from " . $user_name .
+    //         " Please login your account to view the message.</p><a class='btn btn-primary' href=" . $url . ">Sign In</a>";
+
+// // sending mail to user...
+    //     $mail_res = wp_mail($email, '<h3>New Message Arrived</h3>', $msg);
+
+// // if mail success...
+    //     if ($mail_res) {
+    //         $wpdb->query('COMMIT');
+    //         $response = ['status' => Success_Code, 'message' => 'Message sent successfully'];
+    //     } else {
+    //         throw new Exception('Mail not sent due to Internal server error');
+    //     }
+
     echo json_encode($response);
-    exit;
 }
-echo json_encode($response);

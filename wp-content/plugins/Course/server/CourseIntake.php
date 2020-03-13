@@ -32,6 +32,10 @@ if (!empty($_POST['val'])) {
                 throw new Exception("Please enter the deadline of the course intake");
             }
 
+            // echo "<pre>";
+            // print_r($_POST);
+            // die;
+
             switch ($_POST['val']) {
 
                 case 'addCourseIntake':
@@ -40,11 +44,16 @@ if (!empty($_POST['val'])) {
 
                     $wpdb->query('START TRANSACTION');
 
-                    foreach ($_POST['date'] as $exam_id => $arr) {
-                        $insert_arr = ['course_id' => $course_id, 'intake_id' => $exam_id,
+                    foreach ($_POST['date'] as $intake_id => $arr) {
+
+                        if (strtotime($arr['start_date']) >= strtotime($arr['end_date'])) {
+                            throw new Exception('Course start date cannot be greater than or equal to end date.');
+                        }
+
+                        $insert_arr = ['course_id' => $course_id, 'intake_id' => $intake_id,
                             'start_date' => Date('Y-m-d', strtotime($arr['start_date'])),
                             'end_date' => Date('Y-m-d', strtotime($arr['end_date'])),
-                            'deadline' => Date('Y-m-d', strtotime($_POST['deadline'][$exam_id])),
+                            'deadline' => Date('Y-m-d', strtotime($_POST['deadline'][$intake_id])),
                             'created_at' => Date('Y-m-d h:i:s')];
 
                         $course_intake_res = $wpdb->insert('course_intake', $insert_arr);
@@ -65,10 +74,15 @@ if (!empty($_POST['val'])) {
                     }
                     $course_intake_id = base64_decode($_POST['intake_id']);
 
-                    foreach ($_POST['date'] as $exam_id => $arr) {
+                    foreach ($_POST['date'] as $intake_id => $arr) {
+
+                        if (strtotime($arr['start_date']) >= strtotime($arr['end_date'])) {
+                            throw new Exception('Course start date cannot be greater than or equal to end date.');
+                        }
+
                         $update_arr = ['start_date' => Date('Y-m-d', strtotime($arr['start_date'])),
                             'end_date' => Date('Y-m-d', strtotime($arr['end_date'])),
-                            'deadline' => Date('Y-m-d', strtotime($_POST['deadline'][$exam_id])),
+                            'deadline' => Date('Y-m-d', strtotime($_POST['deadline'][$intake_id])),
                             'updated_at' => Date('Y-m-d h:i:s')];
 
                         $course_intake_res = $wpdb->update('course_intake', $update_arr, ['id' => $course_intake_id]);

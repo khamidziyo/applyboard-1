@@ -9,19 +9,27 @@ if (file_exists(dirname(__FILE__, 3) . '/common/autoload.php')) {
     include_once dirname(__FILE__, 3) . '/common/autoload.php';
 }
 
-function verifyUser()
+function staffVerifyUser()
 {
     global $payload;
     $payload = JwtToken::getBearerToken();
     return Staff::verifyUser($payload);
 }
 
-if (!empty($_POST['val'])) {
-    if (verifyUser()) {
-        try {
-            switch ($_POST['val']) {
+function adminVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Admin::verifyUser($payload);
+}
 
-                case 'validateOldPassword':
+if (!empty($_POST['val'])) {
+    try {
+        switch ($_POST['val']) {
+
+            case 'validateOldPassword':
+                if (staffVerifyUser()) {
+
                     $id = $payload->userId;
 
                     // to get the old password...
@@ -49,103 +57,125 @@ if (!empty($_POST['val'])) {
                         // returning the response...
                         $response = ['status' => Success_Code, 'message' => 'Password is correct', 'data' => $data];
                     }
+                }
+                break;
 
-                    break;
-
-                // update the profile...
-                case 'updateProfile':
+            // update the profile...
+            case 'updateProfile':
+                if (staffVerifyUser()) {
                     $id = $payload->userId;
+                    // echo $id ;
+                    // die;
+                    updateStaffProfile($wpdb, $id);
+                }
 
-                    $require_arr = ['name', 'email'];
+                break;
 
-                    foreach ($require_arr as $form_input) {
-                        if (!array_key_exists($form_input, $_POST)) {
-                            throw new Exception("Please enter " . $form_input);
-                        }
+            case 'updateStaffProfileByAdmin':
+                if (adminVerifyUser()) {
+
+                    if (empty($_POST['staff_id'])) {
+                        throw new Exception("Staff id is required");
                     }
+                    $staff_id = base64_decode($_POST['staff_id']);
 
-                    $email = $_POST['email'];
+                    updateStaffProfile($wpdb, $staff_id);
+                }
+                break;
 
-                    // if email is invalid...
-                    if (!filter_var($email, FILTER_DEFAULT)) {
-                        throw new Exception("Invalid email address");
-                    }
-
-                    $email_exist = $wpdb->get_results("select email from staff where email='" . $email . "' && id!=$id");
-
-                    // if new email already exist...
-                    if (!empty($email_exist)) {
-                        throw new Exception("This email already exist.Try another.");
-                    }
-
-                    $img_name = $_POST['cur_image'];
-
-                    if (!empty($_FILES['img_input']['name'])) {
-
-                        // images of type which are allowed...
-                        $allowedType = ['jpg', 'jpeg', 'png'];
-
-                        $img_name = $_FILES['img_input']['name'];
-
-                        // get the image type...
-                        $img_type = pathinfo($img_name, PATHINFO_EXTENSION);
-
-                        // if image type does not matches...
-                        if (!in_array($img_type, $allowedType)) {
-                            throw new Exception("Only jpg,jpeg and png formats are allowed");
-                        }
-
-                        // if image size exceeds more than 2 MB...
-                        if ($_FILES['img_input']['size'] > 2 * 1024 * 1024) {
-                            throw new Exception("Image size should not exceed more than 2 MB");
-                        }
-
-                        // creating a new image name...
-                        $img_name = microtime() . "." . $img_type;
-
-                        $path = dirname(__DIR__, 1) . "/assets/images/";
-
-                        // move new image file to folder...
-                        if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path . $img_name)) {
-                            throw new Exception("Image could not be uploaded to server directory due to internal server error");
-                        }
-
-                        // deleting the previous image...
-                        if (!unlink($path . $_POST['cur_image'])) {
-                            throw new Exception("Previous Image could not be deleted from server due to internal server error");
-                        }
-                    }
-
-                    // update array to update the staff...
-                    $update_arr = ['name' => $_POST['name'], 'email' => $email, 'image' => $img_name,
-                        'updated_at' => Date('Y-m-d h:i:s')];
-
-                    $update_profile_res = $wpdb->update('staff', $update_arr, ['id' => $id]);
-
-                    // if update success...
-                    if ($update_profile_res) {
-                        $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
-                    }
-
-                    // if update is not success...
-                    else {
-                        throw new Exception("Profile not updated due to internal server error");
-                    }
-
-                    break;
-
-                // if no case matches...
-                default:
-                    throw new Exception("No case found");
-                    break;
-            }
-        } catch (Exception $e) {
-            $response = ['status' => Error_Code, 'message' => $e->getMessage()];
+            // if no case matches...
+            default:
+                throw new Exception("No case found");
+                break;
         }
-
+    } catch (Exception $e) {
+        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }
+
 } else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
+}
+
+// function to update the staff profile...
+function updateStaffProfile($wpdb, $id)
+{
+    $require_arr = ['name', 'email'];
+
+    foreach ($require_arr as $form_input) {
+        if (!array_key_exists($form_input, $_POST)) {
+            throw new Exception("Please enter " . $form_input);
+        }
+    }
+
+    $email = $_POST['email'];
+
+    // if email is invalid...
+    if (!filter_var($email, FILTER_DEFAULT)) {
+        throw new Exception("Invalid email address");
+    }
+
+    $email_exist = $wpdb->get_results("select email from staff where email='" . $email . "' && id!=$id");
+
+    // if new email already exist...
+    if (!empty($email_exist)) {
+        throw new Exception("This email already exist.Try another.");
+    }
+
+    $img_name = $_POST['cur_image'];
+
+    if (!empty($_FILES['img_input']['name'])) {
+
+        // images of type which are allowed...
+        $allowedType = ['jpg', 'jpeg', 'png'];
+
+        $img_name = $_FILES['img_input']['name'];
+
+        // get the image type...
+        $img_type = pathinfo($img_name, PATHINFO_EXTENSION);
+
+        // if image type does not matches...
+        if (!in_array($img_type, $allowedType)) {
+            throw new Exception("Only jpg,jpeg and png formats are allowed");
+        }
+
+        // if image size exceeds more than 2 MB...
+        if ($_FILES['img_input']['size'] > 2 * 1024 * 1024) {
+            throw new Exception("Image size should not exceed more than 2 MB");
+        }
+
+        // creating a new image name...
+        $img_name = microtime() . "." . $img_type;
+
+        $path = dirname(__DIR__, 1) . "/assets/images/";
+
+        // move new image file to folder...
+        if (!move_uploaded_file($_FILES['img_input']['tmp_name'], $path . $img_name)) {
+            throw new Exception("Image could not be uploaded to server directory due to internal server error");
+        }
+
+        // deleting the previous image...
+        if (!unlink($path . $_POST['cur_image'])) {
+            throw new Exception("Previous Image could not be deleted from server due to internal server error");
+        }
+    }
+
+    // update array to update the staff...
+    $update_arr = ['name' => $_POST['name'], 'email' => $email, 'image' => $img_name,
+        'updated_at' => Date('Y-m-d h:i:s')];
+
+    $update_profile_res = $wpdb->update('staff', $update_arr, ['id' => $id]);
+
+    // if update success...
+    if ($update_profile_res) {
+        $response = ['status' => Success_Code, 'message' => 'Profile Updated Successfully'];
+    }
+
+    // if update is not success...
+    else {
+        throw new Exception("Profile not updated due to internal server error");
+    }
+    echo json_encode($response);
+    exit;
 }
 
 echo json_encode($response);

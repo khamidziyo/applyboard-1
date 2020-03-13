@@ -136,7 +136,6 @@ $(document).on('click', '.view_message', function () {
         case '3':
             getAllMessagesById(common_server_url + "GetMessages.php", data);
             break;
-
     }
 })
 

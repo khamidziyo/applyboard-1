@@ -58,9 +58,17 @@ function getCourseIntake(data) {
                                 intake_html += "<label>Application Deadline</label><input type='text' class='deadline_" + intake_month + "' name='deadline[" + month_id + "]' placeholder='Enter Application Deadline' required></span>"
                                 $("#intake_date").append(intake_html);
 
-                                $(".start_" + intake_month).datepicker();
-                                $(".end_" + intake_month).datepicker();
-                                $(".deadline_" + intake_month).datepicker();
+                                $(".start_" + intake_month).datepicker({
+                                    changeMonth: true,
+                                    changeYear: true
+                                });
+                                $(".end_" + intake_month).datepicker({
+                                    changeMonth: true,
+                                    changeYear: true
+                                });
+                                $(".deadline_" + intake_month).datepicker({
+                                    changeMonth: true,
+                                });
                             },
                             afterDeselect: function (month_id) {
                                 month_arr.pop(month_id);
@@ -154,9 +162,6 @@ $("#add_intake_form").submit(function (e) {
 
     }
 
-
-
-
     $.ajax({
         url: course_server_url + "CourseIntake.php",
         type: "post",
@@ -227,9 +232,17 @@ $(document).on('click', '.edit_intake', function () {
                     $("#end_date").val(response.course_intake.end_date);
                     $("#deadline").val(response.course_intake.deadline);
 
-                    $(".start_" + month_name).datepicker();
-                    $(".end_" + month_name).datepicker();
-                    $(".deadline_" + month_name).datepicker();
+                    $(".start_" + month_name).datepicker({
+                        changeMonth: true,
+                        changeYear: true
+                    });
+                    $(".end_" + month_name).datepicker({
+                        changeMonth: true,
+                        changeYear: true
+                    });
+                    $(".deadline_" + month_name).datepicker({
+                        changeMonth: true,
+                    });
 
                 }
 

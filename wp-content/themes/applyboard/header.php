@@ -1,6 +1,206 @@
 
-
 <!-- <!DOCTYPE html> -->
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    a:visited {
+        color: black;
+    }
+
+    .box::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #F5F5F5;
+        border-radius: 5px
+    }
+
+    .box::-webkit-scrollbar {
+        width: 10px;
+        background-color: #F5F5F5;
+        border-radius: 5px
+    }
+
+    .box::-webkit-scrollbar-thumb {
+        background-color: black;
+        border: 2px solid black;
+        border-radius: 5px
+    }
+
+    header {
+        -moz-box-shadow: 10px 10px 23px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 10px 10px 23px 0px rgba(0, 0, 0, 0.1);
+        height: 110px;
+        vertical-align: middle;
+    }
+
+    h1 {
+        float: left;
+        padding: 10px 30px
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .icons {
+        display: inline;
+        float: right
+    }
+
+    .notification {
+        padding-top: 30px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .number {
+        height: 22px;
+        width: 22px;
+        background-color: #d63031;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        position: absolute;
+        top: 23px;
+        left: 60px;
+        padding: 3px;
+        border-style: solid;
+        border-width: 2px;
+    }
+
+    .number:empty {
+        display: none;
+    }
+
+    .notBtn {
+        transition: 0.5s;
+        cursor: pointer
+    }
+
+    .fas {
+        font-size: 25pt;
+        padding-bottom: 10px;
+        color: black;
+        margin-right: 40px;
+        margin-left: 40px;
+    }
+
+    .box {
+        width: 400px;
+        height: 0px;
+        border-radius: 10px;
+        transition: 0.5s;
+        position: absolute;
+        overflow-y: scroll;
+        padding: 0px;
+        left: -300px;
+        margin-top: 5px;
+        background-color: #F4F4F4;
+        -webkit-box-shadow: 10px 10px 23px 0px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: 10px 10px 23px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 10px 10px 23px 0px rgba(0, 0, 0, 0.1);
+        cursor: context-menu;
+    }
+
+    /* .fas:hover {
+        color: #d63031;
+    } */
+/* 
+    .notBtn:hover>.box {
+        height: 60vh
+    } */
+
+    .content {
+        padding: 20px;
+        color: black;
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    .gry {
+        background-color: #F4F4F4;
+    }
+
+    .top {
+        color: black;
+        padding: 10px
+    }
+
+    .display {
+        position: relative;
+    }
+
+    .cont {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #F4F4F4;
+    }
+
+    .cont:empty {
+        display: none;
+    }
+
+    .stick {
+        text-align: center;
+        display: block;
+        font-size: 50pt;
+        padding-top: 70px;
+        padding-left: 80px
+    }
+
+    /* .stick:hover {
+        color: black;
+    } */
+
+    .cent {
+        text-align: center;
+        display: block;
+    }
+
+    .sec {
+        padding: 25px 10px;
+        background-color: #F4F4F4;
+        transition: 0.5s;
+    }
+
+    .profCont {
+        padding-left: 15px;
+    }
+
+    .profile {
+        -webkit-clip-path: circle(50% at 50% 50%);
+        clip-path: circle(50% at 50% 50%);
+        width: 75px;
+        float: left;
+    }
+
+    .txt {
+        vertical-align: top;
+        font-size: 1.25rem;
+        padding: 5px 10px 0px 115px;
+    }
+
+    .sub {
+        font-size: 1rem;
+        color: grey;
+    }
+
+    .new {
+        border-style: none none solid none;
+        border-color: red;
+    }
+
+    /* .sec:hover {
+        background-color: #BFBFBF;
+    } */
+</style>
 
 <html lang="en">
 
@@ -28,17 +228,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	  	<link rel="stylesheet" href="<?=get_template_directory_uri();?>/style.css">
-		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/bootstrap.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.dataTables.min.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery-ui.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.multiselect.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/multi-select.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/jquery.fancybox.css')?>">
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/bootstrap-select.min.css')?>">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 		<link rel="stylesheet" href="<?=content_url('themes/applyboard/css/placeholder-loading.min.css')?>">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 
 		<script src="<?=content_url("themes/applyboard/js/jquery.js")?>"></script>
 		<script src="<?=content_url("themes/applyboard/js/bootstrap.min.js")?>"></script>
@@ -66,33 +269,68 @@
 
 
 	 <?php wp_head();?>
+
 </head>
 
 
 <body>
-
 	<div container="headerAfterLogin" id="after_login" style="display:none"><br><br>
-
-
-
 
 	<div   id="user_notification" border="5px solid black" width="100px"></div>
 
 	<span style="float:right">
 
-	<p id="notif_count"></p>
+	<div class="icons">
+        <div class="notification">
+            <a href="#">
+                <div class="notBtn" href="#">
+                    <!--Number supports double digets and automaticly hides itself when there is nothing between divs -->
+					<p id="notif_count"></p>
+				<i class="material-icons" id="notification">add_alert</i>
+                    <div class="box">
+                        <div class="display">
+                            <div class="nothing">
+                                <i class="fas fa-child stick"></i>
+                                <div class="cent">Looks Like your all caught up!</div>
+                            </div>
+                            <div class="cont">
 
-	<img src="<?=content_url("themes/applyboard/images/notification.png")?>" id="notification" height="20px" width="20px">
+                                <span id="view_notification">
+
+
+								</span>
+                                <!-- Fold this div and try deleting evrything inbetween -->
+								
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+
 
 	<span id="user_email"></span>
     <span id="user_image"></span>
 
     <input type="button" class="btn btn-danger" id="logout" value="Logout"  name="logout">
-    </span>
+    </span><br><br>
+	</div>
+</div>
 
 	<div class="container">
+<div class="row">
+<div class="col-sm-3">
+<div class="sidenav">
+<span id="sidebar">
+</span>
 
-<span id="sidebar"></span>
+
+
+<!-- <div class="col-sm-9">
+<div class="main-content"> -->
+
 
 <div class = 'modal fade' id = 'sub_login_modal'>
     <div class = 'modal-dialog'>
@@ -143,9 +381,10 @@
     </div>
     </div>
     </div>
-    </div>
-    </div>
 	</div>
+
+    <!-- </div>
+	</div> -->
 	</div>
 	<!-- HEADER SECTION-->
 
@@ -204,12 +443,12 @@ if(localStorage.getItem('data')!=null){
 
 		// if the logged in user is admin...
 		case '2':
-			html+="<a href='<?=base_url?>admin-dashboard/'>Home</a>";
-			html+="<a href='<?=base_url?>admin-profile/'><h4>Profile</h4></a><a href='<?=base_url?>add-agent/'><h4>Add Agent</h4></a>";
-			html+="<a href='<?=base_url?>view-agents/'><h4>View Agents</h4></a><a href='<?=base_url?>add-school/'><h4>Add School</h4></a>"
-			html+="<a href='<?=base_url?>view-all-schools/'><h4>View Schools</h4></a><a href='<?=base_url?>add-staff/'><h4>Add Staff Member</h4></a>"
-			html+="<a href='<?=base_url?>view-staff-members/'><h4>View Staff Members</h4></a>";
-			html+="<a href='<?=base_url?>view-courses-by-admin/'><h4>View Courses</h4></a>";
+			html+="<div class='sidenav'><span class='glyphicon glyphicon-home'></span>&nbsp;<b><a href='<?=base_url?>admin-dashboard/'>Home</a></b><br>";
+			html+="<span class='glyphicon glyphicon-user'></span>&nbsp;<b><a href='<?=base_url?>admin-profile/'>Profile</a></b><br><span class='glyphicon glyphicon-plus'></span>&nbsp;<b><a href='<?=base_url?>add-agent/'>Add Agent</a></b><br>";
+			html+="<span class='glyphicon glyphicon-eye-open'></span>&nbsp;<b><a href='<?=base_url?>view-agents/'>View Agents</a></b><br><span class='glyphicon glyphicon-plus'></span>&nbsp;<b><a href='<?=base_url?>add-school/'>Add School</a></b><br>"
+			html+="<span class='glyphicon glyphicon-education'></span>&nbsp;<b><a href='<?=base_url?>view-all-schools/'>View Schools</a></b><br><span class='glyphicon glyphicon-plus'></span>&nbsp;<b><a href='<?=base_url?>add-staff/'>Add Staff Member</a></b><br>"
+			html+="<span class='glyphicon glyphicon-eye-open'></span>&nbsp;<b><a href='<?=base_url?>view-staff-members/'>View Staff Members</a></b><br>";
+			html+="<span class='glyphicon glyphicon-eye-open'></span>&nbsp;<b><a href='<?=base_url?>view-courses-by-admin/'>View Courses</a></b></div>";
 
 		break;
 

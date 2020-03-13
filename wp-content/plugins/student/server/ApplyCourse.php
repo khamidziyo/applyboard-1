@@ -152,7 +152,7 @@ if (!empty($_POST['val'])) {
                     // logged in agent id...
                     $id = $payload->userId;
 
-                    applyCourseByAgent($wpdb, $id);
+                    applyCourseByAgent($wpdb, $id, '3');
                 }
                 break;
 
@@ -205,7 +205,7 @@ else {
 //     exit;
 // }
 
-function applyCourseByAgent($wpdb, $id)
+function applyCourseByAgent($wpdb, $id, $role)
 {
 
     if (empty($_POST['student_id'])) {
@@ -240,7 +240,6 @@ function applyCourseByAgent($wpdb, $id)
     $intake['month'] = $intake_id;
     $intake['year'] = $year;
 
-
     // if the staff is 1...
     if ($manage_staff) {
 
@@ -263,16 +262,27 @@ function applyCourseByAgent($wpdb, $id)
 
     // insert application in applications table...
     $insert_app = ['student_id' => $student_id, 'school_id' => $school_id, 'agent_id' => $id,
-        'course_id' => $course_id, 'intake' => json_encode($intake), 'manage_by' => $manage_by, 'created_at' => Date('Y-m-d h:i:s')];
+        'course_id' => $course_id, 'intake' => json_encode($intake), 'manage_by' => $manage_by, 'created_at' => Date('Y-m-d h:i:s a')];
 
     // insert the application record in applications table...
     $application_res = $wpdb->insert('applications', $insert_app);
 
     // if application submitted successfully...
     if ($application_res) {
+
+        $app_id = $wpdb->insert_id;
+
+        $ins_notification_arr = ['application_id' => $app_id, 'type' => '1',
+            'message' => 'A new application is received from ', 'to_user' => $school_id, 'from_user' => $id,
+            'course_id' => $course_id, 'role' => $role, 'created_at' => Date('Y-m-d h:i:s a')];
+
+        // insert the application record in applications table...
+        $application_res = $wpdb->insert('notifications', $ins_notification_arr);
+
         $response = ['status' => Success_Code, 'message' => 'your application submitted Successfully'];
     }
-
+    echo json_encode($response);
+    exit;
 }
 
 // returning the json response...

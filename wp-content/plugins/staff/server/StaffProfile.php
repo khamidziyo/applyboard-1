@@ -9,42 +9,68 @@ if (file_exists(dirname(__FILE__, 3) . '/common/autoload.php')) {
     include_once dirname(__FILE__, 3) . '/common/autoload.php';
 }
 
-function verifyUser()
+function staffVerifyUser()
 {
     global $payload;
     $payload = JwtToken::getBearerToken();
     return Staff::verifyUser($payload);
 }
 
+function adminVerifyUser()
+{
+    global $payload;
+    $payload = JwtToken::getBearerToken();
+    return Admin::verifyUser($payload);
+}
+
 if (!empty($_POST['val'])) {
-    if (verifyUser()) {
-        try {
+    try {
 
-            switch ($_POST['val']) {
-                case 'getStaffProfile':
+        switch ($_POST['val']) {
+            case 'getStaffProfile':
 
+                if (staffVerifyUser()) {
                     $id = $payload->userId;
-                    $sql = 'select id,name,email,image,status from staff where id=' . $id;
-                    $data = $wpdb->get_results($sql);
 
-                    if (!empty($data)) {
-                        $response = ['status' => Success_Code, 'message' => 'Staff profile fetched successfully', 'data' => $data[0]];
-                    } else {
-                        throw new Exception('No staff found');
+                    getStaffProfile($wpdb, $id);
+                }
+                break;
+
+            case 'getStaffProfileByAdmin':
+                if (adminVerifyUser()) {
+
+                    if (empty($_POST['staff'])) {
+                        throw new Exception("Staff id is required");
                     }
-                    break;
+                    $staff_id = base64_decode($_POST['staff']);
 
-                default:
-                    throw new Exception("No case matches");
-                    break;
-            }
+                    getStaffProfile($wpdb, $staff_id);
+                }
+                break;
 
-        } catch (Exception $e) {
-            $response = ['status' => Error_Code, 'message' => $e->getMessage()];
+            default:
+                throw new Exception("No case matches");
+                break;
         }
+
+    } catch (Exception $e) {
+        $response = ['status' => Error_Code, 'message' => $e->getMessage()];
     }
 } else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
 }
 
+function getStaffProfile($wpdb, $staff_id)
+{
+    $sql = 'select id,name,email,image,status from staff where id=' . $staff_id;
+    $data = $wpdb->get_results($sql);
+
+    if (!empty($data)) {
+        $response = ['status' => Success_Code, 'message' => 'Staff profile fetched successfully', 'data' => $data[0]];
+    } else {
+        throw new Exception('No staff found');
+    }
+    echo json_encode($response);
+    exit;
+}
 echo json_encode($response);

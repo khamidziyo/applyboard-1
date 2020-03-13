@@ -109,5 +109,5 @@ function updateStaffStatus(data) {
 
 $(document).on('click', '.view_profile', function () {
     var staff_id = $(this).attr('s_id');
-    alert(staff_id);
+    window.location.href = base_url + "staff-profile?staff=" + staff_id;
 })

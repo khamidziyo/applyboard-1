@@ -1,16 +1,24 @@
 
-$(document).ready(function () {
+var url_params = new URLSearchParams(window.location.search);
 
-    getStaffProfile();
-})
+if (url_params.has('staff')) {
+    var staff_id = url_params.get('staff');
+    var data = { staff: staff_id, val: 'getStaffProfileByAdmin' };
+    getStaffProfile(data);
+} else {
+    var data = { val: 'getStaffProfile' };
+    getStaffProfile(data);
+}
+// return false;
 
-function getStaffProfile() {
+
+function getStaffProfile(data) {
 
     $("#image").show();
     $.ajax({
         url: staff_server_url + "StaffProfile.php",
         type: "post",
-        data: { val: 'getStaffProfile' },
+        data: data,
         dataType: "json",
         beforeSend: function (request) {
 
@@ -125,10 +133,22 @@ function previewImage(file_input) {
 
 $("#update_staff").submit(function (e) {
     e.preventDefault();
+
+
+    // 
+
     var form = document.getElementById('update_staff');
     var form_data = new FormData(form);
 
-    form_data.append('val', 'updateProfile');
+
+    if (url_params.has('staff')) {
+        var staff_id = url_params.get('staff');
+        form_data.append('val', 'updateStaffProfileByAdmin');
+        form_data.append('staff_id', staff_id);
+
+    } else {
+        form_data.append('val', 'updateProfile');
+    }
 
     $.ajax({
         url: staff_server_url + "UpdateProfile.php",
@@ -149,7 +169,7 @@ $("#update_staff").submit(function (e) {
                 sweetalert(response)
                 if (response.status == 200) {
                     form.reset();
-                    
+
                     setTimeout(function () {
                         location.reload();
                     }, 1500);
