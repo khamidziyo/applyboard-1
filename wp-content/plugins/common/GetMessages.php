@@ -62,15 +62,43 @@ if (!empty($_GET['val'])) {
 
                             $ids = implode(",", $students_ids);
 
-                            $sql = "select m.*,staff.name from messages as m left join staff on staff.id =m.sender_id join (select user, max(created_at) created from ((select id, receiver_id user, created_at
-                   from messages as m where sender_id in ($ids) ) union (select id, sender_id user, created_at from messages as m where receiver_id in ($ids))
-                ) t1 group by user) t2 on ((sender_id in ($ids) and receiver_id=user) or (sender_id=user and receiver_id in ($ids))) and
-                    (m.created_at = created) order by m.created_at DESC";
+                            $sql = "select m.* from messages as m  join (select user, max(created_at) created from
+                            ((select id, receiver_id user, created_at from messages as m where sender_id
+                             in ($ids) ) union (select id, sender_id user, created_at from messages as m
+                             where receiver_id in ($ids))) t1 group by user) t2 on
+                             ((sender_id in ($ids) and receiver_id=user) or (sender_id=user and
+                             receiver_id in ($ids))) and (m.created_at = created) order by m.created_at DESC";
 
                             $messages = $wpdb->get_results($sql);
 
+                            foreach ($messages as $key => $obj) {
+                                switch ($obj->receiver_role) {
+                                    case '1':
+                                        $qry = "select concat(f_name,' ',l_name) as name from users where id= $obj->receiver_id && role='$obj->receiver_role'";
+                                        break;
+
+                                    case '3':
+                                        $qry = "select name from agents where id=$obj->receiver_id && role='$obj->receiver_role'";
+                                        break;
+
+                                    case '4':
+                                        $qry = "select name from agents where id=$obj->receiver_id && role='$obj->receiver_role'";
+                                        break;
+
+                                    case '5':
+                                        $qry = "select name from staff where id=$obj->receiver_id && role='$obj->receiver_role'";
+                                        break;
+
+                                }
+                                $user_data = $wpdb->get_results($qry);
+                                $obj->name = $user_data[0]->name;
+                                $user_messages[] = $obj;
+                            }
+                            // echo "<pre>";
+                            // print_r($user_messages);
+                            // die;
                             $response = ['status' => Success_Code, 'message' => 'Message fetched successfully',
-                                'messages' => $messages, 'logged_user' => $user_id];
+                                'messages' => $user_messages, 'logged_user' => $user_id];
                         }
                         break;
 
@@ -88,7 +116,7 @@ if (!empty($_GET['val'])) {
                             $user_id = $_GET['user'];
 
                             $sql = "SELECT * from messages where receiver_id=$id && sender_id=$user_id or
-                            sender_id=$id && receiver_id=" . $user_id . " && role in ('1','5')";
+                            sender_id=$id && receiver_id=" . $user_id . " && receiver_role in ('1','5')";
 
                             $messages = $wpdb->get_results($sql);
                             $response = ['status' => Success_Code, 'message' => 'Message fetched successfully',

@@ -73,7 +73,7 @@ if (!empty($_GET['val'])) {
                             $response = ['status' => Success_Code, 'message' => 'Notification fetched successfully',
                                 'notification' => $notifications];
                         }
-                    break;
+                        break;
 
                     // if logged in user is staff...
                     case '5':
@@ -118,6 +118,8 @@ if (!empty($_GET['val'])) {
                         }
                         break;
 
+                    default:
+                        throw new Exception("No role matches");
                         break;
 
                 }

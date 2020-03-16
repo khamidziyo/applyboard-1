@@ -30,7 +30,9 @@ function agentVerifyUser()
     $payload = JwtToken::getBearerToken();
     return Agent::verifyUser($payload);
 }
-
+// echo "<pre>";
+// print_r($_POST);
+// die;
 if (!empty($_POST['val'])) {
     try {
         switch ($_POST['val']) {
@@ -45,11 +47,11 @@ if (!empty($_POST['val'])) {
                     throw new Exception("Receiver id is required");
                 }
 
-                if (empty($_POST['role'])) {
+                if (empty($_POST['user_role'])) {
                     throw new Exception("User role is missing in the request");
                 }
 
-                $role = $_POST['role'];
+                $role = $_POST['user_role'];
 
                 switch ($role) {
 
@@ -99,6 +101,7 @@ if (!empty($_POST['val'])) {
 } else {
     $response = ['status' => Error_Code, 'message' => 'Unauthorized Access.Value is required'];
 }
+echo json_encode($response);
 
 function sendMessage($wpdb, $sender_id, $path)
 {
@@ -134,7 +137,7 @@ function sendMessage($wpdb, $sender_id, $path)
 
             $doc_arr[] = $doc_name;
 
-            $insert_arr = ['user_id' => $sender_id, 'document' => $doc_name, 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s a')];
+            $insert_arr = ['user_id' => $sender_id, 'document' => $doc_name, 'role' => $_POST['user_role'], 'created_at' => Date('Y-m-d h:i:s a')];
             $insert_doc_res = $wpdb->insert('user_documents', $insert_arr);
 
             if (!$insert_doc_res) {
@@ -144,7 +147,7 @@ function sendMessage($wpdb, $sender_id, $path)
     }
 
     $insert_msg_arr = ['sender_id' => $sender_id, 'receiver_id' => $receiver_id, 'message' => $message,
-        'document' => json_encode($doc_arr), 'role' => $_POST['role'], 'created_at' => Date('Y-m-d h:i:s a')];
+        'document' => json_encode($doc_arr), 'receiver_role' => $_POST['receiver_role'], 'created_at' => Date('Y-m-d h:i:s a')];
 
     $msg_insert_res = $wpdb->insert('messages', $insert_msg_arr);
 
@@ -154,7 +157,9 @@ function sendMessage($wpdb, $sender_id, $path)
 
     $wpdb->query('COMMIT');
     $response = ['status' => Success_Code, 'message' => 'Message sent successfully'];
-
+    
+    echo json_encode($response);
+    exit;
 //     switch ($_POST['role']) {
     //         case '1':
     //             break;
@@ -201,5 +206,4 @@ function sendMessage($wpdb, $sender_id, $path)
     //         throw new Exception('Mail not sent due to Internal server error');
     //     }
 
-    echo json_encode($response);
 }

@@ -64,7 +64,7 @@ function getMessages() {
             // inside common directory of plugins.
             if (verifyToken(response)) {
 
-                // console.log(response);
+                console.log(response);
 
                 // if status is 200...
                 if (response.status == 200) {
@@ -80,7 +80,7 @@ function getMessages() {
                             }
                             msg_html += "<small>" + obj.created_at + "</small><br>";
                             msg_html += "<button sender=" + obj.receiver_id + " receiver=" + obj.sender_id
-                            msg_html += " class='btn btn-primary view_message' data-toggle='collapse' data-target='#messageDiv'>View All Messages</button><br><br>"
+                            msg_html += " role=" + obj.receiver_role + " class='btn btn-primary view_message' data-toggle='collapse' data-target='#messageDiv'>View All Messages</button><br><br>"
                         })
 
                     } else {
@@ -112,8 +112,11 @@ function getMessages() {
         }
     })
 }
+var receiver_role
 
 $(document).on('click', '.view_message', function () {
+
+    receiver_role = $(this).attr('role');
 
     sender_id = $(this).attr('sender');
     receiver_id = $(this).attr('receiver');
@@ -267,7 +270,8 @@ $("#chatForm").submit(function (e) {
     var form_data = new FormData(form);
 
     form_data.append('val', 'sendMessage');
-    form_data.append('role', local_data.role);
+    form_data.append('user_role', local_data.role);
+    form_data.append('receiver_role', receiver_role);
     form_data.append('sender_id', sender_id);
     form_data.append('receiver_id', receiver_id);
 
